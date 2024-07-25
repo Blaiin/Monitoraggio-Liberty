@@ -1,6 +1,6 @@
 package it.sogei.rest.endpoint;
 
-import it.sogei.data_access.shared.SharedDataCache;
+import it.sogei.data_access.shared.RestDataCache;
 import it.sogei.quartz.ejb.JobManagerEJB;
 import it.sogei.quartz.ejb.ManagerEJB;
 import it.sogei.rest.endpoint.interfaces.QueryAPI;
@@ -12,6 +12,7 @@ import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,10 +35,10 @@ public class QueryAPIResource implements QueryAPI {
             try {
                 managerEJB.scheduleQueryJob(queryRequest);
                 log.info("Retrieving latches from cache...");
-                List<String> latches = SharedDataCache.getLatches();
+                List<String> latches = RestDataCache.getLatches();
                 for (String id : latches) {
                     log.info("Retrieving data from latch {}...", id);
-                    Object fromDataCache = SharedDataCache.get(id);
+                    Collection<?> fromDataCache = RestDataCache.get(id);
                     switch (fromDataCache) {
                         case List<?> list when !list.isEmpty() -> {
                             log.info("Data retrieved successfully.");
@@ -72,10 +73,10 @@ public class QueryAPIResource implements QueryAPI {
             try {
                 managerEJB.scheduleJobs();
                 log.info("Retrieving latches from cache...");
-                List<String> latches = SharedDataCache.getLatches();
+                List<String> latches = RestDataCache.getLatches();
                 for (String id : latches) {
                     log.info("Retrieving data from latch {}...", id);
-                    Object fromDataCache = SharedDataCache.get(id);
+                    Object fromDataCache = RestDataCache.get(id);
                     switch (fromDataCache) {
                         case List<?> list when !list.isEmpty() -> {
                             log.info("Data retrieved successfully.");

@@ -1,6 +1,6 @@
 package it.sogei.quartz.ejb;
 
-import it.sogei.data_access.shared.SharedDataCache;
+import it.sogei.data_access.shared.RestDataCache;
 import it.sogei.quartz.jobs.IQueryJob;
 import it.sogei.quartz.jobs.QueryJob;
 import jakarta.annotation.Resource;
@@ -45,14 +45,14 @@ public class JobManagerEJB {
         try {
             schedulerEJB.getScheduler().start();
             log.info("Scheduler started");
-            SharedDataCache.createLatch("names", 1);
+            RestDataCache.createLatch("names", 1);
             log.info("Latch \"names\" created");
 
             for(Class<? extends IQueryJob> queryJob : queryJobs) {
                 JobInfo jobInfo = buildJobInfo(queryJob);
                 schedulerEJB.getScheduler().scheduleJob(jobInfo.jobDetail(), jobInfo.trigger());
             }
-            SharedDataCache.awaitData("names", 15, TimeUnit.SECONDS);
+            RestDataCache.awaitData("names", 15, TimeUnit.SECONDS);
             log.info("Awaiting data from job...");
         } catch (SchedulerException e) {
             log.error("Failed to schedule job", e);
@@ -61,7 +61,7 @@ public class JobManagerEJB {
             throw new RuntimeException(e);
         } finally {
             log.info("Retrieving from cache...");
-            Object names =  SharedDataCache.get("names");
+            Object names =  RestDataCache.get("names");
             if (names instanceof List) {
                 ((List<?>) names).forEach(System.out::println);
             }

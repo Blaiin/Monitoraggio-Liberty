@@ -1,14 +1,12 @@
 package it.sogei.data_access.shared;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.Map;
 
-public class SharedDataCache {
-    private static final Map<String, List<Object>> cache = new ConcurrentHashMap<>();
+public abstract class ASharedCache {
+    private static final Map<String, Collection<Object>> cache = new ConcurrentHashMap<>();
     private static final Map<String, CountDownLatch> latches = new ConcurrentHashMap<>();
 
     public static synchronized void put(String key, List<?> values) {
@@ -19,7 +17,7 @@ public class SharedDataCache {
         }
     }
 
-    public static Object get(String key) {
+    public static Collection<?> get(String key) {
         return cache.get(key);
     }
 
@@ -38,6 +36,7 @@ public class SharedDataCache {
             latch.await(timeout, unit);
         }
     }
+
 
     public static List<String> getLatches() {
         return latches.keySet().stream().toList();

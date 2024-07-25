@@ -2,6 +2,7 @@ package it.sogei.utils.jobs;
 
 import it.sogei.quartz.ejb.ManagerEJB;
 import it.sogei.quartz.jobs.InternalQueryJob;
+import it.sogei.quartz.jobs.RestQueryJob;
 import it.sogei.structure.apimodels.QueryRequest;
 import it.sogei.structure.data.Config;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +21,8 @@ public class JobBuilder {
     private static final boolean devMode = true;
 
     public static ManagerEJB.JobInfo buildJobInfo(Scheduler scheduler, String id, QueryRequest request) {
-        String jobName = InternalQueryJob.class.getSimpleName() + id;
-        String groupName = InternalQueryJob.class.getSimpleName() + "Group" + id;
+        String jobName = RestQueryJob.class.getSimpleName() + id;
+        String groupName = RestQueryJob.class.getSimpleName() + "Group" + id;
         try {
             JobDetail jobDetail = buildJobDetail(scheduler, request, new JobKey(jobName, groupName));
             Trigger trigger = buildTrigger(request, new TriggerKey(jobName, groupName));
@@ -66,7 +67,7 @@ public class JobBuilder {
         }
         JobDataMap map = buildJobDataMap(request);
 
-        org.quartz.JobBuilder builder = org.quartz.JobBuilder.newJob(InternalQueryJob.class)
+        org.quartz.JobBuilder builder = org.quartz.JobBuilder.newJob(RestQueryJob.class)
                 .withIdentity(jobKey)
                 .usingJobData(map);
         return builder.build();

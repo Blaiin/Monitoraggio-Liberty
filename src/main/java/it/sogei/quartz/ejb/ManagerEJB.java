@@ -2,14 +2,14 @@ package it.sogei.quartz.ejb;
 
 
 import it.sogei.data_access.service.ConfigService;
-import it.sogei.data_access.shared.SharedDataCache;
+import it.sogei.data_access.shared.JobDataCache;
+import it.sogei.data_access.shared.RestDataCache;
 import it.sogei.structure.apimodels.QueryRequest;
 import it.sogei.structure.data.Config;
 import it.sogei.utils.NullChecks;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.DependsOn;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDetail;
@@ -27,7 +27,6 @@ import static it.sogei.utils.jobs.JobBuilder.buildJobInfo;
 @DependsOn({"SchedulerEJB", "ConfigService"})
 public class ManagerEJB {
 
-
     @Inject
     private SchedulerEJB schedulerEJB;
 
@@ -41,13 +40,12 @@ public class ManagerEJB {
             schedulerEJB.getScheduler().start();
             log.info("Scheduler started");
             String id = String.valueOf(request.hashCode());
-            SharedDataCache.createLatch(id, 1);
+            RestDataCache.createLatch(id, 1);
             JobInfo jobInfo = buildJobInfo(schedulerEJB.getScheduler(), id, request);
             if (NullChecks.requireNonNull(jobInfo)) {
                 schedulerEJB.getScheduler().scheduleJob(jobInfo.jobDetail(), jobInfo.trigger());
-                SharedDataCache.awaitData(id,
-                    jobInfo.trigger.getStartTime().getTime() - System.currentTimeMillis() + 15000,
-                    TimeUnit.MILLISECONDS);
+                RestDataCache.awaitData(id,
+                    10, TimeUnit.SECONDS);
             } else log.error("No operation scheduled for request n. {}, job info is null.", request.hashCode());
         } catch (SchedulerException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -62,13 +60,13 @@ public class ManagerEJB {
             for(Config config : configs) {
 
                 String id = String.valueOf(config.getId());
-                SharedDataCache.createLatch(id, 1);
+                JobDataCache.createLatch(id, 1);
                 JobInfo jobInfo = buildJobInfo(schedulerEJB.getScheduler(), config);
 
                 if(NullChecks.requireNonNull(jobInfo)) {
 
                     schedulerEJB.getScheduler().scheduleJob(jobInfo.jobDetail(), jobInfo.trigger());
-                    SharedDataCache.awaitData(id,
+                    JobDataCache.awaitData(id,
                         jobInfo.trigger.getStartTime().getTime() - System.currentTimeMillis() + 15000,
                         TimeUnit.MILLISECONDS);
                 }

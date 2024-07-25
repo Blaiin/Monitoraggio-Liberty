@@ -1,45 +1,68 @@
 package it.sogei.quartz.jobs;
 
-import it.sogei.data_access.shared.SharedDataCache;
+import it.sogei.data_access.shared.RestDataCache;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
-public non-sealed class RestQueryJob implements IQueryJob{
-    @Override
-    public void execute (JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        DBInfo dbInfo = buildDBInfo(jobExecutionContext);
-        try {
-            loadDriver();
-        } catch (ClassNotFoundException e) {
-            log.error("Failed to load driver", e);
-        }
+public non-sealed class RestQueryJob implements IQueryJob {
 
+    @Override
+    public void execute (JobExecutionContext jobExecutionContext) throws JobExecutionException{
+        DBInfo dbInfo = buildDBInfo(jobExecutionContext);
+        loadDriver();
         try (var resultSet = queryDB(dbInfo)) {
-            List<String> results = new ArrayList<>();
             if (resultSet != null) {
-                log.info("Reading result set...");
-                while (resultSet.next()) {
-                    results.add(resultSet.getString("name"));
+                Collection<?> results = processResultSet(dbInfo.query, resultSet);
+                if (results instanceof List && !results.isEmpty()) {
+                    log.info("Data found.");
+                    RestDataCache.put(jobExecutionContext
+                            .getJobDetail()
+                            .getJobDataMap()
+                            .getString("id"), (List<?>) results);
+                } else {
+                    log.error("No data found.");
                 }
-            }
-            if (!results.isEmpty()) {
-                log.info("Data found.");
-                SharedDataCache.put(jobExecutionContext.getJobDetail().getJobDataMap().getString("id"), results);
-            } else {
-                log.error("No data found.");
             }
         } catch (NullPointerException e) {
             log.error("Result set was null, skipping", e);
+            throw new JobExecutionException(e);
         } catch (Exception e) {
             log.error("Failed to execute query", e);
+            throw new JobExecutionException(e);
         }
+    }
+    private Collection<?> processResultSet(String query, ResultSet resultSet) {
+        List<Map<?, ?>> results = new ArrayList<>();
+        boolean count = query.trim().toLowerCase().contains("count");
+        boolean select = query.trim().toLowerCase().contains("select");
+        if (select && count) {
+            try {
+                while (resultSet.next()) {
+                    results.add(Map.of("count", resultSet.getInt(1)));
+                }
+            } catch (SQLException e) {
+                log.error("Failed to process result set", e);
+            }
+        }
+        else if (select) {
+            try {
+                int columns = resultSet.getMetaData().getColumnCount();
+                while (resultSet.next()) {
+                    for (int i = 1; i <= columns; i++) {
+                        results.add(Map.of(resultSet.getMetaData().getColumnName(i), resultSet.getObject(i)));
+                    }
+                }
+            } catch (SQLException e) {
+                log.error("Failed to process result set", e);
+            }
+        }
+
+        return results;
     }
     private ResultSet queryDB(DBInfo dbInfo) {
         Objects.requireNonNull(dbInfo.url);

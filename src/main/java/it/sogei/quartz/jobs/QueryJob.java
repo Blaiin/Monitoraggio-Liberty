@@ -1,6 +1,6 @@
 package it.sogei.quartz.jobs;
 
-import it.sogei.data_access.shared.SharedDataCache;
+import it.sogei.data_access.shared.RestDataCache;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobExecutionContext;
 
@@ -16,11 +16,7 @@ public non-sealed class QueryJob implements IQueryJob {
     @Override
     public void execute(JobExecutionContext context) {
         DBInfo dbInfo = buildDBInfo(context);
-        try {
-            loadDriver();
-        } catch (ClassNotFoundException e) {
-            log.error("Failed to load driver", e);
-        }
+        loadDriver();
         List<String> names = new ArrayList<>();
         try (ResultSet resultSet = queryDB(dbInfo)) {
             Objects.requireNonNull(resultSet);
@@ -30,7 +26,7 @@ public non-sealed class QueryJob implements IQueryJob {
         } catch (SQLException e) {
             log.error("Failed to execute query", e);
         }
-        if (!names.isEmpty()) SharedDataCache.put("names", names);
+        if (!names.isEmpty()) RestDataCache.put("names", names);
         else log.error("No data found.");
 
         log.info("QueryJob executed.");
