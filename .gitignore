@@ -1,5 +1,7 @@
-smtp.yaml
-
+*.yaml
+*.env
+*.log
+*.properties
 
 target/
 pom.xml.tag
