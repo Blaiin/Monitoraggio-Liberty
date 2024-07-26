@@ -41,6 +41,7 @@ public class JobManagerEJB {
     public void init() {
         executorService.submit(this::scheduleJobs);
     }
+
     public void scheduleJobs() {
         try {
             schedulerEJB.getScheduler().start();
@@ -62,8 +63,8 @@ public class JobManagerEJB {
         } finally {
             log.info("Retrieving from cache...");
             Object names =  RestDataCache.get("names");
-            if (names instanceof List) {
-                ((List<?>) names).forEach(System.out::println);
+            if (names instanceof List<?> list) {
+                list.forEach(System.out::println);
             }
         }
     }

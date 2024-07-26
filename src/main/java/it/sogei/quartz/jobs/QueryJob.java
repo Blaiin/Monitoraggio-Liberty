@@ -16,7 +16,7 @@ public non-sealed class QueryJob implements IQueryJob {
     @Override
     public void execute(JobExecutionContext context) {
         DBInfo dbInfo = buildDBInfo(context);
-        loadDriver();
+        loadDriver(dbInfo.url());
         List<String> names = new ArrayList<>();
         try (ResultSet resultSet = queryDB(dbInfo)) {
             Objects.requireNonNull(resultSet);

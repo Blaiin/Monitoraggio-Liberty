@@ -6,6 +6,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public abstract class ASharedCache {
+
     private static final Map<String, Collection<Object>> cache = new ConcurrentHashMap<>();
     private static final Map<String, CountDownLatch> latches = new ConcurrentHashMap<>();
 

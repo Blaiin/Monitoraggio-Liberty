@@ -14,7 +14,7 @@ public non-sealed class InternalQueryJob implements IQueryJob{
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         DBInfo dbInfo = buildDBInfo(jobExecutionContext);
-        loadDriver();
+        loadDriver(dbInfo.url());
         try (var resultSet = queryDB(dbInfo)) {
             List<String> names = new ArrayList<>();
             if (resultSet != null) {

@@ -1,6 +1,7 @@
 package it.sogei.quartz.jobs;
 
 import it.sogei.data_access.shared.RestDataCache;
+import it.sogei.utils.exceptions.QueryFailureException;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -12,9 +13,9 @@ import java.util.*;
 public non-sealed class RestQueryJob implements IQueryJob {
 
     @Override
-    public void execute (JobExecutionContext jobExecutionContext) throws JobExecutionException{
+    public void execute (JobExecutionContext jobExecutionContext) throws JobExecutionException {
         DBInfo dbInfo = buildDBInfo(jobExecutionContext);
-        loadDriver();
+        loadDriver(dbInfo.url());
         try (var resultSet = queryDB(dbInfo)) {
             if (resultSet != null) {
                 Collection<?> results = processResultSet(dbInfo.query, resultSet);
@@ -38,9 +39,9 @@ public non-sealed class RestQueryJob implements IQueryJob {
     }
     private Collection<?> processResultSet(String query, ResultSet resultSet) {
         List<Map<?, ?>> results = new ArrayList<>();
-        boolean count = query.trim().toLowerCase().contains("count");
-        boolean select = query.trim().toLowerCase().contains("select");
-        if (select && count) {
+        boolean count = query.trim().toLowerCase().startsWith("select count");
+        boolean select = query.trim().toLowerCase().startsWith("select");
+        if (count) {
             try {
                 while (resultSet.next()) {
                     results.add(Map.of("count", resultSet.getInt(1)));
@@ -59,7 +60,11 @@ public non-sealed class RestQueryJob implements IQueryJob {
                 }
             } catch (SQLException e) {
                 log.error("Failed to process result set", e);
+                results.add(Map.of("error", "Failed to process result set: " + e.getMessage()));
             }
+        } else {
+            log.error("Query type not supported.");
+            results.add(Map.of("error", "Query type not supported."));
         }
 
         return results;
@@ -79,15 +84,18 @@ public non-sealed class RestQueryJob implements IQueryJob {
             }
             else {
                 log.error("Query failed.");
-                throw new NullPointerException("Query failed.");
+                throw new QueryFailureException("Query failed.");
             }
         } catch (SQLException e) {
-            log.error("Failed to execute query", e);
+            log.error("Failed to execute query.", e);
             return null;
         } catch (NullPointerException e) {
             if (e.getMessage().contains("password"))
                 log.error("Connection was not possible.", e);
-            else log.error("Failed to execute query", e);
+            else log.error("Failed to execute query.", e);
+            return null;
+        } catch (QueryFailureException e) {
+            log.error("Failed to execute query", e);
             return null;
         }
     }
