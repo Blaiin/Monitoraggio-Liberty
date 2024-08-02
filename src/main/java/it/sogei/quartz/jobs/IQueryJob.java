@@ -13,7 +13,7 @@ public sealed interface IQueryJob extends Job permits InternalQueryJob, RestQuer
             log.error("URL cannot be null.");
             throw new IllegalArgumentException("URL cannot be null.");
         }
-        if (url.contains("jdbc:postgresql")) {
+        if (url.contains("postgresql")) {
             log.info("Loading PostgreSQL driver...");
             try {
                 Class.forName("org.postgresql.Driver");

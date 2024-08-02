@@ -9,6 +9,6 @@ public record SmtpConfig(
         @JsonProperty("port") int port,
         @JsonProperty("auth") String auth,
         @JsonProperty("starttls") boolean startTls,
-        @JsonProperty("username") String username,
+        @JsonProperty("user") String user,
         @JsonProperty("password") String password) {
 }

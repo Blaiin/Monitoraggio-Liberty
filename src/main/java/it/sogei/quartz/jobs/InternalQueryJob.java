@@ -1,15 +1,17 @@
 package it.sogei.quartz.jobs;
 
 import it.sogei.data_access.shared.RestDataCache;
+import it.sogei.utils.NullChecks;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
-public non-sealed class InternalQueryJob implements IQueryJob{
+public non-sealed class InternalQueryJob implements IQueryJob {
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -32,6 +34,9 @@ public non-sealed class InternalQueryJob implements IQueryJob{
         } catch (NullPointerException e) {
             log.error("Result set was null, skipping", e);
             throw new JobExecutionException(e);
+        } catch (IllegalArgumentException e) {
+            log.error("Query execution failed due to driver not being able to load.", e);
+            throw new JobExecutionException(e);
         } catch (Exception e) {
             log.error("Failed to execute query", e);
             throw new JobExecutionException(e);
@@ -40,10 +45,7 @@ public non-sealed class InternalQueryJob implements IQueryJob{
     }
 
     private ResultSet queryDB(DBInfo dbInfo) {
-        Objects.requireNonNull(dbInfo.url);
-        Objects.requireNonNull(dbInfo.username);
-        Objects.requireNonNull(dbInfo.password);
-        Objects.requireNonNull(dbInfo.query);
+        NullChecks.requireNonNull(dbInfo);
         try (Connection connection = DriverManager.getConnection(dbInfo.url, dbInfo.username, dbInfo.password)) {
             log.info("Connection established successfully.");
             PreparedStatement statement = connection.prepareStatement(dbInfo.query);
@@ -57,7 +59,7 @@ public non-sealed class InternalQueryJob implements IQueryJob{
                 throw new NullPointerException("Query failed.");
             }
         } catch (SQLException e) {
-            log.error("Failed to execute query", e);
+            log.error("Failed to execute query.", e);
             return null;
         } catch (NullPointerException e) {
             if (e.getMessage().contains("password"))
@@ -73,6 +75,6 @@ public non-sealed class InternalQueryJob implements IQueryJob{
         return new DBInfo(dataMap.getString("url"), dataMap.getString("username"),
                 dataMap.getString("password"), dataMap.getString(id + "query"));
     }
-    record DBInfo(String url, String username, String password, String query) {}
+    public record DBInfo(String url, String username, String password, String query) {}
 
 }

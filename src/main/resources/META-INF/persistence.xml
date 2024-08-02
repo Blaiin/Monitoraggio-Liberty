@@ -6,13 +6,5 @@
     <persistence-unit name="default" transaction-type="JTA">
         <jta-data-source>jdbc/defaultDataSource</jta-data-source>
         <class>it.sogei.structure.data.Config</class>
-        <properties>
-            <property name="jakarta.persistence.schema-generation.database.action" value="create"/>
-            <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/Monitoraggio"/>
-            <property name="jakarta.persistence.jdbc.user" value="postgres"/>
-            <property name="jakarta.persistence.jdbc.password" value="postgres"/>
-            <property name="eclipselink.logging.level" value="FINE"/>
-        </properties>
     </persistence-unit>
 </persistence>

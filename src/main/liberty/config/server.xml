@@ -10,16 +10,16 @@
     <dataSource id="defaultDataSource" jndiName="jdbc/defaultDataSource">
         <jdbcDriver libraryRef="PostgreSQLLib"/>
         <properties>
-            <databaseName>Monitoraggio</databaseName>
-            <serverName>localhost</serverName>
-            <portNumber>5432</portNumber>
-            <user>postgres</user>
-            <password>postgres</password>
+            <databaseName>${env.DATABASE_NAME}</databaseName>
+            <serverName>${env.SERVER_HOST}</serverName>
+            <portNumber>${env.DATABASE_PORT}</portNumber>
+            <user>${env.DATABASE_USER}</user>
+            <password>${env.DATABASE_PASSWORD}</password>
         </properties>
     </dataSource>
 
     <library id="PostgreSQLLib">
-        <file name="C:\Users\nicolo.disilvestro\Desktop\Monitoraggio-TomEE\src\main\liberty\lib\postgresql-42.7.3.jar"/>
+        <file name="${env.POSTGRES_DRIVER_LOCATION}"/>
     </library>
     <!-- This template enables security. To get the full use of all the capabilities, a keystore and user registry are required. -->
 
@@ -43,8 +43,8 @@
     <!-- To access this server from a remote client, add a host attribute to the following element, for example, host="*" -->
     <httpEndpoint id="defaultHttpEndpoint"
                   host="*"
-                  httpPort="9080"
-                  httpsPort="9443">
+                  httpPort="${env.HTTP_PORT}"
+                  httpsPort="${env.HTTPS_PORT}">
         <sessionManagement sessionCookieName="JSESSIONID"
                        sessionCookiePath="/"
                        sessionCookieMaxAge="3600"
@@ -57,7 +57,12 @@
 
     <!-- Configures the application on a specified context root -->
     <webApplication contextRoot="/monitoraggio" location="monitoraggio.war" />
+    <logging traceSpecification="com.ibm.ws.kernel.boot=all=enabled"/>
 
     <!-- Default SSL configuration enables trust for default certificates from the Java runtime -->
-    <ssl id="defaultSSLConfig" trustDefaultCerts="true" />
+    <keyStore id="defaultKeyStore" password="${env.KEYSTORE_PASSWORD}" />
+    <ssl id="defaultSSLConfig" keyStoreRef="defaultKeyStore" trustDefaultCerts="true" />
+    <orb id="defaultOrb" sslRef="defaultSSLConfig" />
+
+
 </server>

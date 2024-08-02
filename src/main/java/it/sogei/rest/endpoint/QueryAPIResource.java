@@ -23,6 +23,7 @@ public class QueryAPIResource implements QueryAPI {
     public QueryAPIResource() {
         log.info("QueryAPIResource initialized.");
     }
+
     @Inject
     private JobManagerEJB jobManagerEJB;
     @Inject
@@ -64,7 +65,7 @@ public class QueryAPIResource implements QueryAPI {
                 return Response.serverError().entity(new QueryResponse("500", "Internal server error", results)).build();
             }
         }
-        return Response.serverError().build();
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
     @Override

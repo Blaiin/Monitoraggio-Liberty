@@ -37,8 +37,6 @@ public class ManagerEJB {
 
     public void scheduleQueryJob(QueryRequest request) {
         try {
-            schedulerEJB.getScheduler().start();
-            log.info("Scheduler started");
             String id = String.valueOf(request.hashCode());
             RestDataCache.createLatch(id, 1);
             JobInfo jobInfo = buildJobInfo(schedulerEJB.getScheduler(), id, request);
@@ -55,8 +53,6 @@ public class ManagerEJB {
 
     public void scheduleJobs() {
         try {
-            schedulerEJB.getScheduler().start();
-            log.info("Scheduler started");
             for(Config config : configs) {
 
                 String id = String.valueOf(config.getId());
@@ -67,7 +63,7 @@ public class ManagerEJB {
 
                     schedulerEJB.getScheduler().scheduleJob(jobInfo.jobDetail(), jobInfo.trigger());
                     JobDataCache.awaitData(id,
-                        jobInfo.trigger.getStartTime().getTime() - System.currentTimeMillis() + 15000,
+                        jobInfo.trigger.getStartTime().getTime() - System.currentTimeMillis() + (15 * 1000),
                         TimeUnit.MILLISECONDS);
                 }
 
@@ -91,7 +87,10 @@ public class ManagerEJB {
         try {
             configs = service.getAllConfigs();
             log.info("ManagerEJB initialized.");
+            schedulerEJB.getScheduler().start();
+            log.info("Scheduler (ManagerEJB) started.");
         } catch (NullPointerException e) {
+
             if(e.getMessage().contains("ConfigService")) {
                 log.error("ConfigService is required.");
             } else if(e.getMessage().contains("SchedulerEJB")){
@@ -100,11 +99,11 @@ public class ManagerEJB {
                 log.error("Failed to initialize ManagerEJB", e);
             }
         } catch (Exception e) {
-            log.error("Failed to get configs", e);
+            log.error("Failed to get configs for ManagerEJB", e);
         }
     }
     public ManagerEJB() {
-        log.info("ManagerEJB initialized.");
+        log.info("ManagerEJB queued to be initialized.");
     }
     public record JobInfo(JobDetail jobDetail, Trigger trigger) {
     }

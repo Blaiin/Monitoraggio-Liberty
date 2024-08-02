@@ -1,6 +1,9 @@
 package it.sogei.data_access.shared;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -8,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class ASharedCache {
 
     private static final Map<String, Collection<Object>> cache = new ConcurrentHashMap<>();
+
     private static final Map<String, CountDownLatch> latches = new ConcurrentHashMap<>();
 
     public static synchronized void put(String key, List<?> values) {
