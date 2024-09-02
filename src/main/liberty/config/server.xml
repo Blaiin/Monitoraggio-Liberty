@@ -11,7 +11,7 @@
         <jdbcDriver libraryRef="PostgreSQLLib"/>
         <properties>
             <databaseName>${env.DATABASE_NAME}</databaseName>
-            <serverName>${env.SERVER_HOST}</serverName>
+            <serverName>${env.DATABASE_HOST}</serverName>
             <portNumber>${env.DATABASE_PORT}</portNumber>
             <user>${env.DATABASE_USER}</user>
             <password>${env.DATABASE_PASSWORD}</password>
@@ -43,13 +43,8 @@
     <!-- To access this server from a remote client, add a host attribute to the following element, for example, host="*" -->
     <httpEndpoint id="defaultHttpEndpoint"
                   host="*"
-                  httpPort="${env.HTTP_PORT}"
-                  httpsPort="${env.HTTPS_PORT}">
-        <sessionManagement sessionCookieName="JSESSIONID"
-                       sessionCookiePath="/"
-                       sessionCookieMaxAge="3600"
-                       sessionCookieSecure="true"
-                       sessionCookieHttpOnly="true"/>
+                  httpPort="10000"
+                  httpsPort="9999">
     </httpEndpoint>
 
     <!-- Automatically expand WAR files and EAR files -->

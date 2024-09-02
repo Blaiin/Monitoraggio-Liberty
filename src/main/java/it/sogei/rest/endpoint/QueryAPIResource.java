@@ -70,42 +70,42 @@ public class QueryAPIResource implements QueryAPI {
 
     @Override
     public Response activate() {
-            List<List<?>> results = new ArrayList<>();
-            try {
-                managerEJB.scheduleJobs();
-                log.info("Retrieving latches from cache...");
-                List<String> latches = RestDataCache.getLatches();
-                for (String id : latches) {
-                    log.info("Retrieving data from latch {}...", id);
-                    Object fromDataCache = RestDataCache.get(id);
-                    switch (fromDataCache) {
-                        case List<?> list when !list.isEmpty() -> {
-                            log.info("Data retrieved successfully.");
-                            results.add(list);
-                        }
-                        case List<?> _ -> {
-                            log.error("No data found.");
-                            results.add(Collections.singletonList("No data found."));
-                        }
-                        case null -> {
-                            log.error("No data found.");
-                            results.add(Collections.singletonList("No data found."));
-                        }
-                        default -> {
-                            log.error("Data type not readable.");
-                            results.add(Collections.singletonList("Data type not readable."));
-                        }
+        List<List<?>> results = new ArrayList<>();
+        try {
+            managerEJB.scheduleJobs();
+            log.info("Retrieving latches from cache...");
+            List<String> latches = RestDataCache.getLatches();
+            for (String id : latches) {
+                log.info("Retrieving data from latch {}...", id);
+                Object fromDataCache = RestDataCache.get(id);
+                switch (fromDataCache) {
+                    case List<?> list when !list.isEmpty() -> {
+                        log.info("Data retrieved successfully.");
+                        results.add(list);
+                    }
+                    case List<?> _ -> {
+                        log.error("No data found.");
+                        results.add(Collections.singletonList("No data found."));
+                    }
+                    case null -> {
+                        log.error("No data found.");
+                        results.add(Collections.singletonList("No data found."));
+                    }
+                    default -> {
+                        log.error("Data type not readable.");
+                        results.add(Collections.singletonList("Data type not readable."));
                     }
                 }
-                return !results.isEmpty() ?
-                        Response.ok().entity(new QueryResponse("200", "Results populated", results)).build() :
-                        Response.noContent().build();
-            } catch (Exception e) {
-                log.error("Failed to submit query", e);
-                return Response.serverError().entity(new QueryResponse("500",
-                        "Internal server error",
-                        results)).build();
             }
+            return !results.isEmpty() ?
+                    Response.ok().entity(new QueryResponse("200", "Results populated", results)).build() :
+                    Response.noContent().build();
+        } catch (Exception e) {
+            log.error("Failed to submit query", e);
+            return Response.serverError().entity(new QueryResponse("500",
+                    "Internal server error",
+                    results)).build();
+        }
     }
 
     @Override

@@ -1,7 +1,6 @@
 package it.sogei.data_access.repositories;
 
 import it.sogei.structure.data.Config;
-import jakarta.ejb.Singleton;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -15,6 +14,7 @@ public class ConfigRepository extends ARepository {
     public ConfigRepository() {
         super();
     }
+
     public void save(Config config) {
         super.getEm().persist(config);
     }
