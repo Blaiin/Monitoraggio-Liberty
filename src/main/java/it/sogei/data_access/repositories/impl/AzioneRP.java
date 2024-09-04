@@ -13,9 +13,11 @@ import java.util.List;
 public class AzioneRP extends ARepository {
 
     private final Class<Azione> entityClass = Azione.class;
+
     public AzioneRP () {
         super();
     }
+
     public void save(Azione azione) {
         super.getEm().persist(azione);
     }

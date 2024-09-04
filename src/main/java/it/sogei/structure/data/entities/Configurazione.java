@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "MON_Configurazione")
+@Table(name = "\"MON_Configurazione\"")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,37 +18,37 @@ import lombok.Setter;
 public class Configurazione {
 
     @Id
-    @Column(name = "ConfigurazioneID")
+    @Column(name = "\"ConfigurazioneID\"")
     private Long id;
 
-    @Column(name = "Nome")
+    @Column(name = "\"Nome\"")
     private String nome;
 
-    @Column(name = "SQLScript")
+    @Column(name = "\"SQLScript\"")
     private String sqlScript;
 
-    @Column(name = "Programma")
+    @Column(name = "\"Programma\"")
     private String programma;
 
-    @Column(name = "Classe")
+    @Column(name = "\"Classe\"")
     private String classe;
 
-    @Column(name = "Schedulazione")
+    @Column(name = "\"Schedulazione\"")
     private String schedulazione;
 
-    @Column(name = "ControlloID")
+    @Column(name = "\"ControlloID\"")
     private Long controlloID;
 
-    @Column(name = "TipoControlloID")
+    @Column(name = "\"TipoControlloID\"")
     private Long tipoControlloID;
 
-    @Column(name = "AmbitoID")
+    @Column(name = "\"AmbitoID\"")
     private Long ambitoID;
 
-    @Column(name = "FonteDatiID")
+    @Column(name = "\"FonteDatiID\"")
     private Long fonteDatiID;
 
-    @Column(name = "UtenteFonteDatiID")
+    @Column(name = "\"UtenteFonteDatiID\"")
     private Long utenteFonteDatiID;
 
 }

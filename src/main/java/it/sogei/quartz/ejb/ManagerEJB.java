@@ -1,11 +1,13 @@
 package it.sogei.quartz.ejb;
 
 
-import it.sogei.data_access.service.ConfigService;
+import it.sogei.data_access.service.ConfigServiceOld;
+import it.sogei.data_access.service.ConfigurazioneService;
 import it.sogei.data_access.shared.JobDataCache;
 import it.sogei.data_access.shared.RestDataCache;
 import it.sogei.structure.apimodels.QueryRequest;
 import it.sogei.structure.data.Config;
+import it.sogei.structure.data.entities.Configurazione;
 import it.sogei.utils.NullChecks;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.DependsOn;
@@ -24,16 +26,21 @@ import static it.sogei.utils.jobs.JobBuilder.buildJobInfo;
 
 @ApplicationScoped
 @Slf4j
-@DependsOn({"SchedulerEJB", "ConfigService"})
+@DependsOn("SchedulerEJB")
 public class ManagerEJB {
 
     @Inject
     private SchedulerEJB schedulerEJB;
 
     @Inject
-    private ConfigService service;
+    private ConfigServiceOld service;
 
-    private List<Config> configs;
+    @Inject
+    private ConfigurazioneService configService;
+
+    private List<Config> oldConfigs;
+
+    private List<Configurazione> configs;
 
     public void scheduleQueryJob(QueryRequest request) {
         try {
@@ -50,10 +57,30 @@ public class ManagerEJB {
         }
     }
 
-
     public void scheduleJobs() {
         try {
-            for(Config config : configs) {
+            for (Configurazione config : configs) {
+                String id = String.valueOf(config.getId());
+                JobDataCache.createLatch(id, 1);
+                JobInfo jobInfo = buildJobInfo(schedulerEJB.getScheduler(), config);
+
+                if(NullChecks.requireNonNull(jobInfo)) {
+
+                    schedulerEJB.getScheduler().scheduleJob(jobInfo.jobDetail(), jobInfo.trigger());
+                    JobDataCache.awaitData(id,
+                            jobInfo.trigger.getStartTime().getTime() - System.currentTimeMillis() + (15 * 1000),
+                            TimeUnit.MILLISECONDS);
+                }
+
+                else log.error("No operation scheduled for config n. {}, job info is null.", config.getId());
+            }
+        } catch (Exception e) {
+            log.error("Error: {}", e.getMessage());
+        }
+    }
+    public void scheduleOldJobs() {
+        try {
+            for(Config config : oldConfigs) {
 
                 String id = String.valueOf(config.getId());
                 JobDataCache.createLatch(id, 1);
@@ -85,7 +112,8 @@ public class ManagerEJB {
     @PostConstruct
     public void init() {
         try {
-            configs = service.getAllConfigs();
+            oldConfigs = service.getAllConfigs();
+            configs = configService.getAll();
             log.info("ManagerEJB initialized.");
             schedulerEJB.getScheduler().start();
             log.info("Scheduler (ManagerEJB) started.");

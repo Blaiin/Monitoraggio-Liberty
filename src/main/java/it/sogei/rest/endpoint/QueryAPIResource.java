@@ -72,7 +72,7 @@ public class QueryAPIResource implements QueryAPI {
     public Response activate() {
         List<List<?>> results = new ArrayList<>();
         try {
-            managerEJB.scheduleJobs();
+            managerEJB.scheduleOldJobs();
             log.info("Retrieving latches from cache...");
             List<String> latches = RestDataCache.getLatches();
             for (String id : latches) {

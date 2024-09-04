@@ -3,7 +3,6 @@ package it.sogei.data_access.service;
 
 import it.sogei.data_access.repositories.ConfigRepository;
 import it.sogei.structure.data.Config;
-import jakarta.ejb.DependsOn;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 
@@ -11,7 +10,7 @@ import java.util.List;
 
 
 @Stateless
-public class ConfigService {
+public class ConfigServiceOld {
 
     @Inject
     private ConfigRepository configRepository;
