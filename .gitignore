@@ -2,8 +2,12 @@
 *.env
 *.log
 *.properties
+email-credentials.txt
 
-.libertyls/
+.libertyls/featurelist-ol-24.0.0.7.xml
+.libertyls/ol-24.0.0.7.xsd
+.libertyls/schemagen.log
+.libertyls/ws-featurelist.log
 target/
 pom.xml.tag
 pom.xml.releaseBackup
