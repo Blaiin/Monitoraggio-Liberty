@@ -75,6 +75,6 @@ public non-sealed class InternalQueryJob implements IQueryJob {
         return new DBInfo(dataMap.getString("url"), dataMap.getString("username"),
                 dataMap.getString("password"), dataMap.getString(id + "query"));
     }
-    public record DBInfo(String url, String username, String password, String query) {}
+    public record DBInfo(String url, String username, String password, String query) implements Info {}
 
 }

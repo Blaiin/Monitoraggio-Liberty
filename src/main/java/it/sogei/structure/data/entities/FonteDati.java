@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "MON_FonteDati")
+@Table(name = "\"MON_FonteDati\"")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,22 +18,22 @@ import lombok.Setter;
 public class FonteDati {
 
     @Id
-    @Column(name = "FonteDatiID")
+    @Column(name = "\"FonteDatiID\"")
     private Long id;
 
-    @Column(name = "Descrizione")
+    @Column(name = "\"Descrizione\"")
     private String descrizione;
 
-    @Column(name = "NomeDriver")
+    @Column(name = "\"NomeDriver\"")
     private String nomeDriver;
 
-    @Column(name = "NomeClasse")
+    @Column(name = "\"NomeClasse\"")
     private String nomeClasse;
 
-    @Column(name = "URL")
+    @Column(name = "\"URL\"")
     private String url;
 
-    @Column(name = "JNDIName")
+    @Column(name = "\"JNDIName\"")
     private String jndiName;
 
 }

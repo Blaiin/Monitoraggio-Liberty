@@ -5,6 +5,6 @@
              version="3.0">
     <persistence-unit name="default" transaction-type="JTA">
         <jta-data-source>jdbc/defaultDataSource</jta-data-source>
-        <class>it.sogei.structure.data.Config</class>
+        <class>it.sogei.structure.data.entities.Configurazione</class>
     </persistence-unit>
 </persistence>

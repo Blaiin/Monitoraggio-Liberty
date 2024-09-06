@@ -1,11 +1,13 @@
 package it.sogei.rest.endpoint;
 
+import it.sogei.data_access.service.OutputService;
 import it.sogei.data_access.shared.RestDataCache;
 import it.sogei.quartz.ejb.JobManagerEJB;
 import it.sogei.quartz.ejb.ManagerEJB;
 import it.sogei.rest.endpoint.interfaces.QueryAPI;
 import it.sogei.structure.apimodels.QueryRequest;
 import it.sogei.structure.apimodels.QueryResponse;
+import it.sogei.structure.data.dto.OutputDTO;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
@@ -26,8 +28,58 @@ public class QueryAPIResource implements QueryAPI {
 
     @Inject
     private JobManagerEJB jobManagerEJB;
+
     @Inject
     private ManagerEJB managerEJB;
+
+    @Inject
+    private OutputService outputService;
+
+    @Override
+    public Response activate() {
+        List<List<?>> results = new ArrayList<>();
+        try {
+            //managerEJB.scheduleOldJobs();
+            managerEJB.scheduleJobs();
+            log.info("Retrieving latches from cache...");
+            List<String> latches = RestDataCache.getLatches();
+            for (String id : latches) {
+                log.info("Retrieving data from latch {}...", id);
+                Object fromDataCache = RestDataCache.get(id);
+                switch (fromDataCache) {
+                    case List<?> list when !list.isEmpty() -> {
+                        log.info("Data retrieved successfully.");
+                        results.add(list);
+                        log.info("Creating output...");
+                        outputService.create(
+                                ((List<OutputDTO>) RestDataCache.get("output" + id))
+                                        .getFirst().toEntity());
+                    }
+                    case List<?> _ -> {
+                        log.error("No data found.");
+                        results.add(Collections.singletonList("No data found."));
+                    }
+                    case null -> {
+                        log.error("No data found.");
+                        results.add(Collections.singletonList("No data found."));
+                    }
+                    default -> {
+                        log.error("Data type not readable.");
+                        results.add(Collections.singletonList("Data type not readable."));
+                    }
+
+                }
+            }
+            return !results.isEmpty() ?
+                    Response.ok().entity(new QueryResponse("200", "Results populated", results)).build() :
+                    Response.noContent().build();
+        } catch (Exception e) {
+            log.error("Failed to submit query", e);
+            return Response.serverError().entity(new QueryResponse("500",
+                    "Internal server error",
+                    results)).build();
+        }
+    }
 
     @Override
     public Response submitQuery(QueryRequest queryRequest) {
@@ -66,46 +118,6 @@ public class QueryAPIResource implements QueryAPI {
             }
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
-    }
-
-    @Override
-    public Response activate() {
-        List<List<?>> results = new ArrayList<>();
-        try {
-            managerEJB.scheduleOldJobs();
-            log.info("Retrieving latches from cache...");
-            List<String> latches = RestDataCache.getLatches();
-            for (String id : latches) {
-                log.info("Retrieving data from latch {}...", id);
-                Object fromDataCache = RestDataCache.get(id);
-                switch (fromDataCache) {
-                    case List<?> list when !list.isEmpty() -> {
-                        log.info("Data retrieved successfully.");
-                        results.add(list);
-                    }
-                    case List<?> _ -> {
-                        log.error("No data found.");
-                        results.add(Collections.singletonList("No data found."));
-                    }
-                    case null -> {
-                        log.error("No data found.");
-                        results.add(Collections.singletonList("No data found."));
-                    }
-                    default -> {
-                        log.error("Data type not readable.");
-                        results.add(Collections.singletonList("Data type not readable."));
-                    }
-                }
-            }
-            return !results.isEmpty() ?
-                    Response.ok().entity(new QueryResponse("200", "Results populated", results)).build() :
-                    Response.noContent().build();
-        } catch (Exception e) {
-            log.error("Failed to submit query", e);
-            return Response.serverError().entity(new QueryResponse("500",
-                    "Internal server error",
-                    results)).build();
-        }
     }
 
     @Override
