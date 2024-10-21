@@ -1,0 +1,53 @@
+package it.dmi.structure.data.entities;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.math.BigInteger;
+import java.util.List;
+
+@Entity
+@Table(name = "\"MON_Soglia\"")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Soglia {
+
+    @Id
+    @Column(name = "\"SogliaID\"")
+    private Long id;
+
+    @Column(name = "\"SogliaInferiore\"")
+    private BigInteger sogliaInferiore;
+
+    @Column(name = "\"SogliaSuperiore\"")
+    private BigInteger sogliaSuperiore;
+
+    @Column(name = "\"Valore\"")
+    private String valore;
+
+    @Column(name = "\"Operatore\"", length = 10)
+    private String operatore;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "\"ConfigurazioneID\"")
+    private Configurazione configurazione;
+
+    @OneToMany(mappedBy = "soglia", fetch = FetchType.LAZY)
+    private List<Azione> azioni;
+
+    public Soglia (Long id, BigInteger sogliaInferiore, BigInteger sogliaSuperiore,
+                   String valore, String operatore, Configurazione configurazione) {
+        this.id = id;
+        this.sogliaInferiore = sogliaInferiore;
+        this.sogliaSuperiore = sogliaSuperiore;
+        this.valore = valore;
+        this.operatore = operatore;
+        this.configurazione = configurazione;
+    }
+}
+
