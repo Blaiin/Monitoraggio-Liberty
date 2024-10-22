@@ -1,7 +1,5 @@
 package it.dmi.utils.thresholds;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiPredicate;
@@ -20,15 +18,7 @@ public class ThresholdUtils {
     private static final Map<String, BiPredicate<Integer, Integer>> SV_COMPARATORS;
 
     static {
-        Map<String, BiPredicate<Integer, Integer>> tempMap = new HashMap<>();
-        tempMap.put("<", (a, b) -> a < b);
-        tempMap.put(">", (a, b) -> a > b);
-        tempMap.put("<=", (a, b) -> a <= b);
-        tempMap.put(">=", (a, b) -> a >= b);
-        tempMap.put("<>", (a, b) -> !Objects.equals(a, b));
-        tempMap.put("=", Objects::equals);
-        tempMap.put("==", Objects::equals);
-        SV_COMPARATORS = Collections.unmodifiableMap(tempMap); // Make the map unmodifiable
+        SV_COMPARATORS = Map.of("<", (a, b) -> a < b, ">", (a, b) -> a > b, "<=", (a, b) -> a <= b, ">=", (a, b) -> a >= b, "<>", (a, b) -> !Objects.equals(a, b), "=", Objects::equals, "==", Objects::equals); // Make the map unmodifiable
     }
 
     public static Map<String, BiPredicate<Integer, Integer>> getSvComparators() {

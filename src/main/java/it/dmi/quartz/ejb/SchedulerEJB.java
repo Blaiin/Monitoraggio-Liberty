@@ -1,6 +1,6 @@
 package it.dmi.quartz.ejb;
 
-import it.dmi.data_access.service.ConfigurazioneService;
+import it.dmi.data.api.service.ConfigurazioneService;
 import it.dmi.utils.file.ConfigLoader;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;

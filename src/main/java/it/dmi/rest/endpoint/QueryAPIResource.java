@@ -1,6 +1,6 @@
 package it.dmi.rest.endpoint;
 
-import it.dmi.data_access.shared.AzioneQueueCache;
+import it.dmi.caches.AzioneQueueCache;
 import it.dmi.quartz.ejb.ManagerEJB;
 import it.dmi.rest.endpoint.interfaces.QueryAPI;
 import it.dmi.structure.io.QueryResponse;
@@ -51,7 +51,7 @@ public class QueryAPIResource implements QueryAPI {
             log.info("Retrieving actions..");
             log.info("AzioneQueueCache size: {}", AzioneQueueCache.getCacheSize());
             AzioneQueueCache.getAll().forEach((k, v) -> {
-                log.debug("AzioneQueueCache: sogliaId: {}, azioni: {}", k, v.toArray());
+                log.info("AzioneQueueCache: sogliaId: {}, azioni: {}", k, v.toArray());
                 v.forEach(a -> log.debug("A. n. {}, action: {}", a.getSoglia().getId() , a.getDestinatario()));
             });
         }

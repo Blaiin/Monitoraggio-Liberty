@@ -1,11 +1,22 @@
 package it.dmi.quartz.jobs;
 
+import it.dmi.data.dto.OutputDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public interface IJob extends org.quartz.Job {
 
     Logger log = LoggerFactory.getLogger(IJob.class);
+
+    default OutputDTO initializeOutputDTO(String id, LocalDateTime inizio) {
+        return OutputDTO.builder()
+                .configurazioneId(Long.valueOf(id))
+                .inizio(Timestamp.valueOf(inizio))
+                .build();
+    }
 
     default void loadDriver(Info dbInfo) {
         if(dbInfo == null) {

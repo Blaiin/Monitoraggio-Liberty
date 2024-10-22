@@ -1,8 +1,9 @@
 package it.dmi.quartz.jobs;
 
-import it.dmi.data_access.shared.RestDataCache;
-import it.dmi.structure.data.dto.OutputDTO;
-import it.dmi.structure.data.entities.Configurazione;
+import it.dmi.caches.RestDataCache;
+import it.dmi.data.dto.OutputDTO;
+import it.dmi.data.entities.Configurazione;
+import it.dmi.structure.internal.DBInfo;
 import it.dmi.utils.NullChecks;
 import it.dmi.utils.ResultsProcessor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,8 +75,8 @@ public class SelectJob implements IJob {
         try (Connection connection = connect(dbInfo)) {
             log.info("Connection established successfully.");
             Objects.requireNonNull(connection,
-                    String.format("Could not connect to database: %s.", dbInfo.getUrl()));
-            PreparedStatement statement = connection.prepareStatement(dbInfo.getSqlScript());
+                    String.format("Could not connect to database: %s.", dbInfo.url()));
+            PreparedStatement statement = connection.prepareStatement(dbInfo.sqlScript());
             ResultSet resultSet = statement.executeQuery();
             if (resultSet != null) {
                 log.info("Query executed successfully.");
@@ -100,7 +101,7 @@ public class SelectJob implements IJob {
 
     private Connection connect(DBInfo dbInfo) {
         try {
-            return DriverManager.getConnection(dbInfo.getUrl(), dbInfo.getUser(), dbInfo.getPassword());
+            return DriverManager.getConnection(dbInfo.url(), dbInfo.user(), dbInfo.password());
         } catch (SQLException e) {
             log.error("Failed to connect to database.", e);
             return null;

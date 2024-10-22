@@ -1,12 +1,12 @@
 package it.dmi.quartz.jobs;
 
-import it.dmi.data_access.shared.JobDataCache;
-import it.dmi.data_access.shared.RestDataCache;
-import it.dmi.structure.data.dto.OutputDTO;
-import it.dmi.structure.data.entities.Configurazione;
+import it.dmi.caches.JobDataCache;
+import it.dmi.caches.RestDataCache;
+import it.dmi.data.entities.Configurazione;
 import it.dmi.structure.internal.DBInfo;
 import it.dmi.utils.NullChecks;
 import it.dmi.utils.ResultsProcessor;
+import it.dmi.utils.TimeUtils;
 import it.dmi.utils.thresholds.ThresHoldComparator;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDataMap;
@@ -14,8 +14,6 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import java.sql.*;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -38,15 +36,15 @@ public class SelectCountJob implements IJob {
                 id, dataMap.getString(NOME));
         DBInfo dbInfo = buildDBInfo(dataMap);
         loadDriver(dbInfo);
-        OutputDTO output = new OutputDTO(); LocalDateTime inizio = LocalDateTime.now();
-        output.setInizio(Timestamp.valueOf(inizio)); output.setConfigurazioneId(Long.valueOf(id));
+        var inizio = TimeUtils.now();
+        var output = initializeOutputDTO(id, inizio);
         try (ResultSet resultSet = queryDB(dbInfo)) {
             Map<String, Integer> results = resultsProcessor.processCountResultSet(resultSet);
             if (!results.isEmpty()) {
                 log.info("Data found.");
-                LocalDateTime fine = LocalDateTime.now();
+                var fine = TimeUtils.now();
                 output.setEsito(POSITIVE.getValue()); output.setContenuto(results);
-                output.setFine(Timestamp.valueOf(fine)); output.setDurata(Duration.between(inizio, fine).getSeconds());
+                output.setFine(Timestamp.valueOf(fine)); output.setDurata(TimeUtils.duration(inizio, fine));
                 RestDataCache.put(id, results);
                 RestDataCache.put(OUTPUT + id, Collections.singletonList(output));
                 if (config != null) {
@@ -79,7 +77,7 @@ public class SelectCountJob implements IJob {
         }
     }
 
-    private ResultSet queryDB (DBInfo dbInfo) {
+    private ResultSet queryDB(DBInfo dbInfo) {
         NullChecks.requireNonNull(dbInfo);
         try (Connection connection = connect(dbInfo)) {
             log.info("Connection established successfully.");
@@ -108,7 +106,7 @@ public class SelectCountJob implements IJob {
         }
     }
 
-    private Connection connect (DBInfo dbInfo) {
+    private Connection connect(DBInfo dbInfo) {
         try {
             return DriverManager.getConnection(dbInfo.url(), dbInfo.user(), dbInfo.password());
         } catch (SQLException e) {

@@ -1,6 +1,8 @@
 package it.dmi.utils.jobs;
 
-import it.dmi.structure.data.entities.Configurazione;
+import it.dmi.data.entities.Azione;
+import it.dmi.data.entities.Configurazione;
+import it.dmi.data.entities.task.QuartzTask;
 import it.dmi.structure.internal.QueryType;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
@@ -27,6 +29,7 @@ public class QueryResolver {
 
     public static QueryType resolveQuery(String query) throws JSQLParserException, IllegalArgumentException {
         Statement stmt = CCJSqlParserUtil.parse(query);
+        if(query == null || query.isEmpty()) throw new IllegalArgumentException("Query null or empty.");
         if (stmt instanceof Select select) {
             if (select instanceof SetOperationList setOperationList) {
                 for (Select listSelects : setOperationList.getSelects()) {
@@ -64,37 +67,63 @@ public class QueryResolver {
         return false;
     }
 
+    public static boolean acceptSelectOrCount(Configurazione c) {
+        try {
+            return DEV_filterSELECT_OR_COUNT(c.getSqlScript());
+        } catch (JSQLParserException e) {
+            log.error("Could not resolve query to a supported type.");
+            throw new RuntimeException(e);
+        }
+    }
+
     public static boolean DEV_filterSELECT_OR_COUNT (String sqlScript) throws JSQLParserException {
         QueryType queryType = resolveQuery(sqlScript);
         return queryType == QueryType.SELECT || queryType == QueryType.SELECT_COUNT;
     }
 
-    public static boolean validateAndLog (Configurazione configurazione) {
-        if (configurazione == null) {
-            log.error("Configurazione is null.");
-            return false;
-        }
-        if (configurazione.getSqlScript() == null) {
-            log.error("SqlScript is null.");
-            return false;
-        }
-        if (configurazione.getSqlScript().isEmpty()) {
-            log.error("SqlScript is empty.");
-            return false;
-        }
-        if (SQL_INJECTION_PATTERN.matcher(configurazione.getSqlScript()).find()) {
-            log.error("SqlScript contains SQL injection.");
-            return false;
-        }
-        try {
-            QueryType queryType = resolveQuery(configurazione.getSqlScript());
-            if (queryType == QueryType.NOT_SUPPORTED) {
-                log.error("Query type not supported.");
-                return false;
+    public static boolean validateAndLog(QuartzTask task) {
+        switch (task) {
+            case Configurazione c -> {
+                if (c.getSqlScript() == null || c.getSqlScript().isEmpty()) {
+                    log.error("Configurazione script(sql) is null or empty.");
+                    return false;
+                }
+                if (SQL_INJECTION_PATTERN.matcher(c.getSqlScript()).find()) {
+                    log.error("Configurazione script(sql) contains SQL injection.");
+                    return false;
+                }
+                try {
+                    QueryType queryType = resolveQuery(c.getSqlScript());
+                    if (queryType == QueryType.NOT_SUPPORTED) {
+                        log.error("Configurazione query type not supported.");
+                        return false;
+                    }
+                    return true;
+                } catch (JSQLParserException | IllegalArgumentException e) {
+                    throw new RuntimeException(e);
+                }
             }
-            return true;
-        } catch (JSQLParserException | IllegalArgumentException e) {
-            throw new RuntimeException(e);
+            case Azione a -> {
+                if (a.getSqlScript() == null || a.getSqlScript().isEmpty()) {
+                    log.error("Azione script(sql) is null or empty.");
+                    return false;
+                }
+                if (SQL_INJECTION_PATTERN.matcher(a.getSqlScript()).find()) {
+                    log.error("Azione script(sql) contains SQL injection.");
+                    return false;
+                }
+                try {
+                    QueryType queryType = resolveQuery(a.getSqlScript());
+                    if (queryType == QueryType.NOT_SUPPORTED) {
+                        log.error("Azione query type not supported.");
+                        return false;
+                    }
+                    return true;
+                } catch (JSQLParserException | IllegalArgumentException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + task);
         }
     }
 }

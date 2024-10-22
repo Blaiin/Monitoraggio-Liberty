@@ -1,20 +1,19 @@
 package it.dmi.quartz.ejb;
 
 
-import it.dmi.data_access.service.ControlloService;
-import it.dmi.data_access.shared.JobDataCache;
-import it.dmi.structure.data.entities.Configurazione;
-import it.dmi.structure.data.entities.Controllo;
+import it.dmi.caches.JobDataCache;
+import it.dmi.data.api.service.ControlloService;
+import it.dmi.data.entities.Configurazione;
+import it.dmi.data.entities.Controllo;
+import it.dmi.quartz.builders.JobInfoBuilder;
 import it.dmi.structure.internal.JobInfo;
 import it.dmi.utils.NullChecks;
-import it.dmi.utils.jobs.JobBuilder;
 import it.dmi.utils.jobs.QueryResolver;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.DependsOn;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.jsqlparser.JSQLParserException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,24 +34,19 @@ public class ManagerEJB {
     private ControlloService controlService;
 
     @Inject
-    private JobBuilder jobBuilder;
+    private JobInfoBuilder jobInfoBuilder;
 
     private List<Configurazione> configs;
 
-    private List<Controllo> controls;
-
     public void scheduleJobs() {
         try {
-            if(controls.isEmpty()) {
-                throw new NullPointerException("No controls found.");
-            }
             if(configs.isEmpty()) {
                 throw new NullPointerException("No configs found.");
             }
             for (Configurazione config : configs) {
-                String id = String.valueOf(config.getId());
+                var id = config.getStringID();
                 JobDataCache.createLatch(id, 1);
-                JobInfo jobInfo = jobBuilder.buildJobInfo(schedulerEJB.getScheduler(), config);
+                JobInfo jobInfo = jobInfoBuilder.buildJobInfo(schedulerEJB.getScheduler(), config);
                 if(NullChecks.requireNonNull(jobInfo)) {
                     schedulerEJB.getScheduler().scheduleJob(jobInfo.jobDetail(), jobInfo.trigger());
                     long waitTime = jobInfo.trigger().getStartTime().getTime() - System.currentTimeMillis() + (15 * 1000);
@@ -76,24 +70,18 @@ public class ManagerEJB {
         log.debug("Post-construct phase initialized.");
         try {
             configs = new ArrayList<>();
-            controls = controlService.getAll();
-            int cSize = controls.size();
+            List<Controllo> controls = controlService.getAllOrdered();
             if(!controls.isEmpty()) {
-                log.info("Controls fetched: {}", cSize);
-                log.debug("Controls fetched: {}", cSize);
+                log.info("Controls fetched: {}", controls.size());
+                log.debug("Controls fetched: {}", controls.size());
                 for(Controllo controllo : controls) {
                     if (dev) {
-                        configs.addAll(controllo.getConfigurazioni()
+                        configs.addAll(controllo.getConfigurazioniOrdered()
                                 .stream()
-                                .filter(c -> {
-                                    try {
-                                        return QueryResolver.DEV_filterSELECT_OR_COUNT(c.getSqlScript());
-                                    } catch (JSQLParserException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                }).toList());
+                                .filter(QueryResolver::acceptSelectOrCount)
+                                .toList());
                     } else {
-                        configs.addAll(controllo.getConfigurazioni()
+                        configs.addAll(controllo.getConfigurazioniOrdered()
                                 .stream()
                                 .filter(QueryResolver::validateAndLog).toList());
                     }

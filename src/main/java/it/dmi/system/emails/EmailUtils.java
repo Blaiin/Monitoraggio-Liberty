@@ -10,7 +10,6 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.util.Properties;
 
 import static it.dmi.utils.constants.FileConstants.*;
@@ -30,31 +29,27 @@ public class EmailUtils {
 
     @PostConstruct
     private void loadSmtpConfig() {
-        try {
-            smtp = ConfigLoader.loadSmtpConfig();
-            if(smtp == null) {
-                log.error("Error loading SMTP configuration file.");
-                return;
-            }
-            log.debug("SMTP configuration loaded successfully, proceeding with email service initialization.");
-            PROPS.put(SMTP_HOST, smtp.getSmtp().getHost());
-            PROPS.put(SMTP_PORT, smtp.getSmtp().getPort());
-            PROPS.put(SMTP_AUTH, smtp.getSmtp().getAuth());
-            PROPS.put(SMTP_STARTTLS, smtp.getSmtp().isStartTls());
-            PROPS.put(SMTP_DEBUG, String.valueOf(enableEmailDebug));
-
-            Authenticator auth = new Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication () {
-                    return new PasswordAuthentication(smtp.getSmtp().getUser(), smtp.getSmtp().getPassword());
-                }
-            };
-
-            session = Session.getInstance(PROPS, auth);
-            log.debug("Email service initialized successfully.");
-            log.info("Email service initialized successfully.");
-        } catch (IOException e) {
-            log.error("Error loading configuration file: {}", e.getMessage());
+        smtp = ConfigLoader.loadSmtpConfig();
+        if(smtp == null) {
+            log.error("Error loading SMTP configuration file.");
+            return;
         }
+        log.debug("SMTP configuration loaded successfully, proceeding with email service initialization.");
+        PROPS.put(SMTP_HOST, smtp.smtp().host());
+        PROPS.put(SMTP_PORT, smtp.smtp().port());
+        PROPS.put(SMTP_AUTH, smtp.smtp().auth());
+        PROPS.put(SMTP_STARTTLS, smtp.smtp().startTls());
+        PROPS.put(SMTP_DEBUG, String.valueOf(enableEmailDebug));
+
+        Authenticator auth = new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication () {
+                return new PasswordAuthentication(smtp.smtp().user(), smtp.smtp().password());
+            }
+        };
+
+        session = Session.getInstance(PROPS, auth);
+        log.debug("Email service initialized successfully.");
+        log.info("Email service initialized successfully.");
     }
 
     public static void sendEmail(String toAddress, String subject, String messageBody) {
@@ -62,7 +57,7 @@ public class EmailUtils {
         try {
 
             Message msg = new MimeMessage(session);
-            msg.setFrom(new InternetAddress(smtp.getSmtp().getUser()));
+            msg.setFrom(new InternetAddress(smtp.smtp().user()));
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toAddress));
             msg.setSubject(subject);
             msg.setText(messageBody);

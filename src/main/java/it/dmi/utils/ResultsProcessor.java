@@ -1,9 +1,9 @@
 package it.dmi.utils;
 
-import it.dmi.data_access.service.ConfigurazioneService;
-import it.dmi.data_access.service.OutputService;
-import it.dmi.data_access.shared.RestDataCache;
-import it.dmi.structure.data.dto.OutputDTO;
+import it.dmi.caches.RestDataCache;
+import it.dmi.data.api.service.ConfigurazioneService;
+import it.dmi.data.api.service.OutputService;
+import it.dmi.data.dto.OutputDTO;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.NoContentException;
@@ -86,10 +86,9 @@ public class ResultsProcessor {
                 log.debug("Creating output...");
                 Collection<?> outputList = RestDataCache.get("output" + id);
                 if (outputList instanceof List<?> outList && !outList.isEmpty()) {
-                    Object output = outList.get(0);
-                    if (output instanceof OutputDTO outputDTO) {
+                    if (outList.getFirst() instanceof OutputDTO outputDTO) {
                         outputService.create(outputDTO.toEntity());
-                        log.info("Output from C. n. {} created.", outputDTO.getConfigurazioneId());
+                        log.info("Output from C. {} created.", outputDTO.getConfigurazioneId());
                     }
                 } else {
                     log.error("Output not created.");

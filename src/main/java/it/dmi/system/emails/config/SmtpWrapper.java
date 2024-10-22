@@ -2,16 +2,11 @@ package it.dmi.system.emails.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
 
-@Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SmtpWrapper {
+public record SmtpWrapper(@JsonProperty("smtp") SmtpConfig smtp) {
 
-    @JsonProperty("smtp")
-    private final SmtpConfig smtp;
-
-    public SmtpWrapper(SmtpConfig smtp) {
+    public SmtpWrapper (SmtpConfig smtp) {
         if (smtp == null) {
             throw new IllegalArgumentException("smtp cannot be null");
         }

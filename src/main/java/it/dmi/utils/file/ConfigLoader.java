@@ -28,7 +28,7 @@ public class ConfigLoader {
         }
         return properties;
     }
-    public static SmtpWrapper loadSmtpConfig() throws IOException {
+    public static SmtpWrapper loadSmtpConfig() {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
         try (InputStream inputStream = ConfigLoader.class.getClassLoader().getResourceAsStream(SMTP_CONFIG_FILE)) {

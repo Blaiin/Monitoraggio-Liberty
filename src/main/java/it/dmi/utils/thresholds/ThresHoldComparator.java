@@ -1,8 +1,8 @@
 package it.dmi.utils.thresholds;
 
-import it.dmi.structure.data.entities.Azione;
-import it.dmi.structure.data.entities.Configurazione;
-import it.dmi.structure.data.entities.Soglia;
+import it.dmi.data.entities.Azione;
+import it.dmi.data.entities.Configurazione;
+import it.dmi.data.entities.Soglia;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,7 +24,9 @@ public class ThresHoldComparator {
                 boolean result = isInRange(value, s);
                 if (result) {
                     log.info("Enabling actions for C: {}, S: {}", config.getId(), s.getId());
-                    s.getAzioni().forEach(Azione::queue);
+                    var azioni = s.getAzioniOrdered();
+                    log.info("Azioni fetched: {}", azioni.size());
+                    azioni.forEach(Azione::queue);
                 } else {
                     log.warn("No actions scheduled for Configurazione n. {}, Soglia n. {}, value outside range.",
                             config.getId(), s.getId());
@@ -43,7 +45,7 @@ public class ThresHoldComparator {
             config.getSoglie().forEach(s -> {
                 if(!v.isEmpty()) {
                     if (isSogliaMultivalue(s)) {
-                        Object value = v.get(0);
+                        Object value = v.getFirst();
                         if (value instanceof Integer) {
                             boolean result = isInRange((Integer) value, s);
                             if(result) {
