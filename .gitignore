@@ -4,10 +4,8 @@
 *.properties
 email-credentials.txt
 
-.libertyls/featurelist-ol-24.0.0.7.xml
-.libertyls/ol-24.0.0.7.xsd
-.libertyls/schemagen.log
-.libertyls/ws-featurelist.log
+.idea/
+.libertyls/
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -19,3 +17,4 @@ buildNumber.properties
 .mvn/timing.properties
 # https://github.com/takari/maven-wrapper#usage-without-binary-jar
 .mvn/wrapper/maven-wrapper.jar
+/monitoraggio.iml
