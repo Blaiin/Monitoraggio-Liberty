@@ -1,4 +1,4 @@
-package it.dmi.utils.thresholds;
+package it.dmi.processors.thresholds;
 
 import it.dmi.data.entities.Azione;
 import it.dmi.data.entities.Configurazione;

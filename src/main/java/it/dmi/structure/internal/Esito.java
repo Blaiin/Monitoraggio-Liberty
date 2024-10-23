@@ -1,4 +1,4 @@
-package it.dmi.utils.constants;
+package it.dmi.structure.internal;
 
 import lombok.Getter;
 

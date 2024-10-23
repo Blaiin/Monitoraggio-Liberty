@@ -1,10 +1,10 @@
 package it.dmi.rest.endpoint;
 
 import it.dmi.caches.AzioneQueueCache;
+import it.dmi.processors.ResultsProcessor;
 import it.dmi.quartz.ejb.ManagerEJB;
 import it.dmi.rest.endpoint.interfaces.QueryAPI;
 import it.dmi.structure.io.QueryResponse;
-import it.dmi.utils.ResultsProcessor;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
@@ -36,15 +36,14 @@ public class QueryAPIResource implements QueryAPI {
     public Response activate() {
         List<Map<String, List<?>>> results;
         try {
-            managerEJB.scheduleJobs();
+            managerEJB.scheduleJobsAsync();
             results = resultsProcessor.processLatches();
-
             return !results.isEmpty() ?
                     Response.ok().entity(new QueryResponse("Success",
                             "Results populated", results)).build() :
                     Response.noContent().build();
         } catch (Exception e) {
-            log.error("Couldn't process configurations", e);
+            log.error("Could not process configurations: ", e);
             return Response.serverError().entity(new QueryResponse("Error",
                     "Internal server error")).build();
         } finally {

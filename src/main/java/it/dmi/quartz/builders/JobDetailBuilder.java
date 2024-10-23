@@ -5,8 +5,10 @@ import it.dmi.data.entities.Configurazione;
 import it.dmi.data.entities.task.QuartzTask;
 import it.dmi.quartz.jobs.ClassJob;
 import it.dmi.quartz.jobs.ProgramJob;
-import it.dmi.quartz.jobs.SelectCountJob;
-import it.dmi.quartz.jobs.SelectJob;
+import it.dmi.quartz.jobs.sql.SelectCountJob;
+import it.dmi.quartz.jobs.sql.SelectJob;
+import it.dmi.structure.exceptions.MSDException;
+import it.dmi.structure.exceptions.impl.quartz.JobTypeException;
 import it.dmi.structure.internal.JobType;
 import it.dmi.structure.internal.QueryType;
 import jakarta.enterprise.context.RequestScoped;
@@ -15,8 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import org.quartz.*;
 
+import static it.dmi.processors.jobs.QueryResolver.resolveQuery;
 import static it.dmi.utils.constants.NamingConstants.JOB_TYPE;
-import static it.dmi.utils.jobs.QueryResolver.resolveQuery;
 
 @Slf4j
 @RequestScoped
@@ -26,16 +28,20 @@ public class JobDetailBuilder {
     private JobDataMapBuilder dataMapBuilder;
 
     public JobDetail buildJobDetail(Scheduler scheduler, QuartzTask task, JobKey jobKey)
-            throws SchedulerException, JSQLParserException {
-
+            throws SchedulerException, JSQLParserException, JobTypeException {
         checkIfJobExists(scheduler, jobKey, task);
-        JobDataMap jobDataMap = dataMapBuilder.buildJobDataMap(task);
+        JobDataMap jobDataMap;
+        try {
+            jobDataMap = dataMapBuilder.buildJobDataMap(task);
+        } catch (MSDException e) {
+            throw new SchedulerException(e);
+        }
         JobType jobType = getJobType(jobDataMap, task);
         return createJobBuilder(jobType, jobKey, jobDataMap, task).build();
     }
 
     private JobBuilder createJobBuilder(JobType jobType, JobKey jobKey, JobDataMap jobDataMap, QuartzTask task)
-            throws JSQLParserException {
+            throws JSQLParserException, JobTypeException {
         return switch (jobType) {
             case SQL -> createSqlJobBuilder(task, jobKey, jobDataMap);
             case PROGRAM -> JobBuilder.newJob(ProgramJob.class)
@@ -44,7 +50,7 @@ public class JobDetailBuilder {
             case CLASS -> JobBuilder.newJob(ClassJob.class)
                     .withIdentity(jobKey)
                     .usingJobData(jobDataMap);
-            case AZIONE -> throw new IllegalArgumentException("JobType not supported.");
+            case AZIONE -> throw new JobTypeException("JobType not supported.");
         };
     }
 

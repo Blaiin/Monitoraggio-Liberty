@@ -21,7 +21,7 @@ import static it.dmi.utils.constants.FileConstants.QUARTZ_THREAD_COUNT;
 @Singleton
 @Startup
 @Slf4j
-public class SchedulerEJB {
+public class ConfigSchedulerEJB {
 
     private Scheduler scheduler;
 

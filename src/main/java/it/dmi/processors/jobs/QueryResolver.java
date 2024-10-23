@@ -1,4 +1,4 @@
-package it.dmi.utils.jobs;
+package it.dmi.processors.jobs;
 
 import it.dmi.data.entities.Azione;
 import it.dmi.data.entities.Configurazione;

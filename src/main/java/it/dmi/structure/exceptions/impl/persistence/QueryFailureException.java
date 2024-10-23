@@ -1,6 +1,8 @@
-package it.dmi.utils.exceptions;
+package it.dmi.structure.exceptions.impl.persistence;
 
-public class QueryFailureException extends Exception {
+import it.dmi.structure.exceptions.MSDException;
+
+public class QueryFailureException extends MSDException {
 
     public QueryFailureException(String message) {
         super(message);

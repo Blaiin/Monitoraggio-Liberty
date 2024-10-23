@@ -1,4 +1,4 @@
-package it.dmi.utils;
+package it.dmi.processors;
 
 import it.dmi.caches.RestDataCache;
 import it.dmi.data.api.service.ConfigurazioneService;
@@ -23,7 +23,7 @@ public class ResultsProcessor {
     @Inject
     private ConfigurazioneService configurazioneService;
 
-    public Map<String, List<Object>> processSelectResultSet (ResultSet resultSet)
+    public static Map<String, List<Object>> processSelectResultSet (ResultSet resultSet)
             throws SQLException, NullPointerException {
 
         Map<String, List<Object>> results = new HashMap<>();
@@ -46,7 +46,7 @@ public class ResultsProcessor {
         return results;
     }
 
-    public Map<String, Integer> processCountResultSet(ResultSet set) {
+    public static Map<String, Integer> processCountResultSet (ResultSet set) {
         Map<String, Integer> results = new HashMap<>();
         Objects.requireNonNull(set, "ResultSet for count query was null.");
         log.info("Reading count result set..");

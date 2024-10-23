@@ -47,13 +47,12 @@ public abstract class ASharedCache {
 
 
 
-    public static void awaitData(String key, long timeout, TimeUnit unit) throws InterruptedException {
+    public static boolean awaitData(String key, long timeout, TimeUnit unit) throws InterruptedException {
         CountDownLatch latch = latches.get(key);
         if (latch != null) {
-            if (latch.await(timeout, unit)) {
-                latches.remove(key);
-            }
+            return latch.await(timeout, unit);
         }
+        return false;
     }
 
 

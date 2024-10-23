@@ -7,6 +7,7 @@ import it.dmi.data.entities.Configurazione;
 import it.dmi.data.entities.FonteDati;
 import it.dmi.data.entities.SicurezzaFonteDati;
 import it.dmi.data.entities.task.QuartzTask;
+import it.dmi.structure.exceptions.MSDException;
 import it.dmi.structure.internal.JobType;
 import jakarta.ejb.DependsOn;
 import jakarta.enterprise.context.RequestScoped;
@@ -30,11 +31,11 @@ public class JobDataMapBuilder {
 
     private static final boolean devMode = false;
 
-    public JobDataMap buildJobDataMap(QuartzTask task) {
+    public JobDataMap buildJobDataMap(QuartzTask task) throws MSDException {
         return switch (task) {
             case Configurazione c -> buildJobDataMap(c);
             case Azione a -> buildJobDataMap(a);
-            default -> throw new IllegalStateException("Unsupported task: " + task);
+            default -> throw new MSDException("Unsupported task: " + task);
         };
     }
 
