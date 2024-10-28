@@ -1,12 +1,6 @@
 package it.dmi.processors;
 
-import it.dmi.caches.RestDataCache;
-import it.dmi.data.api.service.ConfigurazioneService;
-import it.dmi.data.api.service.OutputService;
-import it.dmi.data.dto.OutputDTO;
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.inject.Inject;
-import jakarta.ws.rs.core.NoContentException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.ResultSet;
@@ -16,12 +10,6 @@ import java.util.*;
 @Slf4j
 @RequestScoped
 public class ResultsProcessor {
-
-    @Inject
-    private OutputService outputService;
-
-    @Inject
-    private ConfigurazioneService configurazioneService;
 
     public static Map<String, List<Object>> processSelectResultSet (ResultSet resultSet)
             throws SQLException, NullPointerException {
@@ -57,46 +45,6 @@ public class ResultsProcessor {
             }
         } catch (SQLException e) {
             log.error("Failed to process count result set.", e);
-        }
-        return results;
-    }
-
-    public List<Map<String, List<?>>> processLatches() throws NoContentException {
-        List<Map<String, List<?>>> results = new ArrayList<>();
-        log.info("Retrieving latches from cache...");
-        List<String> latches = RestDataCache.getLatches();
-        if (latches.isEmpty()) {
-            log.error("No latches found.");
-            return null;
-        }
-        for (String id : latches) {
-            log.debug("Retrieving data from latch {}...", id);
-            Object fromDataCache = RestDataCache.get(id);
-            Objects.requireNonNull(fromDataCache, "Output data cache is null.");
-            if (fromDataCache instanceof List<?> list) {
-                if (list.isEmpty()) {
-                    log.error("Result from Configurazione with id: {} (Configurazione name: {}) were null.",
-                            id,
-                            configurazioneService.getByID(Long.valueOf(id)).getNome());
-                    throw new NoContentException(String
-                            .format("No content found for Configurazione id: %d.", Long.valueOf(id)));
-                }
-                log.debug("Data retrieved successfully.");
-                results.add(Collections.singletonMap(id, list));
-                log.debug("Creating output...");
-                Collection<?> outputList = RestDataCache.get("output" + id);
-                if (outputList instanceof List<?> outList && !outList.isEmpty()) {
-                    if (outList.getFirst() instanceof OutputDTO outputDTO) {
-                        outputService.create(outputDTO.toEntity());
-                        log.info("Output from C. {} created.", outputDTO.getConfigurazioneId());
-                    }
-                } else {
-                    log.error("Output not created.");
-                }
-            } else {
-                log.error("Data type not readable.");
-                results.add(Map.of(id, Collections.singletonList("Data type not readable.")));
-            }
         }
         return results;
     }

@@ -1,7 +1,6 @@
 package it.dmi.rest.endpoint;
 
 import it.dmi.caches.AzioneQueueCache;
-import it.dmi.processors.ResultsProcessor;
 import it.dmi.quartz.ejb.ManagerEJB;
 import it.dmi.rest.endpoint.interfaces.QueryAPI;
 import it.dmi.structure.io.QueryResponse;
@@ -15,9 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 public class QueryAPIResource implements QueryAPI {
 
     private static int maxMessages = 1;
-
-    @Inject
-    private ResultsProcessor resultsProcessor;
 
     public QueryAPIResource() {
         if (maxMessages == 1) {

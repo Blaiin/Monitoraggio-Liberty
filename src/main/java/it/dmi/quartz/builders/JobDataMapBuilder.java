@@ -7,6 +7,7 @@ import it.dmi.data.entities.SicurezzaFonteDati;
 import it.dmi.data.entities.task.Azione;
 import it.dmi.data.entities.task.Configurazione;
 import it.dmi.data.entities.task.QuartzTask;
+import it.dmi.structure.exceptions.impl.quartz.JobBuildingException;
 import it.dmi.structure.internal.JobType;
 import jakarta.ejb.DependsOn;
 import jakarta.enterprise.context.RequestScoped;
@@ -30,21 +31,21 @@ public class JobDataMapBuilder {
 
     private static final boolean devMode = false;
 
-    public JobDataMap buildJobDataMap(QuartzTask task) {
+    public JobDataMap buildJobDataMap(QuartzTask task) throws JobBuildingException {
         return switch (task) {
             case Configurazione c -> buildJobDataMap(c);
             case Azione a -> /*buildJobDataMap(a);*/ null;
         };
     }
 
-    public JobDataMap buildJobDataMap(Configurazione config) throws IllegalArgumentException {
+    public JobDataMap buildJobDataMap(Configurazione config) throws JobBuildingException {
         String id = String.valueOf(config.getId());
         boolean sql = config.getSqlScript() != null;
         boolean program = config.getProgramma() != null;
         boolean clasz = config.getClasse() != null;
         if((sql && program) || (sql && clasz) || (program && clasz)) {
             log.error("Configurazione n. {} has multiple conflicting fields set, skipping creation.", config.getId());
-            throw new IllegalArgumentException("Configurazione has multiple conflicting fields set, only one allowed.");
+            throw new JobBuildingException("Configurazione has multiple conflicting fields set, only one allowed.");
         }
         if(devMode)
             log.debug("Dev Mode is enabled, logging sensitive data.");
