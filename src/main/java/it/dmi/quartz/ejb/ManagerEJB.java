@@ -54,7 +54,7 @@ public class ManagerEJB {
 
     private final ExecutorService service = Executors.newCachedThreadPool();
 
-    public void scheduleJobsAsync() {
+    public void scheduleJobs () {
         if(configs.isEmpty()) {
             throw new NullPointerException("No configs found.");
         }
@@ -96,41 +96,6 @@ public class ManagerEJB {
                 }}, service);
             }
         });
-    }
-
-    public void scheduleJobs() {
-        if(configs.isEmpty()) {
-            throw new NullPointerException("No configs found.");
-        }
-        for (Configurazione config : configs) {
-            var id = config.getStringID();
-            JobDataCache.createLatch(id, 1);
-            JobInfo jobInfo = jobInfoBuilder.buildJobInfo(configScheduler.getScheduler(), config);
-            try {
-                if (NullChecks.requireNonNull(jobInfo)) {
-                    configScheduler.getScheduler().scheduleJob(jobInfo.jobDetail(), jobInfo.trigger());
-                    long waitTime = jobInfo.trigger().getStartTime().getTime() - System.currentTimeMillis() + (15 * 1000);
-                    log.info("Timeout: {} s", waitTime / 1000);
-                    if (config.getSchedulazione() == null) {
-                        if (JobDataCache.awaitData(id,
-                                waitTime,
-                                TimeUnit.MILLISECONDS)) {
-                            log.debug("Undertaking Configurazione n. {}", id);
-                        }
-                    } else {
-                        int maxWaitTime = 3600;
-                        JobDataCache.awaitData(id,
-                                maxWaitTime,
-                                TimeUnit.SECONDS);
-                    }
-                }
-            } catch (InterruptedException e) {
-                log.error("Error while waiting for job to finish. {}", e.getMessage());
-            } catch (SchedulerException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
     }
 
     public void scheduleActions() {

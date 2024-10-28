@@ -28,7 +28,7 @@ public class QueryAPIResource implements QueryAPI {
     @Override
     public Response activate() {
         try {
-            managerEJB.scheduleJobsAsync();
+            managerEJB.scheduleJobs();
             return Response.accepted().build();
         } catch (Exception e) {
             log.error("Could not process configurations: ", e);
