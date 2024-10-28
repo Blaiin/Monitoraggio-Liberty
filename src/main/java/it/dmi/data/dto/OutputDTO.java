@@ -2,44 +2,35 @@ package it.dmi.data.dto;
 
 import it.dmi.data.dto.idto.IDTO;
 import it.dmi.data.entities.Output;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @Builder
 @Slf4j
 public class OutputDTO implements IDTO {
 
     private Long id;
-    @Setter
     private Character esito;
-
+    @Getter(AccessLevel.NONE)
     private Map<String, List<Object>> contenuto;
-    @Setter
     private Long configurazioneId;
-    @Setter
     private Long azioneId;
-    @Setter
     private Long tipoAzioneId;
-    @Setter
-    private Timestamp inizio;
-    @Setter
-    private Timestamp fine;
-    @Setter
+    private LocalDateTime inizio;
+    private LocalDateTime fine;
     private Long durata;
 
-    public OutputDTO (Long id, Character esito,
+    public OutputDTO(Long id, Character esito,
                       Map<String, ?> contenuto,
                       Long configurazioneId, Long azioneId,
-                      Long tipoAzioneId, Timestamp inizio,
-                      Timestamp fine, Long durata) {
+                      Long tipoAzioneId, LocalDateTime inizio,
+                      LocalDateTime fine, Long durata) {
         this.id = id;
         this.esito = esito;
         this.contenuto = adaptContent(contenuto);
@@ -69,7 +60,7 @@ public class OutputDTO implements IDTO {
                 }
             });
         } catch (Exception e) {
-            log.error("There was an error while trying to generate output from Configurazione n. {}.",
+            log.error("There was an error while trying to generate output for Config {}.",
                     this.configurazioneId, e);
         }
         return adaptedContent;
@@ -77,16 +68,16 @@ public class OutputDTO implements IDTO {
 
     @Override
     public <T> IDTO fromEntity (T entity) {
-        return entity instanceof Output ? new OutputDTO(
-                ((Output) entity).getId(),
-                ((Output) entity).getEsito(),
-                ((Output) entity).getContenuto(),
-                ((Output) entity).getConfigurazioneId(),
-                ((Output) entity).getAzioneId(),
-                ((Output) entity).getTipoAzioneId(),
-                ((Output) entity).getInizio(),
-                ((Output) entity).getFine(),
-                ((Output) entity).getDurata()
+        return entity instanceof Output out ? new OutputDTO(
+                out.getId(),
+                out.getEsito(),
+                out.getContenuto(),
+                out.getConfigurazioneId(),
+                out.getAzioneId(),
+                out.getTipoAzioneId(),
+                out.getInizio(),
+                out.getFine(),
+                out.getDurata()
         ) : null;
     }
 

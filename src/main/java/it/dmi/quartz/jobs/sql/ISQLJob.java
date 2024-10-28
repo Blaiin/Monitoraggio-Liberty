@@ -1,12 +1,17 @@
 package it.dmi.quartz.jobs.sql;
 
+import it.dmi.caches.JobDataCache;
 import it.dmi.data.dto.OutputDTO;
+import it.dmi.data.entities.task.Azione;
+import it.dmi.data.entities.task.Configurazione;
+import it.dmi.data.entities.task.QuartzTask;
 import it.dmi.structure.exceptions.impl.persistence.DatabaseConnectionException;
 import it.dmi.structure.exceptions.impl.persistence.InvalidCredentialsException;
 import it.dmi.structure.exceptions.impl.persistence.QueryFailureException;
 import it.dmi.structure.internal.info.DBInfo;
-import it.dmi.structure.internal.info.Info;
 import it.dmi.utils.NullChecks;
+import it.dmi.utils.TimeUtils;
+import it.dmi.utils.Utils;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionException;
@@ -14,14 +19,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
-import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Objects;
 
+import static it.dmi.structure.internal.Esito.NEGATIVE;
+import static it.dmi.structure.internal.Esito.POSITIVE;
 import static it.dmi.utils.constants.NamingConstants.*;
 
 public interface ISQLJob extends Job {
 
     Logger log = LoggerFactory.getLogger(ISQLJob.class);
+
+    Map<String, String> DRIVER_MAP = Map.of(
+            "postgres", "org.postgresql.Driver",
+            "oracle", "oracle.jdbc.driver.OracleDriver"
+    );
 
     default ResultSet queryDB(DBInfo dbInfo) throws DatabaseConnectionException,
             InvalidCredentialsException, QueryFailureException {
@@ -33,7 +45,7 @@ public interface ISQLJob extends Job {
             PreparedStatement statement = connection.prepareStatement(dbInfo.sqlScript());
             ResultSet resultSet = statement.executeQuery();
             if (resultSet != null) {
-                log.info("Query executed successfully.");
+                log.debug("Query executed successfully.");
                 return resultSet;
             } else {
                 throw new QueryFailureException("Query failed, result set was null.");
@@ -61,56 +73,104 @@ public interface ISQLJob extends Job {
                 map.getString(SQL_SCRIPT + id));
     }
 
-    default OutputDTO initializeOutputDTO(String id, LocalDateTime inizio) {
-        return OutputDTO.builder()
-                .configurazioneId(Long.valueOf(id))
-                .inizio(Timestamp.valueOf(inizio))
-                .build();
+    default OutputDTO initializeOutputDTO (QuartzTask task) {
+        OutputDTO out = new OutputDTO();
+        out.setInizio(TimeUtils.now());
+        switch (task) {
+            case Azione a -> out.setAzioneId(a.getId());
+            case Configurazione c -> out.setConfigurazioneId(c.getId());
+        }
+        return out;
+    }
+
+    default OutputDTO finalizeOutputDTO(OutputDTO out, Map<String, ?> results) {
+        log.debug("Finalizing output for Config {}", out.getConfigurazioneId());
+        if(results.isEmpty()) {
+            log.debug("Esito was negative for Config {}", out.getConfigurazioneId());
+            out.setEsito(NEGATIVE.getValue());
+        }
+        else out.setEsito(POSITIVE.getValue());
+        out.setContenuto(results);
+        var fine = TimeUtils.now();
+        out.setFine(fine);
+        out.setDurata(TimeUtils.duration(out.getInizio(), fine));
+        return out;
+    }
+
+    default void cacheOutputDTO(String id, OutputDTO out) {
+        if (out != null) {
+            log.debug("Caching output {} for Config {}", out.getConfigurazioneId(), id);
+            JobDataCache.put(OUTPUT + id, out);
+            return;
+        }
+        log.warn("Output for Config {} was null.", id);
     }
 
     default void resolveException (Throwable e) throws JobExecutionException {
         switch (e) {
-            case QueryFailureException qfE -> log.error("Error while executing query. {}", qfE.getMessage());
-            case DatabaseConnectionException dcE -> log.error("Error while connecting to database. {}", dcE.getMessage());
-            case InvalidCredentialsException icE -> log.error("Could not connect to database. {}", icE.getMessage());
-            case SQLException sqlE -> log.error("Query execution had problems. {}", sqlE.getMessage());
-            default -> log.error("{} [Nested exception: {}]", e.getMessage(), e.getCause());
+            case QueryFailureException qfE -> {
+                final String msg = "Error while executing query. " + qfE.getMessage();
+                log.error(msg, qfE.getCause());
+                throw new JobExecutionException(msg, e);
+            }
+            case DatabaseConnectionException dcE -> {
+                final String msg = "Error while connecting to database. " + dcE.getMessage();
+                log.error(msg, dcE.getCause());
+                throw new JobExecutionException(msg, e);
+            }
+            case InvalidCredentialsException icE -> {
+                final String msg = "Could not connect to database. " + icE.getMessage();
+                log.error(msg, e.getCause());
+                throw new JobExecutionException(e);
+            }
+            case SQLException sqlE -> {
+                final String msg = "Query execution had problems. " + sqlE.getMessage();
+                log.error(msg, sqlE.getCause());
+                throw new JobExecutionException(e);
+            }
+            case JobExecutionException jeE -> {
+                final String msg = "Job encountered an error while executing " + jeE.getMessage();
+                log.error(msg, jeE.getCause());
+                throw new JobExecutionException(e);
+            }
+            default -> {
+                final String msg = String.format("%s [Nested exception: %s]", e.getMessage(), e.getCause());
+                log.error(msg);
+                throw new JobExecutionException(e);
+            }
         }
-
-        throw new JobExecutionException(e);
     }
 
-    default void loadDriver(Info dbInfo) {
-        if(dbInfo == null) {
-            log.error("Database info could not be retrieved or read.");
-            throw new IllegalArgumentException("Database info could not be retrieved or read.");
+    default void loadDriver(DBInfo dbInfo) {
+        if (dbInfo == null) {
+            throw logAndThrow("Database info could not be retrieved or read.");
         }
         String driverName = dbInfo.driverName();
-        if(driverName == null) {
-            log.error("Driver name cannot be null.");
-            throw new IllegalArgumentException("Driver name cannot be null.");
+        if (driverName == null) {
+            throw logAndThrow("Driver name cannot be null.");
         }
-        if (driverName.contains("postgres")) {
-            log.info("Loading PostgreSQL driver.");
-            try {
-                Class.forName("org.postgresql.Driver");
-                log.info("PostgreSQL driver loaded successfully.");
-            } catch (ClassNotFoundException e) {
-                log.error("Failed to load PostgreSQL driver.", e);
-                throw new RuntimeException(e);
-            }
-        } else if (driverName.contains("oracle")) {
-            log.info("Loading Oracle driver.");
-            try {
-                Class.forName("oracle.jdbc.driver.OracleDriver");
-                log.info("Oracle driver loaded successfully.");
-            } catch (ClassNotFoundException e) {
-                log.error("Failed to load Oracle driver.", e);
-                throw new RuntimeException(e);
-            }
-        } else {
-            log.error("Unsupported database type.");
-            throw new IllegalArgumentException("Unsupported database type.");
+
+        String driverClass = DRIVER_MAP.entrySet().stream()
+                .filter(entry -> driverName.contains(entry.getKey()))
+                .map(Map.Entry::getValue)
+                .findFirst()
+                .orElseThrow(() -> logAndThrow("Unsupported database type."));
+        loadDriverClass(driverClass);
+    }
+
+    private RuntimeException logAndThrow(String message) {
+        log.error(message);
+        throw new IllegalArgumentException(message);
+    }
+
+    private void loadDriverClass(String driverClassName) {
+        try {
+            Class.forName(driverClassName);
+            log.debug("{} loaded successfully.", driverClassName);
+        } catch (ClassNotFoundException e) {
+            log.error("Failed to load driver class: {}", Utils.capitalize(driverClassName), e);
+            throw new RuntimeException(e);
         }
     }
+
 }

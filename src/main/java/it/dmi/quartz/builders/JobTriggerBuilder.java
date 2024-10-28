@@ -1,7 +1,7 @@
 package it.dmi.quartz.builders;
 
-import it.dmi.data.entities.Azione;
-import it.dmi.data.entities.Configurazione;
+import it.dmi.data.entities.task.Azione;
+import it.dmi.data.entities.task.Configurazione;
 import it.dmi.data.entities.task.QuartzTask;
 import it.dmi.utils.NullChecks;
 import jakarta.enterprise.context.RequestScoped;

@@ -1,6 +1,7 @@
 package it.dmi.quartz.builders;
 
-import it.dmi.data.entities.Configurazione;
+import it.dmi.data.entities.task.Azione;
+import it.dmi.data.entities.task.Configurazione;
 import it.dmi.data.entities.task.QuartzTask;
 import it.dmi.structure.internal.info.JobInfo;
 import jakarta.enterprise.context.RequestScoped;
@@ -10,8 +11,7 @@ import org.quartz.*;
 
 import java.util.Objects;
 
-import static it.dmi.utils.constants.NamingConstants.GROUP;
-import static it.dmi.utils.constants.NamingConstants.JOB;
+import static it.dmi.utils.constants.NamingConstants.*;
 
 @Slf4j
 @RequestScoped
@@ -25,11 +25,12 @@ public class JobInfoBuilder extends MSDJobBuilder {
 
     public JobInfo buildJobInfo(Scheduler scheduler, Configurazione config) {
         String id = String.valueOf(config.getId());
-        String jobName = JOB + id;
-        String groupName = GROUP + id;
         try {
-            JobDetail jobDetail = detailBuilder.buildJobDetail(scheduler, config, new JobKey(jobName, groupName));
-            Trigger trigger = triggerBuilder.buildTrigger(config, new TriggerKey(jobName, groupName));
+            var identity = resolveJobAndGroupName(id, config);
+            JobDetail jobDetail = detailBuilder.buildJobDetail(scheduler, config,
+                    new JobKey(identity.jobName(), identity.groupName()));
+            Trigger trigger = triggerBuilder.buildTrigger(config,
+                    new TriggerKey(identity.triggerName(), identity.triggerGroup()));
             Objects.requireNonNull(jobDetail, "JobDetail is required.");
             Objects.requireNonNull(trigger, "Trigger is required.");
             log.info("Job scheduled for Configurazione n. {}.", config.getId());
@@ -40,15 +41,13 @@ public class JobInfoBuilder extends MSDJobBuilder {
     }
 
     public JobInfo buildJobInfo(Scheduler scheduler, QuartzTask task) {
-        String id = String.valueOf(task.getStringID());
-        String jobName = JOB + id;
-        String groupName = GROUP + id;
+        var id = task.getStringID();
         try {
-            JobDetail jobDetail = detailBuilder.buildJobDetail(scheduler, task, new JobKey(jobName, groupName));
-
-            //TODO fix cast to Configurazione, implement proper handling of QuartzTask
-            Trigger trigger = triggerBuilder.buildTrigger(task, new TriggerKey(jobName, groupName));
-
+            var identity = resolveJobAndGroupName(id, task);
+            JobDetail jobDetail = detailBuilder.buildJobDetail(scheduler, task,
+                    new JobKey(identity.jobName(), identity.groupName()));
+            Trigger trigger = triggerBuilder.buildTrigger(task,
+                    new TriggerKey(identity.triggerName(), identity.triggerGroup()));
             Objects.requireNonNull(jobDetail, "JobDetail is required.");
             Objects.requireNonNull(trigger, "Trigger is required.");
             log.info("Job scheduled for Azione n. {}.", task.getStringID());
@@ -57,5 +56,16 @@ public class JobInfoBuilder extends MSDJobBuilder {
             return resolveJobBuildingException(e);
         }
     }
+
+    private JobIdentity resolveJobAndGroupName(String id, QuartzTask task) {
+        return switch (task) {
+            case Configurazione c -> new JobIdentity(CONFIG_JOB + id, CONFIG_GROUP,
+                    CONFIG_TRIGGER + id, CONFIG_TRIGGER_GROUP);
+            case Azione a -> new JobIdentity(AZIONE_JOB + id, AZIONE_GROUP,
+                    AZIONE_TRIGGER + id, AZIONE_TRIGGER_GROUP);
+        };
+    }
+
+    private record JobIdentity(String jobName, String groupName, String triggerName, String triggerGroup) {}
 
 }

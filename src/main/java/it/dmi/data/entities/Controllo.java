@@ -1,5 +1,7 @@
 package it.dmi.data.entities;
 
+import it.dmi.data.entities.task.Azione;
+import it.dmi.data.entities.task.Configurazione;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

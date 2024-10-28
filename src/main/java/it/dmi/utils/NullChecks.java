@@ -12,9 +12,13 @@ import java.util.Objects;
 @Slf4j
 public class NullChecks {
 
-    public static boolean requireNonNull(JobInfo jobInfo) throws JobBuildingException {
-        Objects.requireNonNull(jobInfo);
-        return checkJobComponents(jobInfo);
+    public static boolean requireNonNull(JobInfo jobInfo) {
+        try {
+            Objects.requireNonNull(jobInfo);
+            return checkJobComponents(jobInfo);
+        } catch (JobBuildingException | NullPointerException e) {
+            return false;
+        }
     }
     public static void requireNonNull(DBInfo dbInfo) throws InvalidCredentialsException {
         Objects.requireNonNull(dbInfo);

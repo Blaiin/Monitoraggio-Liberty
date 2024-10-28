@@ -1,7 +1,7 @@
 package it.dmi.data.api.service;
 
 import it.dmi.data.api.repositories.impl.ConfigurazioneRP;
-import it.dmi.data.entities.Configurazione;
+import it.dmi.data.entities.task.Configurazione;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 

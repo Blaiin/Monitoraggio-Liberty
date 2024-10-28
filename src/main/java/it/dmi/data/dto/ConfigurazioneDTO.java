@@ -2,6 +2,7 @@ package it.dmi.data.dto;
 
 import it.dmi.data.dto.idto.IDTO;
 import it.dmi.data.entities.*;
+import it.dmi.data.entities.task.Configurazione;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -22,6 +22,7 @@ public interface QueryAPI {
     @APIResponse(responseCode = "200",
             description = "Query submitted successfully",
             content = @Content(schema = @Schema(implementation = QueryResponse.class)))
+    @APIResponse(responseCode = "202", description = "System took charge of request")
     @APIResponse(responseCode = "204",
             description = "No content",
             content = @Content(schema = @Schema(implementation = QueryResponse.class)))

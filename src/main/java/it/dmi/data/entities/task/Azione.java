@@ -1,7 +1,7 @@
-package it.dmi.data.entities;
+package it.dmi.data.entities.task;
 
 import it.dmi.caches.AzioneQueueCache;
-import it.dmi.data.entities.task.QuartzTask;
+import it.dmi.data.entities.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 @AllArgsConstructor
 @Slf4j
-public class Azione implements QuartzTask {
+public non-sealed class Azione implements QuartzTask {
 
     @Id
     @Column(name = "\"AzioneID\"")

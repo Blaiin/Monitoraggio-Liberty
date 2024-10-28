@@ -28,8 +28,35 @@ public class NamingConstants {
 
     public static final String OUTPUT = "output";
 
-    public static String JOB = "JOB";
+    //JOB IDENTITY ENTRIES
 
-    public static String GROUP = "GROUP";
+        //JOBS
 
+        private static final String JOB = "JOB";
+
+        public static final String CONFIG_JOB = "CONFIG" + JOB;
+
+        public static final String AZIONE_JOB = "AZIONE" + JOB;
+
+        //TRIGGERS
+
+        private static final String TRIGGER = "TRIGGER";
+
+        public static final String CONFIG_TRIGGER = "CONFIG" + TRIGGER;
+
+        public static final String AZIONE_TRIGGER = "AZIONE" + TRIGGER;
+
+        //JOBS GROUP
+
+        private static final String GROUP = "GROUP";
+
+        public static final String CONFIG_GROUP = "CONFIG" + GROUP;
+
+        public static final String AZIONE_GROUP = "AZIONE" + GROUP;
+
+        //TRIGGER GROUP
+
+        public static final String CONFIG_TRIGGER_GROUP = CONFIG_TRIGGER + GROUP;
+
+        public static final String AZIONE_TRIGGER_GROUP = AZIONE_TRIGGER + GROUP;
 }

@@ -1,7 +1,7 @@
 package it.dmi.processors.jobs;
 
-import it.dmi.data.entities.Azione;
-import it.dmi.data.entities.Configurazione;
+import it.dmi.data.entities.task.Azione;
+import it.dmi.data.entities.task.Configurazione;
 import it.dmi.data.entities.task.QuartzTask;
 import it.dmi.structure.internal.QueryType;
 import lombok.extern.slf4j.Slf4j;
@@ -76,9 +76,22 @@ public class QueryResolver {
         }
     }
 
+    public static boolean acceptCount(Configurazione c) {
+        try {
+            return DEV_filterCOUNT(c.getSqlScript());
+        } catch (JSQLParserException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static boolean DEV_filterSELECT_OR_COUNT (String sqlScript) throws JSQLParserException {
         QueryType queryType = resolveQuery(sqlScript);
         return queryType == QueryType.SELECT || queryType == QueryType.SELECT_COUNT;
+    }
+
+    public static boolean DEV_filterCOUNT(String script) throws JSQLParserException {
+        QueryType type = resolveQuery(script);
+        return type == QueryType.SELECT_COUNT;
     }
 
     public static boolean validateAndLog(QuartzTask task) {

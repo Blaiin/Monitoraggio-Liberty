@@ -12,5 +12,4 @@ public class AzioneJob implements ISQLJob {
     public void execute (JobExecutionContext jobExecutionContext) throws JobExecutionException {
 
     }
-
 }

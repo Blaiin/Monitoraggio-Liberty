@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -42,16 +42,16 @@ public class Output {
     private Long tipoAzioneId;
 
     @Column(name = "\"Inizio\"")
-    private Timestamp inizio;
+    private LocalDateTime inizio;
 
     @Column(name = "\"Fine\"")
-    private Timestamp fine;
+    private LocalDateTime fine;
 
     @Column(name = "\"Durata\"")
     private Long durata;
 
     public Output(Character esito, Map<String, List<Object>> contenuto, Long configurazioneId, Long azioneId,
-                  Long tipoAzioneId, Timestamp inizio, Timestamp fine, Long durata) {
+                  Long tipoAzioneId, LocalDateTime inizio, LocalDateTime fine, Long durata) {
         this.esito = esito;
         this.contenuto = contenuto;
         this.configurazioneId = configurazioneId;

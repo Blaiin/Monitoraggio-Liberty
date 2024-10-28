@@ -49,7 +49,7 @@ public class ResultsProcessor {
     public static Map<String, Integer> processCountResultSet (ResultSet set) {
         Map<String, Integer> results = new HashMap<>();
         Objects.requireNonNull(set, "ResultSet for count query was null.");
-        log.info("Reading count result set..");
+        log.debug("Reading count result set..");
         try {
             if (set.next()) {
                 int count = set.getInt(1);

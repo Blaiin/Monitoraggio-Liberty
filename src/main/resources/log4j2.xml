@@ -4,15 +4,12 @@
         <Console name="InfoConsole" target="SYSTEM_OUT">
             <PatternLayout pattern="%-5p %d{HH:mm:ss} [%t] %c{1}:%L - %m%n"/>
             <Filters>
-                <LevelRangeFilter minLevel="INFO" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+                <LevelRangeFilter minLevel="ERROR" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
         </Console>
 
         <File name="DebugFile" fileName="${env:log4j}/debug.log">
-            <PatternLayout pattern="%-5p %d{HH:mm:ss} [%t] [DEBUG DETAIL] %c{1}:%L - %m%n"/>
-            <Filters>
-                <LevelRangeFilter minLevel="DEBUG" maxLevel="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
-            </Filters>
+            <PatternLayout pattern="%-5p %d{HH:mm:ss} [%t] [DETAIL] %c{1}:%L - %m%n"/>
         </File>
     </Appenders>
 
@@ -24,6 +21,11 @@
 
         <Logger name="org.quartz" level="DEBUG" additivity="false">
             <AppenderRef ref="DebugFile"/>
+        </Logger>
+
+        <Logger name="it.dmi" level="DEBUG" additivity="false">
+            <AppenderRef ref="DebugFile"/>
+            <AppenderRef ref="InfoConsole"/>
         </Logger>
     </Loggers>
 </Configuration>

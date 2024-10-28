@@ -1,6 +1,6 @@
-package it.dmi.data.entities;
+package it.dmi.data.entities.task;
 
-import it.dmi.data.entities.task.QuartzTask;
+import it.dmi.data.entities.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +15,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Configurazione implements QuartzTask {
+public non-sealed class Configurazione implements QuartzTask {
 
     @Id
     @Column(name = "\"ConfigurazioneID\"")

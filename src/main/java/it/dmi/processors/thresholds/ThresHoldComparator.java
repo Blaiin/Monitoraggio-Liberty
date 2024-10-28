@@ -1,8 +1,8 @@
 package it.dmi.processors.thresholds;
 
-import it.dmi.data.entities.Azione;
-import it.dmi.data.entities.Configurazione;
 import it.dmi.data.entities.Soglia;
+import it.dmi.data.entities.task.Azione;
+import it.dmi.data.entities.task.Configurazione;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,9 +23,9 @@ public class ThresHoldComparator {
             if (isSogliaMultivalue(s)) {
                 boolean result = isInRange(value, s);
                 if (result) {
-                    log.info("Enabling actions for C: {}, S: {}", config.getId(), s.getId());
+                    log.debug("Enabling actions for C: {}, S: {}", config.getId(), s.getId());
                     var azioni = s.getAzioniOrdered();
-                    log.info("Azioni fetched: {}", azioni.size());
+                    log.debug("Azioni fetched: {}", azioni.size());
                     azioni.forEach(Azione::queue);
                 } else {
                     log.warn("No actions scheduled for Configurazione n. {}, Soglia n. {}, value outside range.",
@@ -50,7 +50,7 @@ public class ThresHoldComparator {
                             boolean result = isInRange((Integer) value, s);
                             if(result) {
                                 s.getAzioni().forEach(Azione::queue);
-                            } else log.error("No actions queued for Configurazione n. {}, Soglia n. {}",
+                            } else log.error("No actions queued for Config n. {}, Soglia n. {}",
                                     config.getId(), s.getId());
                         } else if (value instanceof String sValue) {
                             if(isNumericValue(sValue)) {
