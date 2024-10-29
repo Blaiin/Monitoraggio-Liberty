@@ -4,4 +4,6 @@ public sealed interface QuartzTask permits Azione, Configurazione {
     Long getId();
     String getStringID();
     String getSqlScript();
+    String getProgramma();
+    String getClasse();
 }

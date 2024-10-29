@@ -43,6 +43,10 @@ public class Soglia {
     @OneToMany(mappedBy = "soglia", fetch = FetchType.LAZY)
     private List<Azione> azioni;
 
+    public int getAzioniSize() {
+        return azioni.size();
+    }
+
     public List<Azione> getAzioniOrdered() {
         return azioni.stream()
                 .sorted(Comparator.comparingInt(Azione::getOrdineAzione))
@@ -57,6 +61,10 @@ public class Soglia {
         this.valore = valore;
         this.operatore = operatore;
         this.configurazione = configurazione;
+    }
+
+    public String getStringID() {
+        return String.valueOf(this.id);
     }
 }
 

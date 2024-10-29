@@ -2,26 +2,29 @@ package it.dmi.quartz.listeners;
 
 import it.dmi.data.entities.task.Configurazione;
 import it.dmi.quartz.ejb.ManagerEJB;
+import it.dmi.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobListener;
 
+import java.util.List;
+
+import static it.dmi.utils.constants.NamingConstants.SOGLIE;
+
 @Slf4j
 public class ConfigurazioneJobListener implements JobListener {
 
-    private final Configurazione config;
     private final String cID;
     private final ManagerEJB manager;
 
     public ConfigurazioneJobListener(Configurazione c, ManagerEJB m) {
-        this.config = c;
         this.cID = c.getStringID();
         this.manager = m;
     }
     @Override
     public String getName () {
-        return "ConfigJobListener" + config.getStringID();
+        return "ConfigJobListener" + cID;
     }
 
     @Override
@@ -34,15 +37,20 @@ public class ConfigurazioneJobListener implements JobListener {
 
     }
 
+    //TODO resolve Soglie not retrievable from jobDataMap
     @Override
     public void jobWasExecuted (JobExecutionContext jobExecutionContext, JobExecutionException e) {
         log.debug("Manager instance: {}", manager);
-        if (e == null) {
-            log.debug("Job for Config {} executed.", cID);
-            manager.onConfigJobCompletion(cID);
-            return;
+        if (e != null) {
+            manager.onConfigJobFail(cID, e);
         }
-        log.warn("Job encountered an error {} during execution.", e.getMessage());
-        manager.onConfigJobFail(cID);
+        log.debug("Job for Config {} executed.", cID);
+        var fromJobDataMap = jobExecutionContext.getJobDetail().getJobDataMap().get(SOGLIE + cID);
+        List<String> soglieIDs = Utils.typeCheckAndReturn(fromJobDataMap, String.class);
+        if (!soglieIDs.isEmpty()) {
+            manager.onConfigJobCompletion(cID, soglieIDs);
+        } else {
+            log.warn("Soglie not retrievable for Config {}.", cID);
+        }
     }
 }

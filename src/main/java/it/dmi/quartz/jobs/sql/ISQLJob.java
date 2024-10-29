@@ -168,7 +168,7 @@ public interface ISQLJob extends Job {
             Class.forName(driverClassName);
             log.debug("{} loaded successfully.", driverClassName);
         } catch (ClassNotFoundException e) {
-            log.error("Failed to load driver class: {}", Utils.capitalize(driverClassName), e);
+            log.error("Failed to load driver class: {}", Utils.StringHelper.capitalize(driverClassName), e);
             throw new RuntimeException(e);
         }
     }

@@ -50,7 +50,7 @@ public class JobDetailBuilder {
             case CLASS -> JobBuilder.newJob(ClassJob.class)
                     .withIdentity(jobKey)
                     .usingJobData(jobDataMap);
-            case AZIONE -> throw new JobTypeException("JobType not supported.");
+            case OTHER -> throw new JobTypeException("JobType not supported.");
         };
     }
 

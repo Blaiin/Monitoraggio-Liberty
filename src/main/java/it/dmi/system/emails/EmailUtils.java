@@ -1,7 +1,7 @@
 package it.dmi.system.emails;
 
 import it.dmi.system.emails.config.SmtpWrapper;
-import it.dmi.utils.file.ConfigLoader;
+import it.dmi.utils.file.PropsLoader;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.Singleton;
 import jakarta.ejb.Startup;
@@ -29,7 +29,7 @@ public class EmailUtils {
 
     @PostConstruct
     private void loadSmtpConfig() {
-        smtp = ConfigLoader.loadSmtpConfig();
+        smtp = PropsLoader.loadSmtpProperties();
         if(smtp == null) {
             log.error("Error loading SMTP configuration file.");
             return;
@@ -52,6 +52,8 @@ public class EmailUtils {
         log.info("Email service initialized successfully.");
     }
 
+    //TODO resolve proxy requirements and activate functionality
+    @SuppressWarnings("unused")
     public static void sendEmail(String toAddress, String subject, String messageBody) {
         log.debug("Sending email to: {}", toAddress);
         try {

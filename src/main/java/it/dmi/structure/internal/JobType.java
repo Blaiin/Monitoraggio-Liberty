@@ -8,7 +8,7 @@ public enum JobType {
     SQL("SQL"),
     PROGRAM("PROGRAM"),
     CLASS("CLASS"),
-    AZIONE("AZIONE"),;
+    OTHER("NOT VALID");
     private final String jobType;
 
     JobType (String jobType) {

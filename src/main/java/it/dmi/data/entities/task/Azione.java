@@ -65,11 +65,6 @@ public non-sealed class Azione implements QuartzTask {
     @Column(name = "\"ORDINEAZIONE\"")
     private int ordineAzione;
 
-    public void schedule () {
-        log.info("Scheduled successfully from Soglia n. {}, Configurazione n. {}", soglia.getId(),
-                soglia.getConfigurazione().getId());
-    }
-
     public void queue() {
         var cID = soglia.getConfigurazione().getStringID(); var sID = String.valueOf(soglia.getId());
         log.info("Queueing action for S: {}, C: {}", sID, cID);

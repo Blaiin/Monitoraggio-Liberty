@@ -1,6 +1,5 @@
 package it.dmi.rest.endpoint;
 
-import it.dmi.caches.AzioneQueueCache;
 import it.dmi.quartz.ejb.ManagerEJB;
 import it.dmi.rest.endpoint.interfaces.QueryAPI;
 import it.dmi.structure.io.QueryResponse;
@@ -28,21 +27,12 @@ public class QueryAPIResource implements QueryAPI {
     @Override
     public Response activate() {
         try {
-            managerEJB.scheduleJobs();
+            managerEJB.scheduleConfigs();
             return Response.accepted().build();
         } catch (Exception e) {
             log.error("Could not process configurations: ", e);
             return Response.serverError().entity(new QueryResponse("Error",
                     "Internal server error")).build();
-        } finally {
-            var acs = AzioneQueueCache.getCacheSize();
-            if (acs > 0) {
-                log.info("Retrieving actions..");
-                AzioneQueueCache.getAll().forEach((k, v) -> {
-                    log.info("AzioneQueueCache: sogliaId: {}, azioni: {}", k, v.toArray());
-                    v.forEach(a -> log.debug("A. n. {}, action: {}", a.getSoglia().getId() , a.getDestinatario()));
-                });
-            }
         }
     }
 }

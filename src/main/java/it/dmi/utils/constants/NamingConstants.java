@@ -6,6 +6,8 @@ public class NamingConstants {
 
     public static final String CONFIG = "config";
 
+    public static final String SOGLIE = "soglie";
+
     public static final String JOB_TYPE = "jobType";
 
     public static final String NOME = "nome";
@@ -29,6 +31,11 @@ public class NamingConstants {
     public static final String OUTPUT = "output";
 
     //JOB IDENTITY ENTRIES
+
+        //THREAD POOL
+        public static final String WORKER = "V_Worker";
+        public static final String AZIONE = "Azione_";
+        public static final String CONFIGURAZIONE = "Configurazione_";
 
         //JOBS
 

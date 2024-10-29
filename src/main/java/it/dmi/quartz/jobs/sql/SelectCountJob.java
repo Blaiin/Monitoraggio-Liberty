@@ -45,7 +45,7 @@ public class SelectCountJob implements ISQLJob {
             if (config.getSoglie().isEmpty()) {
                 log.warn("No thresholds for Config {}.", config.getId());
             } else {
-                comparator.compareCountThresholds(config, results);
+                dataMap.put(SOGLIE + id, comparator.compareCountThresholds(config, results));
             }
         }  catch (Exception e) {
             resolveException(e);

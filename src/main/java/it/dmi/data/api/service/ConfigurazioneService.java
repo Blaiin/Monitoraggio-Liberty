@@ -13,25 +13,26 @@ public class ConfigurazioneService {
     @Inject
     private ConfigurazioneRP repository;
 
-    public void create (Configurazione config) {
+    public void create(Configurazione config) {
         repository.save(config);
     }
 
-    public Configurazione getByID (Long id) {
+    public Configurazione getByID(Long id) {
         return repository.findByID(id);
     }
 
-    public void update (Configurazione config) {
+    public void update(Configurazione config) {
         repository.update(config);
     }
 
-    public void delete (Long id) {
+    public void delete(Long id) {
         repository.delete(id);
     }
 
-    public List<Configurazione> getAll () {
+    public List<Configurazione> getAll() {
         return repository.findAll();
     }
+
     public int count() {
         return repository.findAll().size();
     }

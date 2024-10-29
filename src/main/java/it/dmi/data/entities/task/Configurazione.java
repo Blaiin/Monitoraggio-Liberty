@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "\"MON_Configurazione\"")
@@ -80,11 +81,11 @@ public non-sealed class Configurazione implements QuartzTask {
         this.ordineConfigurazione = ordineConfigurazione;
     }
 
-    public String getClasseSimpleName() {
-        return this.classe.substring(this.classe.lastIndexOf('.') + 1);
-    }
-
     public String getStringID() {
         return String.valueOf(this.id);
+    }
+
+    public Stream<Soglia> getSoglieAsStream() {
+        return this.soglie.stream();
     }
 }

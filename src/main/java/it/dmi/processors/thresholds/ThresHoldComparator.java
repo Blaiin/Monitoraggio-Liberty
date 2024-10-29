@@ -17,27 +17,33 @@ public class ThresHoldComparator {
 
     private final Map<String, List<String>> comparationMessages = new ConcurrentHashMap<>();
 
-    public void compareCountThresholds(Configurazione config, Map<String, Integer> results) {
+    public List<String> compareCountThresholds(Configurazione config, Map<String, Integer> results) {
+        List<String> soglieIDs = new ArrayList<>();
         config.getSoglie().forEach(s -> {
             int value = results.get("count");
+            var sID = s.getStringID();
             if (isSogliaMultivalue(s)) {
                 boolean result = isInRange(value, s);
                 if (result) {
-                    log.debug("Enabling actions for C: {}, S: {}", config.getId(), s.getId());
+                    log.debug("Enabling actions for C: {}, S: {}", config.getId(), sID);
                     var azioni = s.getAzioniOrdered();
                     log.debug("Azioni fetched: {}", azioni.size());
+                    soglieIDs.add(sID);
                     azioni.forEach(Azione::queue);
                 } else {
                     log.warn("No actions scheduled for Configurazione n. {}, Soglia n. {}, value outside range.",
-                            config.getId(), s.getId());
+                            config.getId(), sID);
                 }
             } else {
                 log.error("Could not compare thresholds for Configurazione n. {}, Soglia n. {}. " +
-                        "Invalid or missing count value.", config.getId(), s.getId());
+                        "Invalid or missing count value.", config.getId(), sID);
             }
         });
+        return soglieIDs;
     }
 
+    //TODO reactivate method usage and SELECT functionality
+    @SuppressWarnings("unused")
     public void compareSelectThresholds (Configurazione config,
                                          Map<String, List<Object>> mapToCompare) {
         mapToCompare.forEach((k, v) -> {
@@ -71,7 +77,6 @@ public class ThresHoldComparator {
                             }
                         }
                     }
-
                 } else {
                     log.error("Could finish Configurazione n. {}, output was null.", config.getId());
                 }
@@ -81,6 +86,8 @@ public class ThresHoldComparator {
         });
     }
 
+    //TODO check for method usage or delete
+    @SuppressWarnings("unused")
     public static boolean evaluate(int toEvaluate, Soglia soglia) {
         if (ThresholdUtils.getSvComparators().get(soglia.getOperatore()) == null) {
             throw new IllegalArgumentException("Invalid or null operator.");
@@ -93,8 +100,8 @@ public class ThresHoldComparator {
     }
 
     public static boolean evaluate(Object toEvaluate, Soglia soglia) {
-        if (toEvaluate instanceof String) {
-            return ((String) toEvaluate).contains(soglia.getValore());
+        if (toEvaluate instanceof String s) {
+            return s.contains(soglia.getValore());
         }
         return false;
     }
@@ -122,7 +129,5 @@ public class ThresHoldComparator {
                     "one value must be present(Valore OR (both) Soglia Inferiore AND Soglia Superiore).");
         return soglia.getValore() == null;
     }
-
-
 }
 
