@@ -3,6 +3,7 @@ package it.dmi.quartz.scheduler;
 import it.dmi.data.api.service.ConfigurazioneService;
 import it.dmi.data.entities.Soglia;
 import it.dmi.data.entities.task.Configurazione;
+import it.dmi.structure.exceptions.MSDRuntimeException;
 import it.dmi.utils.file.PropsLoader;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -46,7 +47,7 @@ public class MSDScheduler {
 
             var props = PropsLoader.loadQuartzProperties();
             StdSchedulerFactory configFactory = new StdSchedulerFactory(props.configProps());
-            StdSchedulerFactory azioneFactory = new StdSchedulerFactory(props.configProps());
+            StdSchedulerFactory azioneFactory = new StdSchedulerFactory(props.azioneProps());
 
             configScheduler = configFactory.getScheduler();
             azioneScheduler = azioneFactory.getScheduler();
@@ -54,11 +55,11 @@ public class MSDScheduler {
             configScheduler.start();
             azioneScheduler.start();
 
-            log.debug("Initialized Quartz (Configurazione) scheduler");
-            log.info("Initialized Quartz (Configurazione) scheduler");
+            log.debug("Initialized Quartz schedulers.");
+            log.info("Initialized Quartz schedulers.");
         } catch (SchedulerException | RuntimeException e) {
-            log.error("Failed to start Quartz scheduler", e);
-            throw new RuntimeException("Failed to start Quartz scheduler", e);
+            log.error("Failed to start Quartz schedulers. {}", e.getMessage(), e.getCause());
+            throw new MSDRuntimeException("Failed to start Quartz schedulers", e);
         }
     }
 
@@ -66,16 +67,16 @@ public class MSDScheduler {
     public void destroy() {
         try {
             if (configScheduler != null) {
-                log.debug("Shutting down (Configurazione) scheduler...");
+                log.debug("Shutting down (Configurazione) scheduler..");
                 configScheduler.shutdown();
             }
             if (azioneScheduler != null) {
-                log.debug("Shutting down (Azione) scheduler...");
+                log.debug("Shutting down (Azione) scheduler..");
                 azioneScheduler.shutdown();
             }
         } catch (SchedulerException e) {
-            log.error("Failed to shutdown remote Quartz scheduler", e);
-            throw new RuntimeException("Failed to shutdown remote Quartz scheduler", e);
+            log.error("Failed to shutdown Quartz schedulers. {}", e.getMessage(), e.getCause());
+            throw new MSDRuntimeException("Failed to shutdown Quartz schedulers", e);
         }
     }
 
