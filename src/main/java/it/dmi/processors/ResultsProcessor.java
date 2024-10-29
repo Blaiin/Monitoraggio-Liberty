@@ -1,6 +1,5 @@
 package it.dmi.processors;
 
-import jakarta.enterprise.context.RequestScoped;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.ResultSet;
@@ -8,10 +7,9 @@ import java.sql.SQLException;
 import java.util.*;
 
 @Slf4j
-@RequestScoped
 public class ResultsProcessor {
 
-    public static Map<String, List<Object>> processSelectResultSet (ResultSet resultSet)
+    public static Map<String, List<Object>> processSelectResultSet(ResultSet resultSet)
             throws SQLException, NullPointerException {
 
         Map<String, List<Object>> results = new HashMap<>();
@@ -34,7 +32,7 @@ public class ResultsProcessor {
         return results;
     }
 
-    public static Map<String, Integer> processCountResultSet (ResultSet set) {
+    public static Map<String, Integer> processCountResultSet(ResultSet set) {
         Map<String, Integer> results = new HashMap<>();
         Objects.requireNonNull(set, "ResultSet for count query was null.");
         log.debug("Reading count result set..");

@@ -150,9 +150,8 @@ public interface ISQLJob extends Job {
             throw logAndThrow("Driver name cannot be null.");
         }
 
-        String driverClass = DRIVER_MAP.entrySet().stream()
+        Map.Entry<String, String> driverClass = DRIVER_MAP.entrySet().stream()
                 .filter(entry -> driverName.contains(entry.getKey()))
-                .map(Map.Entry::getValue)
                 .findFirst()
                 .orElseThrow(() -> logAndThrow("Unsupported database type."));
         loadDriverClass(driverClass);
@@ -163,12 +162,23 @@ public interface ISQLJob extends Job {
         throw new IllegalArgumentException(message);
     }
 
+    @SuppressWarnings("unused")
     private void loadDriverClass(String driverClassName) {
         try {
             Class.forName(driverClassName);
-            log.debug("{} loaded successfully.", driverClassName);
+            log.debug("{} driver loaded successfully.", driverClassName);
         } catch (ClassNotFoundException e) {
-            log.error("Failed to load driver class: {}", Utils.StringHelper.capitalize(driverClassName), e);
+            log.error("Failed to load driver class: {}", driverClassName, e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void loadDriverClass(Map.Entry<String, String> entry) {
+        try {
+            Class.forName(entry.getValue());
+            log.debug("{} driver loading was successful.", Utils.StringHelper.capitalize(entry.getKey()));
+        } catch (ClassNotFoundException e) {
+            log.error("Loading driver class failed: {}", Utils.StringHelper.capitalize(entry.getKey()), e);
             throw new RuntimeException(e);
         }
     }
