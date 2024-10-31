@@ -62,6 +62,7 @@ public class ManagerEJB {
 
     private Scheduler scheduler;
 
+    //TODO enable full SELECT functionality
     public void scheduleConfigs() {
         if(configs.isEmpty()) {
             throw new NullPointerException("No configs found.");
