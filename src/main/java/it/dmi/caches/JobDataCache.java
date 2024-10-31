@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
+import static it.dmi.utils.constants.NamingConstants.CONFIG;
+
 @Slf4j
 public class JobDataCache extends ASharedCache {
 
@@ -19,8 +21,10 @@ public class JobDataCache extends ASharedCache {
         CountDownLatch latch = getLatchesMap().get(key);
         if (latch != null) {
             latch.countDown();
+            log.debug("CountDown called for Config ID: {}", key.replace(CONFIG, ""));
+        } else {
+            log.debug("Not CountDown latch found for Task ID: {}", key);
         }
-        log.debug("CountDown called for Config ID: {}", key);
     }
 
     public static OutputDTO getOutput(String key) {

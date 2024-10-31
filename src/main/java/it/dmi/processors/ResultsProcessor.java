@@ -32,19 +32,18 @@ public class ResultsProcessor {
         return results;
     }
 
-    public static Map<String, Integer> processCountResultSet(ResultSet set) {
-        Map<String, Integer> results = new HashMap<>();
+    public static Integer processCountResultSet(ResultSet set) {
+        int result = 0;
         Objects.requireNonNull(set, "ResultSet for count query was null.");
         log.debug("Reading count result set..");
         try {
             if (set.next()) {
-                int count = set.getInt(1);
-                results.put("count", count);
+                result = set.getInt(1);
             }
         } catch (SQLException e) {
             log.error("Failed to process count result set.", e);
         }
-        return results;
+        return result;
     }
 
 }

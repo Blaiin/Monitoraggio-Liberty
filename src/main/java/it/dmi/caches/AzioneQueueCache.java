@@ -33,13 +33,6 @@ public class AzioneQueueCache {
         cache.remove(sogliaId);
     }
 
-    //TODO properly utilize clearing logic
-    @SuppressWarnings("unused")
-    public static void clearAll() {
-        log.debug("Clearing {} Azioni.", cache.size());
-        cache.clear();
-    }
-
     public static long getCacheSize() {
         return cache.size();
     }

@@ -1,5 +1,7 @@
 package it.dmi.caches;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -8,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public abstract class ASharedCache {
 
     private static final Map<String, Collection<Object>> cache = new ConcurrentHashMap<>();
@@ -42,10 +45,9 @@ public abstract class ASharedCache {
     }
 
     public static void createLatch(String key, int count) {
+        log.debug("Creating latch with key {}", key);
         latches.put(key, new CountDownLatch(count));
     }
-
-
 
     public static boolean awaitData(String key, long timeout, TimeUnit unit) throws InterruptedException {
         CountDownLatch latch = latches.get(key);
@@ -54,7 +56,6 @@ public abstract class ASharedCache {
         }
         return false;
     }
-
 
     public static List<String> getLatches() {
         return new ArrayList<>(latches.keySet());

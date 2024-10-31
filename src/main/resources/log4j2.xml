@@ -4,7 +4,7 @@
         <Console name="InfoConsole" target="SYSTEM_OUT">
             <PatternLayout pattern="%-5p %d{HH:mm:ss} [%t] %c{1}:%L - %m%n"/>
             <Filters>
-                <LevelRangeFilter minLevel="ERROR" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+                <LevelRangeFilter minLevel="FATAL" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
         </Console>
 

@@ -19,10 +19,10 @@ public class AmbitoDTO implements IDTO {
 
     @Override
     public <T> IDTO fromEntity (T entity) {
-        return entity instanceof Ambito ? new AmbitoDTO(
-                ((Ambito) entity).getId(),
-                ((Ambito) entity).getNome(),
-                ((Ambito) entity).getDestinazione()
+        return entity instanceof Ambito a ? new AmbitoDTO(
+                a.getId(),
+                a.getNome(),
+                a.getDestinazione()
         ) : null;
     }
 

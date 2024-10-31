@@ -3,7 +3,7 @@ package it.dmi.utils.file;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import it.dmi.structure.internal.props.ConfigAndAzioneProps;
+import it.dmi.structure.exceptions.MSDRuntimeException;
 import it.dmi.system.emails.config.SmtpWrapper;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,24 +11,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import static it.dmi.utils.constants.FileConstants.*;
+import static it.dmi.utils.constants.FileConstants.QUARTZ_MSD_PROPS_FILE;
+import static it.dmi.utils.constants.FileConstants.SMTP_CONFIG_FILE;
 
 @Slf4j
 public class PropsLoader {
 
-    public static ConfigAndAzioneProps loadQuartzProperties() {
-        var props = new ConfigAndAzioneProps(new Properties(), new Properties());
-        try (InputStream config = PropsLoader.class.getClassLoader().getResourceAsStream(QUARTZ_CONFIG_PROPS_FILE);
-            InputStream azione = PropsLoader.class.getClassLoader().getResourceAsStream(QUARTZ_AZIONE_PROPS_FILE)) {
-            if (config != null) {
-                props.configProps().load(config);
-            }
-            if (azione != null) {
-                props.azioneProps().load(azione);
+    public static Properties loadQuartzProperties() {
+        var props = new Properties();
+        try (InputStream msdSchedulerProps = PropsLoader.class.getClassLoader().getResourceAsStream(QUARTZ_MSD_PROPS_FILE)) {
+            if (msdSchedulerProps != null) {
+                props.load(msdSchedulerProps);
             }
         } catch (IOException e) {
             log.error("Failed to load Quartz properties", e);
-            throw new RuntimeException(e);
+            throw new MSDRuntimeException(e);
         }
         return props;
     }

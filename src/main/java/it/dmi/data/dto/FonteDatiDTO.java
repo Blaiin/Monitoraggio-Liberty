@@ -22,13 +22,13 @@ public class FonteDatiDTO implements IDTO {
 
     @Override
     public <T> IDTO fromEntity (T entity) {
-        return entity instanceof FonteDati ? new FonteDatiDTO(
-                ((FonteDati) entity).getId(),
-                ((FonteDati) entity).getDescrizione(),
-                ((FonteDati) entity).getNomeDriver(),
-                ((FonteDati) entity).getNomeClasse(),
-                ((FonteDati) entity).getUrl(),
-                ((FonteDati) entity).getJndiName()
+        return entity instanceof FonteDati fd ? new FonteDatiDTO(
+                fd.getId(),
+                fd.getDescrizione(),
+                fd.getNomeDriver(),
+                fd.getNomeClasse(),
+                fd.getUrl(),
+                fd.getJndiName()
         ) : null;
     }
 

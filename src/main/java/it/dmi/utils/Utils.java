@@ -3,6 +3,7 @@ package it.dmi.utils;
 import it.dmi.caches.AzioneQueueCache;
 import it.dmi.data.entities.FonteDati;
 import it.dmi.data.entities.SicurezzaFonteDati;
+import it.dmi.data.entities.Soglia;
 import it.dmi.data.entities.task.Azione;
 import it.dmi.data.entities.task.Configurazione;
 import it.dmi.data.entities.task.QuartzTask;
@@ -13,6 +14,9 @@ import org.quartz.JobDataMap;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.BiPredicate;
 
 import static it.dmi.utils.constants.NamingConstants.*;
 
@@ -77,7 +81,7 @@ public class Utils {
 
         public static void createSQLJobDataMap(Configurazione config, JobDataMap map, String id, JobType jobType, FonteDati fd, SicurezzaFonteDati sfd) {
             map.put(ID, id);
-            map.put(CONFIG + id, config);
+            map.put(TASK + id, config);
             map.put(JOB_TYPE + id, jobType.getJobType());
             map.put(SQL_SCRIPT + id, config.getSqlScript());
             map.put(NOME, config.getNome());
@@ -90,7 +94,7 @@ public class Utils {
 
         public static void createSQLJobDataMap(Azione azione, JobDataMap map, String id, JobType jobType, FonteDati fd, SicurezzaFonteDati sfd) {
             map.put(ID, id);
-            map.put(CONFIG + id, azione);
+            map.put(TASK + id, azione);
             map.put(JOB_TYPE + id, jobType.getJobType());
             map.put(SQL_SCRIPT + id, azione.getSqlScript());
             map.put(DRIVER_NAME + id, fd.getNomeDriver());
@@ -170,7 +174,44 @@ public class Utils {
         }
     }
 
+    public static class TH {
+
+        private static final Map<String, BiPredicate<Integer, Integer>> SV_COMPARATORS;
+
+        static {
+            SV_COMPARATORS = Map.of("<", (a, b) -> a < b,
+                                    ">", (a, b) -> a > b,
+                                    "<=", (a, b) -> a <= b,
+                                    ">=", (a, b) -> a >= b,
+                                    "<>", (a, b) -> !Objects.equals(a, b),
+                                    "=", Objects::equals,
+                                    "==", Objects::equals); }
+
+        //TODO check for method usage or delete
+        @SuppressWarnings("unused")
+        public static boolean evaluate(int toEvaluate, Soglia soglia) {
+            if (SV_COMPARATORS.get(soglia.getOperatore()) == null) {
+                throw new IllegalArgumentException("Invalid or null operator.");
+            }
+            if (isNumeric(soglia.getValore())) {
+                return SV_COMPARATORS.get(soglia.getOperatore())
+                        .test(toEvaluate, Integer.valueOf(soglia.getValore()));
+            } else return false;
+        }
+
+        public static boolean isNumeric(String valore) {
+            try {
+                Integer.parseInt(valore);
+                return true;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+    }
+
     public static <V> List<V> typeCheckAndReturn(Object toSanitize, Class<V> transformTo) {
+        Objects.requireNonNull(toSanitize, "Sanitization failed.");
+        log.debug("Sanitizing output");
         var sanitized = new ArrayList<V>();
         try {
             if(toSanitize instanceof List<?> l)

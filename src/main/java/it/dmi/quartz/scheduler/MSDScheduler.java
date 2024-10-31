@@ -23,10 +23,7 @@ import org.quartz.impl.StdSchedulerFactory;
 @Slf4j
 public class MSDScheduler {
 
-
-    private Scheduler configScheduler;
-
-    private Scheduler azioneScheduler;
+    private Scheduler msdScheduler;
 
     @Inject
     @Getter(AccessLevel.NONE)
@@ -37,7 +34,7 @@ public class MSDScheduler {
         try {
             var configsList = configurazioneService.getAll();
             int configCount = configsList.size();
-            log.info("Detected {} CONFIGS to be scheduled.", configCount);
+            log.info("Detected {} possible CONFIGS to be scheduled.", configCount);
 
             int azioniCount = configsList.stream()
                     .flatMap(Configurazione::getSoglieAsStream)
@@ -46,14 +43,11 @@ public class MSDScheduler {
             log.info("Detected {} possible AZIONI to be executed.", azioniCount);
 
             var props = PropsLoader.loadQuartzProperties();
-            StdSchedulerFactory configFactory = new StdSchedulerFactory(props.configProps());
-            StdSchedulerFactory azioneFactory = new StdSchedulerFactory(props.azioneProps());
+            StdSchedulerFactory configFactory = new StdSchedulerFactory(props);
 
-            configScheduler = configFactory.getScheduler();
-            azioneScheduler = azioneFactory.getScheduler();
+            msdScheduler = configFactory.getScheduler();
 
-            configScheduler.start();
-            azioneScheduler.start();
+            msdScheduler.start();
 
             log.debug("Initialized Quartz schedulers.");
             log.info("Initialized Quartz schedulers.");
@@ -66,13 +60,9 @@ public class MSDScheduler {
     @PreDestroy
     public void destroy() {
         try {
-            if (configScheduler != null) {
+            if (msdScheduler != null) {
                 log.debug("Shutting down (Configurazione) scheduler..");
-                configScheduler.shutdown();
-            }
-            if (azioneScheduler != null) {
-                log.debug("Shutting down (Azione) scheduler..");
-                azioneScheduler.shutdown();
+                msdScheduler.shutdown();
             }
         } catch (SchedulerException e) {
             log.error("Failed to shutdown Quartz schedulers. {}", e.getMessage(), e.getCause());

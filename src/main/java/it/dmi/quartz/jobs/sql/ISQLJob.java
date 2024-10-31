@@ -84,9 +84,9 @@ public interface ISQLJob extends Job {
     }
 
     default OutputDTO finalizeOutputDTO(OutputDTO out, Map<String, ?> results) {
-        log.debug("Finalizing output for Config {}", out.getConfigurazioneId());
+        log.debug("Finalizing (select query) output for Config {}", out.getConfigurazioneId());
         if(results.isEmpty()) {
-            log.debug("Esito was negative for Config {}", out.getConfigurazioneId());
+            log.debug("Esito (select query) was negative for Config {}", out.getConfigurazioneId());
             out.setEsito(NEGATIVE.getValue());
         }
         else out.setEsito(POSITIVE.getValue());
@@ -97,9 +97,23 @@ public interface ISQLJob extends Job {
         return out;
     }
 
+    default OutputDTO finalizeOutputDTO(OutputDTO out, int result) {
+        log.debug("Finalizing (select count query) output for Config {}", out.getConfigurazioneId());
+        if(result == 0) {
+            log.debug("Esito (select count query) was negative for Config {}", out.getConfigurazioneId());
+            out.setEsito(NEGATIVE.getValue());
+        }
+        else out.setEsito(POSITIVE.getValue());
+        out.setContenuto(Map.of("count", result));
+        var fine = TimeUtils.now();
+        out.setFine(fine);
+        out.setDurata(TimeUtils.duration(out.getInizio(), fine));
+        return out;
+    }
+
     default void cacheOutputDTO(String id, OutputDTO out) {
         if (out != null) {
-            log.debug("Caching output {} for Config {}", out.getConfigurazioneId(), id);
+            log.debug("Caching output for Config {}", out.getConfigurazioneId());
             JobDataCache.put(OUTPUT + id, out);
             return;
         }

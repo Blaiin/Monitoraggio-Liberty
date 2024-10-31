@@ -66,8 +66,8 @@ public non-sealed class Azione implements QuartzTask {
     private int ordineAzione;
 
     public void queue() {
-        var cID = soglia.getConfigurazione().getStringID(); var sID = String.valueOf(soglia.getId());
-        log.info("Queueing action for S: {}, C: {}", sID, cID);
+        var cID = soglia.getConfigurazione().getStringID(); var sID = soglia.getStringID();
+        log.debug("Queueing Azione {} for Soglia {}, Config {}", this.id, sID, cID);
         AzioneQueueCache.put(sID, this);
     }
 

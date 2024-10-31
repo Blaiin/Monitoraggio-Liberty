@@ -18,9 +18,9 @@ public class TipoAzioneDTO implements IDTO {
 
     @Override
     public <T> IDTO fromEntity (T entity) {
-        return entity instanceof TipoAzione ? new TipoAzioneDTO(
-                ((TipoAzione) entity).getId(),
-                ((TipoAzione) entity).getDescrizione()
+        return entity instanceof TipoAzione ta ? new TipoAzioneDTO(
+                ta.getId(),
+                ta.getDescrizione()
         ) : null;
     }
 

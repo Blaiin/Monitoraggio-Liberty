@@ -12,12 +12,18 @@ import java.util.Objects;
 @Slf4j
 public class NullChecks {
 
+    /**
+     *
+     * @param jobInfo Record object representing crucial info for org.quartz.Job building
+     * @return true if input was null
+     */
     public static boolean requireNonNull(JobInfo jobInfo) {
         try {
             Objects.requireNonNull(jobInfo);
-            return checkJobComponents(jobInfo);
+            return !checkJobComponents(jobInfo);
         } catch (JobBuildingException | NullPointerException e) {
-            return false;
+            log.error("Error during Job contruction {}", e.getMessage(), e.getCause());
+            return true;
         }
     }
     public static void requireNonNull(DBInfo dbInfo) throws InvalidCredentialsException {

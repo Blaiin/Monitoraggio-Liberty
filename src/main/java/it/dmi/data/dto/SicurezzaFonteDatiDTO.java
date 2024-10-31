@@ -20,11 +20,11 @@ public class SicurezzaFonteDatiDTO implements IDTO {
 
     @Override
     public <T> IDTO fromEntity (T entity) {
-        return entity instanceof SicurezzaFonteDati ? new SicurezzaFonteDatiDTO(
-                ((SicurezzaFonteDati) entity).getId(),
-                ((SicurezzaFonteDati) entity).getDescrizione(),
-                ((SicurezzaFonteDati) entity).getUserID(),
-                ((SicurezzaFonteDati) entity).getPassword()
+        return entity instanceof SicurezzaFonteDati sfd ? new SicurezzaFonteDatiDTO(
+                sfd.getId(),
+                sfd.getDescrizione(),
+                sfd.getUserID(),
+                sfd.getPassword()
         ) : null;
     }
 

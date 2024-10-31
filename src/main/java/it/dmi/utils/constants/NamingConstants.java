@@ -6,6 +6,8 @@ public class NamingConstants {
 
     public static final String CONFIG = "config";
 
+    public static final String TASK = "TASK";
+
     public static final String SOGLIE = "soglie";
 
     public static final String JOB_TYPE = "jobType";

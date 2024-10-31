@@ -25,13 +25,13 @@ public class SogliaDTO implements IDTO {
 
     @Override
     public <T> IDTO fromEntity (T entity) {
-        return entity instanceof Soglia ? new SogliaDTO(
-                ((Soglia) entity).getId(),
-                ((Soglia) entity).getSogliaInferiore(),
-                ((Soglia) entity).getSogliaSuperiore(),
-                ((Soglia) entity).getValore(),
-                ((Soglia) entity).getOperatore(),
-                ((Soglia) entity).getConfigurazione()
+        return entity instanceof Soglia s ? new SogliaDTO(
+                s.getId(),
+                s.getSogliaInferiore(),
+                s.getSogliaSuperiore(),
+                s.getValore(),
+                s.getOperatore(),
+                s.getConfigurazione()
         ) : null;
     }
 

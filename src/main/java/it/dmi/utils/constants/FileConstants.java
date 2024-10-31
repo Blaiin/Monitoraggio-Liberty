@@ -7,8 +7,7 @@ public class FileConstants {
     private static final String fileSep = FileSystems.getDefault().getSeparator();
 
     //Quartz
-    public static final String QUARTZ_CONFIG_PROPS_FILE = "quartz" + fileSep + "quartz-config.properties";
-    public static final String QUARTZ_AZIONE_PROPS_FILE = "quartz" + fileSep + "quartz-azione.properties";
+    public static final String QUARTZ_MSD_PROPS_FILE = "quartz" + fileSep + "quartz-msd.properties";
 
     //Mail
     public static final String SMTP_CONFIG_FILE = "mail" + fileSep + "smtp.yaml";

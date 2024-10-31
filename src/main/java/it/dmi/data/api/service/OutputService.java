@@ -1,6 +1,7 @@
 package it.dmi.data.api.service;
 
 import it.dmi.data.api.repositories.impl.OutputRP;
+import it.dmi.data.dto.OutputDTO;
 import it.dmi.data.entities.Output;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
@@ -15,12 +16,20 @@ public class OutputService {
     @Inject
     private OutputRP repository;
 
-    public void create(Output output) {
-
-        if (output != null) {
-            log.debug("Saving output (Config {}) to database.", output.getConfigurazioneId());
-            repository.save(output);
+    public void create(OutputDTO output) {
+        if (output == null) {
+            log.error("Could not save a null output to database.");
+            return;
         }
+        if(output.getConfigurazioneId() == null && output.getAzioneId() == null) {
+            log.error("Could not save output to database, necessary fields were invalid.");
+            return;
+        }
+        create(output.toEntity());
+    }
+
+    private void create(Output output) {
+        repository.save(output);
     }
 
     public Output getByID(Long id) {
