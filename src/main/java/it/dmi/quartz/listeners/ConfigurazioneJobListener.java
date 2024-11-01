@@ -29,7 +29,7 @@ public class ConfigurazioneJobListener implements JobListener {
 
     @Override
     public void jobToBeExecuted (JobExecutionContext jobExecutionContext) {
-        log.debug("Job for Config {} about to start.", cID);
+        log.debug("Jobs for Config {} about to start.", cID);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class ConfigurazioneJobListener implements JobListener {
         if (e != null) {
             manager.onConfigJobFail(cID, e);
         }
-        log.debug("Job for Config {} executed.", cID);
+        log.debug("Jobs for Config {} executed.", cID);
         var fromJobDataMap = jobExecutionContext.getJobDetail().getJobDataMap().get(SOGLIE + cID);
         List<String> soglieIDs = Utils.typeCheckAndReturn(fromJobDataMap, String.class);
         if (!soglieIDs.isEmpty()) {

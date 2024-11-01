@@ -69,12 +69,12 @@ public class JobDetailBuilder {
         if (scheduler.checkExists(jobKey)) {
             switch (task) {
                 case Configurazione c -> {
-                    log.warn("Job with key {}, Configurazione {} already exists, skipping creation.", jobKey, c.getId());
-                    throw new SchedulerException(String.format("Job for Configurazione %d already exists.", c.getId()));
+                    log.warn("Jobs with key {}, Configurazione {} already exists, skipping creation.", jobKey, c.getId());
+                    throw new SchedulerException(String.format("Jobs for Configurazione %d already exists.", c.getId()));
                 }
                 case Azione a -> {
-                    log.warn("Job with key {}, Azione {} already exists, skipping creation.", jobKey, a.getId());
-                    throw new SchedulerException(String.format("Job for Azione %d already exists.", a.getId()));
+                    log.warn("Jobs with key {}, Azione {} already exists, skipping creation.", jobKey, a.getId());
+                    throw new SchedulerException(String.format("Jobs for Azione %d already exists.", a.getId()));
                 }
                 default -> throw new SchedulerException("Illegal task: " + task);
             }

@@ -25,7 +25,7 @@ public class AzioneJobListener implements JobListener {
 
     @Override
     public void jobToBeExecuted (JobExecutionContext jobExecutionContext) {
-        log.debug("Job for Azione {} to be executed.", aID);
+        log.debug("Jobs for Azione {} to be executed.", aID);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class AzioneJobListener implements JobListener {
         if (e != null) {
             manager.onAzioneJobFail(aID, e);
         } else {
-            log.debug("Job for Config {} executed.", aID);
+            log.debug("Jobs for Config {} executed.", aID);
             manager.onAzioneJobCompletion(aID);
         }
     }

@@ -4,4 +4,8 @@ import org.quartz.JobDetail;
 import org.quartz.Trigger;
 
 public record JobInfo(JobDetail jobDetail, Trigger trigger) implements Info {
+
+    public boolean isValid() {
+        return jobDetail != null && trigger != null;
+    }
 }

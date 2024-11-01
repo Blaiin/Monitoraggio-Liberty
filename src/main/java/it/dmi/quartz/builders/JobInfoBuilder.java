@@ -24,7 +24,7 @@ public class JobInfoBuilder extends MSDJobBuilder {
                     new TriggerKey(identity.triggerName(), identity.triggerGroup()));
             Objects.requireNonNull(jobDetail, "JobDetail is required.");
             Objects.requireNonNull(trigger, "Trigger is required.");
-            log.info("Job scheduled for Azione n. {}.", task.getStringID());
+            log.info("Jobs scheduled for Azione n. {}.", task.getStringID());
             return new JobInfo(jobDetail, trigger);
         } catch (Exception e) {
             return resolveJobBuildingException(e);

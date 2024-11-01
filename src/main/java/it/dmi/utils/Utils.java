@@ -7,15 +7,24 @@ import it.dmi.data.entities.Soglia;
 import it.dmi.data.entities.task.Azione;
 import it.dmi.data.entities.task.Configurazione;
 import it.dmi.data.entities.task.QuartzTask;
+import it.dmi.quartz.ejb.ManagerEJB;
+import it.dmi.quartz.listeners.AzioneJobListener;
+import it.dmi.quartz.listeners.ConfigurazioneJobListener;
+import it.dmi.structure.exceptions.MSDRuntimeException;
 import it.dmi.structure.exceptions.impl.quartz.JobBuildingException;
 import it.dmi.structure.internal.JobType;
+import it.dmi.structure.internal.info.JobInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDataMap;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.impl.matchers.KeyMatcher;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiPredicate;
 
 import static it.dmi.utils.constants.NamingConstants.*;
@@ -31,7 +40,27 @@ public class Utils {
         }
     }
 
-    public static class JobHelper {
+    public static class Jobs {
+
+        public static void addJobListener(ManagerEJB manager, Scheduler scheduler, QuartzTask task, JobInfo jobInfo) {
+            try {
+                switch (task) {
+                    case Azione a ->
+                            scheduler.getListenerManager().addJobListener(
+                                    new AzioneJobListener(a, manager),
+                                    KeyMatcher.keyEquals(jobInfo.jobDetail().getKey())
+                            );
+                    case Configurazione c ->
+                            scheduler.getListenerManager().addJobListener(
+                                    new ConfigurazioneJobListener(c, manager),
+                                    KeyMatcher.keyEquals(jobInfo.jobDetail().getKey())
+                            );
+                }
+            } catch (SchedulerException e) {
+                log.error("Error adding Jobs Listener for Task {}", task.getStringID());
+                throw new MSDRuntimeException(e);
+            }
+        }
 
         public static JobType resolveJobType(QuartzTask task) throws JobBuildingException {
             boolean sql = task.getSqlScript() != null;
@@ -113,7 +142,7 @@ public class Utils {
             log.debug("Nome: {}", name);
         }
         private static void debugID(String id) {
-            log.debug("Job ID: {}", id);
+            log.debug("Jobs ID: {}", id);
         }
         private static void debugScript(String script) {
             log.debug("SQL Script: {}", script);
@@ -206,6 +235,14 @@ public class Utils {
             } catch (NumberFormatException e) {
                 return false;
             }
+        }
+    }
+
+    public static long calculateWaitTime(Configurazione c, JobInfo info) {
+        if (c.getSchedulazione() == null) {
+            return info.trigger().getStartTime().getTime() - System.currentTimeMillis() + (10 * 1000);
+        } else {
+            return TimeUnit.SECONDS.toMillis(3600);
         }
     }
 

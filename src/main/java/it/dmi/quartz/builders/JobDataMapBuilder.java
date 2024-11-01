@@ -26,7 +26,7 @@ public class JobDataMapBuilder {
 
     private static JobDataMap buildJobDataMap(Azione azione) throws JobBuildingException {
         var id = azione.getStringID();
-        JobType jobType = Utils.JobHelper.resolveJobType(azione);
+        JobType jobType = Utils.Jobs.resolveJobType(azione);
         FonteDati fd = azione.getFonteDati();
         SicurezzaFonteDati sfd = azione.getUtenteFonteDati();
         if(devMode)
@@ -35,19 +35,19 @@ public class JobDataMapBuilder {
             case SQL -> {
                 JobDataMap map = new JobDataMap();
                 Utils.DebugLogger.debug(devMode, azione, jobType, fd);
-                Utils.JobHelper.createSQLJobDataMap(azione, map, id, jobType, fd, sfd);
+                Utils.Jobs.createSQLJobDataMap(azione, map, id, jobType, fd, sfd);
                 return map;
             }
             case PROGRAM -> {
                 JobDataMap map = new JobDataMap();
                 Utils.DebugLogger.debug(devMode, azione, jobType);
-                Utils.JobHelper.createPROGRAMJobDataMap(azione, map, id);
+                Utils.Jobs.createPROGRAMJobDataMap(azione, map, id);
                 return map;
             }
             case CLASS -> {
                 JobDataMap map = new JobDataMap();
                 Utils.DebugLogger.debug(devMode, azione, jobType);
-                Utils.JobHelper.createCLASSEJobDataMap(azione, map, id);
+                Utils.Jobs.createCLASSEJobDataMap(azione, map, id);
                 return map;
             }
             default -> {
@@ -60,7 +60,7 @@ public class JobDataMapBuilder {
 
     private static JobDataMap buildJobDataMap(Configurazione config) throws JobBuildingException {
         var id = config.getStringID();
-        JobType jobType = Utils.JobHelper.resolveJobType(config);
+        JobType jobType = Utils.Jobs.resolveJobType(config);
         FonteDati fd = config.getFonteDati();
         SicurezzaFonteDati sfd = config.getUtenteFonteDati();
         if(devMode)
@@ -69,19 +69,19 @@ public class JobDataMapBuilder {
             case SQL -> {
                 JobDataMap map = new JobDataMap();
                 Utils.DebugLogger.debug(devMode, config, jobType, fd);
-                Utils.JobHelper.createSQLJobDataMap(config, map, id, jobType, fd, sfd);
+                Utils.Jobs.createSQLJobDataMap(config, map, id, jobType, fd, sfd);
                 return map;
             }
             case PROGRAM -> {
                 JobDataMap map = new JobDataMap();
                 Utils.DebugLogger.debug(devMode, config, jobType);
-                Utils.JobHelper.createPROGRAMJobDataMap(config, map, id);
+                Utils.Jobs.createPROGRAMJobDataMap(config, map, id);
                 return map;
             }
             case CLASS -> {
                 JobDataMap map = new JobDataMap();
                 Utils.DebugLogger.debug(devMode, config, jobType);
-                Utils.JobHelper.createCLASSEJobDataMap(config, map, id);
+                Utils.Jobs.createCLASSEJobDataMap(config, map, id);
                 return map;
             }
             default -> {

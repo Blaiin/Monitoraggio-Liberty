@@ -6,18 +6,15 @@ import it.dmi.caches.JobDataCache;
 import it.dmi.data.api.service.ControlloService;
 import it.dmi.data.api.service.OutputService;
 import it.dmi.data.entities.Controllo;
-import it.dmi.data.entities.task.Azione;
 import it.dmi.data.entities.task.Configurazione;
-import it.dmi.data.entities.task.QuartzTask;
 import it.dmi.processors.jobs.QueryResolver;
 import it.dmi.quartz.builders.JobInfoBuilder;
-import it.dmi.quartz.listeners.AzioneJobListener;
-import it.dmi.quartz.listeners.ConfigurazioneJobListener;
 import it.dmi.quartz.scheduler.MSDScheduler;
 import it.dmi.structure.exceptions.MSDRuntimeException;
 import it.dmi.structure.exceptions.impl.internal.DependencyInjectionException;
+import it.dmi.structure.exceptions.impl.internal.InvalidStateException;
 import it.dmi.structure.internal.info.JobInfo;
-import it.dmi.utils.NullChecks;
+import it.dmi.utils.Utils;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.DependsOn;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -26,7 +23,6 @@ import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.impl.matchers.KeyMatcher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,80 +60,78 @@ public class ManagerEJB {
 
     //TODO enable full SELECT functionality
     public void scheduleConfigs() {
-        if(configs.isEmpty()) {
-            throw new NullPointerException("No configs found.");
-        }
-        log.info("Trying to start reading configs..");
+        if(configs.isEmpty())
+            throw new InvalidStateException("No configs available to be scheduled.");
+
+        log.info("Scheduling configs..");
         configs.forEach(c -> {
-            var id = c.getStringID();
-            log.debug("Reading confing {}", id);
+            final var id = c.getStringID();
             JobDataCache.createLatch(id + CONFIG, 1);
-            JobInfo jobInfo = JobInfoBuilder.buildJobInfo(scheduler, c);
-            if(NullChecks.requireNonNull(jobInfo)) {
-                log.error("Could not construct job info");
-            } else {
-                addJobListener(scheduler, c, jobInfo);
-                CompletableFuture.runAsync(() -> {
-                try {
-                    scheduler.scheduleJob(jobInfo.jobDetail(), jobInfo.trigger());
-                    if (c.getSchedulazione() == null) {
-                        long waitTime = jobInfo.trigger().getStartTime().getTime()
-                                - System.currentTimeMillis() + (15 * 1000);
-                        log.debug("ASYNC - Timeout: {} s", waitTime / 1000);
-                        if (JobDataCache.awaitData(id + CONFIG,
-                                waitTime,
-                                TimeUnit.MILLISECONDS)) {
-                            log.debug("ASYNC - Undertaking Configurazione n. {}", id);
-                        }
-                    } else {
-                        int maxWaitTime = 3600;
-                        JobDataCache.awaitData(id + CONFIG,
-                                maxWaitTime,
-                                TimeUnit.SECONDS);
-                    }
-                } catch (InterruptedException e) {
-                    log.error("ASYNC - Error while waiting for job to finish. {}", e.getMessage(), e);
-                } catch (SchedulerException e) {
-                    log.error("Error: {}", e.getMessage(), e);
-                    throw new MSDRuntimeException(e);
-                }}, service);
+            final var jobInfo = JobInfoBuilder.buildJobInfo(scheduler, c);
+            if(!jobInfo.isValid()) {
+                log.error("Could not construct job info for Config {}", id);
+                return;
             }
+            log.debug("Processing Config {}", id);
+            Utils.Jobs.addJobListener(this, scheduler, c, jobInfo);
+            CompletableFuture.runAsync(() -> scheduleJob(id, c, jobInfo), service);
         });
     }
 
     //TODO check for usages of Config ID
-    public void scheduleActions(/*String cID,*/ List<String> soglieIDs) {
-        if(soglieIDs.isEmpty()) log.error("List of Azioni to be scheduled was null");
+    private void scheduleActions(/*String cID,*/ List<String> soglieIDs) {
+        if (soglieIDs.isEmpty()) {
+            log.error("List of Azioni to be scheduled is empty");
+            return;
+        }
         soglieIDs.forEach(sID ->
             AzioneQueueCache.get(sID).forEach(a -> {
-                log.debug("Reading azione {} from Soglia {}", a.getStringID(), sID);
-                JobDataCache.createLatch(a.getStringID() + AZIONE, 1);
-                var jobInfo = JobInfoBuilder.buildJobInfo(scheduler, a);
-                if(NullChecks.requireNonNull(jobInfo)) {
-                    log.error("Could not construct job info for Azione {}", a.getStringID());
-                } else {
-                    addJobListener(scheduler, a, jobInfo);
-                    CompletableFuture.runAsync(() -> {
-                        try {
-                            log.info("Scheduling Azione {}", a.getStringID());
-                            scheduler.scheduleJob(jobInfo.jobDetail(), jobInfo.trigger());
-                            int maxWaitTime = 3600;
-                            JobDataCache.awaitData(a.getStringID() + AZIONE,
-                                    maxWaitTime,
-                                    TimeUnit.SECONDS);
-                        } catch (Exception e) {
-                            log.error("Encountered an error while scheduling Azione {}", a.getStringID());
-                            throw new RuntimeException(e);
-                        }
-                    }, service);
+                final var aID = a.getStringID();
+                log.debug("Reading azione {} from Soglia {}", aID, sID);
+                JobDataCache.createLatch(aID + AZIONE, 1);
+                final var jobInfo = JobInfoBuilder.buildJobInfo(scheduler, a);
+                if(!jobInfo.isValid()) {
+                    log.error("Could not construct job info for Azione {}", aID);
+                    return;
                 }
-        }));
+                Utils.Jobs.addJobListener(this, scheduler, a, jobInfo);
+                CompletableFuture.runAsync(() -> {
+                    try {
+                        log.info("Scheduling Azione {}", aID);
+                        scheduler.scheduleJob(jobInfo.jobDetail(), jobInfo.trigger());
+                        int maxWaitTime = 3600;
+                        JobDataCache.awaitData(aID + AZIONE,
+                                maxWaitTime,
+                                TimeUnit.SECONDS);
+                    } catch (Exception e) {
+                        log.error("Encountered an error while scheduling Azione {}", aID);
+                        throw new RuntimeException(e);
+                    }
+                }, service);
+            }));
+    }
+
+
+    private void scheduleJob(String id, Configurazione c, JobInfo jobInfo) {
+        try {
+            scheduler.scheduleJob(jobInfo.jobDetail(), jobInfo.trigger());
+            long waitTime = Utils.calculateWaitTime(c, jobInfo);
+            boolean dataAvailable = JobDataCache
+                    .awaitData(id + CONFIG, waitTime, TimeUnit.MILLISECONDS);
+            log.debug("Config {} scheduled. Data available: {}", id, dataAvailable);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("Error waiting for job to complete. {}", e.getMessage(), e);
+        } catch (SchedulerException e) {
+            log.error("Scheduler error for config {}: {}", id, e.getMessage(), e);
+            throw new MSDRuntimeException(e);
+        }
     }
 
     @Synchronized
     public void onConfigJobCompletion(String cID, List<String> soglieIDs) {
         try {
-            log.debug("CONFIG Job completion verification {}", cID);
+            log.debug("CONFIG Jobs completion verification {}", cID);
             var configOutput = JobDataCache.getOutput(OUTPUT + cID);
             outputService.create(configOutput);
             log.info("Output from Config {} created.", cID);
@@ -150,13 +144,13 @@ public class ManagerEJB {
     //TODO implement logic for config job failure
     @Synchronized
     public void onConfigJobFail(String cID, Throwable e) {
-        log.warn("Job {} encountered an error during execution. {}", cID, e.getMessage(), e);
+        log.warn("Jobs {} encountered an error during execution. {}", cID, e.getMessage(), e);
     }
 
     @Synchronized
     public void onAzioneJobCompletion(String aID) {
         try {
-            log.debug("AZIONE Job completion verification {}", aID);
+            log.debug("AZIONE Jobs completion verification {}", aID);
             var azioneOutput = JobDataCache.getOutput(OUTPUT + aID);
             outputService.create(azioneOutput);
             log.info("Output from Azione {} created.", aID);
@@ -167,27 +161,7 @@ public class ManagerEJB {
 
     @Synchronized
     public void onAzioneJobFail(String aID, Throwable e) {
-        log.warn("Job {} encountered an error during execution. {}", aID, e.getMessage(), e);
-    }
-
-    private void addJobListener(Scheduler scheduler, QuartzTask task, JobInfo jobInfo) {
-        try {
-            switch (task) {
-                case Azione a ->
-                        scheduler.getListenerManager().addJobListener(
-                        new AzioneJobListener(a, this),
-                        KeyMatcher.keyEquals(jobInfo.jobDetail().getKey())
-                );
-                case Configurazione c ->
-                        scheduler.getListenerManager().addJobListener(
-                        new ConfigurazioneJobListener(c, this),
-                        KeyMatcher.keyEquals(jobInfo.jobDetail().getKey())
-                );
-            }
-        } catch (SchedulerException e) {
-            log.error("Error adding Job Listener for Task {}", task.getStringID());
-            throw new MSDRuntimeException(e);
-        }
+        log.warn("Jobs {} encountered an error during execution. {}", aID, e.getMessage(), e);
     }
 
     @PostConstruct

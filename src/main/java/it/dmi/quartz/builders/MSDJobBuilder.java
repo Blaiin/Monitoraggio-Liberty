@@ -13,7 +13,7 @@ public abstract class MSDJobBuilder {
         switch (e) {
             case SchedulerException sE -> log.error("Error while trying to build job: {}", sE.getMessage());
             case JSQLParserException jsqlE -> log.error("Could not determine query functionality. {}", jsqlE.getMessage());
-            case JobTypeException jtE -> log.error("Job type resolution found a problem: {}", jtE.getMessage());
+            case JobTypeException jtE -> log.error("Jobs type resolution found a problem: {}", jtE.getMessage());
             default -> log.error("Error: {}", e.getMessage());
         }
         return new JobInfo(null, null);

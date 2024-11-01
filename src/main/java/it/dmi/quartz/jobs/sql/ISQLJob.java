@@ -143,7 +143,7 @@ public interface ISQLJob extends Job {
                 throw new JobExecutionException(e);
             }
             case JobExecutionException jeE -> {
-                final String msg = "Job encountered an error while executing " + jeE.getMessage();
+                final String msg = "Jobs encountered an error while executing " + jeE.getMessage();
                 log.error(msg, jeE.getCause());
                 throw new JobExecutionException(e);
             }

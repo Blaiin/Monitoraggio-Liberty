@@ -1,9 +1,7 @@
 package it.dmi.utils;
 
 import it.dmi.structure.exceptions.impl.persistence.InvalidCredentialsException;
-import it.dmi.structure.exceptions.impl.quartz.JobBuildingException;
 import it.dmi.structure.internal.info.DBInfo;
-import it.dmi.structure.internal.info.JobInfo;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
@@ -12,31 +10,10 @@ import java.util.Objects;
 @Slf4j
 public class NullChecks {
 
-    /**
-     *
-     * @param jobInfo Record object representing crucial info for org.quartz.Job building
-     * @return true if input was null
-     */
-    public static boolean requireNonNull(JobInfo jobInfo) {
-        try {
-            Objects.requireNonNull(jobInfo);
-            return !checkJobComponents(jobInfo);
-        } catch (JobBuildingException | NullPointerException e) {
-            log.error("Error during Job contruction {}", e.getMessage(), e.getCause());
-            return true;
-        }
-    }
+
     public static void requireNonNull(DBInfo dbInfo) throws InvalidCredentialsException {
         Objects.requireNonNull(dbInfo);
         checkDBComponents(dbInfo);
-    }
-
-    private static boolean checkJobComponents(JobInfo info) throws JobBuildingException {
-        if(info.jobDetail() == null || info.trigger() == null) {
-            log.error("JobInfo has not allowed null values.");
-            throw new JobBuildingException("Necessary info (detail or trigger) not built properly.");
-        }
-        return true;
     }
 
     private static void checkDBComponents(DBInfo info) throws InvalidCredentialsException {
