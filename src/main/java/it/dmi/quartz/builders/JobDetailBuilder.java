@@ -51,6 +51,7 @@ public class JobDetailBuilder {
     private static JobBuilder createSqlJobBuilder(QuartzTask task, JobKey jobKey, JobDataMap jobDataMap)
             throws JSQLParserException {
         QueryType queryType = resolveQuery(task.getSqlScript());
+        log.debug("Query type detected: {}", queryType.getQueryType());
         return switch (queryType) {
             case SELECT -> JobBuilder.newJob(SelectJob.class)
                     .withIdentity(jobKey)
@@ -59,8 +60,9 @@ public class JobDetailBuilder {
                     .withIdentity(jobKey)
                     .usingJobData(jobDataMap);
             case INSERT, UPDATE, DELETE ->
-                    throw new IllegalArgumentException(String.format("QueryType (%s) not supported.", queryType.getQueryType()));
-            default -> throw new IllegalArgumentException("Unexpected QueryType: " + queryType);
+                    throw new IllegalArgumentException(String.format("Query type (%s) not supported yet.",
+                            queryType.getQueryType()));
+            case NOT_SUPPORTED -> throw new IllegalArgumentException("Unexpected Query type: " + queryType);
         };
     }
 
@@ -76,7 +78,6 @@ public class JobDetailBuilder {
                     log.warn("Jobs with key {}, Azione {} already exists, skipping creation.", jobKey, a.getId());
                     throw new SchedulerException(String.format("Jobs for Azione %d already exists.", a.getId()));
                 }
-                default -> throw new SchedulerException("Illegal task: " + task);
             }
         }
     }

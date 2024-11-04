@@ -1,12 +1,12 @@
 package it.dmi.quartz.ejb;
 
-
 import it.dmi.caches.AzioneQueueCache;
 import it.dmi.caches.JobDataCache;
 import it.dmi.data.api.service.ControlloService;
 import it.dmi.data.api.service.OutputService;
 import it.dmi.data.entities.Controllo;
 import it.dmi.data.entities.task.Configurazione;
+import it.dmi.data.entities.task.QuartzTask;
 import it.dmi.processors.jobs.QueryResolver;
 import it.dmi.quartz.builders.JobInfoBuilder;
 import it.dmi.quartz.scheduler.MSDScheduler;
@@ -31,7 +31,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static it.dmi.utils.constants.NamingConstants.*;
+import static it.dmi.utils.constants.NamingConstants.OUTPUT;
 
 @ApplicationScoped
 @Slf4j
@@ -39,7 +39,6 @@ import static it.dmi.utils.constants.NamingConstants.*;
 public class ManagerEJB {
 
     private static int maxMessages = 1;
-
     private static final boolean dev = true;
     private static final boolean countOnly = true;
 
@@ -58,7 +57,6 @@ public class ManagerEJB {
 
     private Scheduler scheduler;
 
-    //TODO enable full SELECT functionality
     public void scheduleConfigs() {
         if(configs.isEmpty())
             throw new InvalidStateException("No configs available to be scheduled.");
@@ -66,7 +64,8 @@ public class ManagerEJB {
         log.info("Scheduling configs..");
         configs.forEach(c -> {
             final var id = c.getStringID();
-            JobDataCache.createLatch(id + CONFIG, 1);
+            final var latchID = c.getLatchID();
+            JobDataCache.createLatch(latchID, 1);
             final var jobInfo = JobInfoBuilder.buildJobInfo(scheduler, c);
             if(!jobInfo.isValid()) {
                 log.error("Could not construct job info for Config {}", id);
@@ -74,12 +73,11 @@ public class ManagerEJB {
             }
             log.debug("Processing Config {}", id);
             Utils.Jobs.addJobListener(this, scheduler, c, jobInfo);
-            CompletableFuture.runAsync(() -> scheduleJob(id, c, jobInfo), service);
+            CompletableFuture.runAsync(() -> scheduleJob(c, jobInfo), service);
         });
     }
 
-    //TODO check for usages of Config ID
-    private void scheduleActions(/*String cID,*/ List<String> soglieIDs) {
+    private void scheduleActions(List<String> soglieIDs) {
         if (soglieIDs.isEmpty()) {
             log.error("List of Azioni to be scheduled is empty");
             return;
@@ -87,38 +85,29 @@ public class ManagerEJB {
         soglieIDs.forEach(sID ->
             AzioneQueueCache.get(sID).forEach(a -> {
                 final var aID = a.getStringID();
+                final var latchID = a.getLatchID();
                 log.debug("Reading azione {} from Soglia {}", aID, sID);
-                JobDataCache.createLatch(aID + AZIONE, 1);
+                JobDataCache.createLatch(latchID, 1);
                 final var jobInfo = JobInfoBuilder.buildJobInfo(scheduler, a);
                 if(!jobInfo.isValid()) {
                     log.error("Could not construct job info for Azione {}", aID);
                     return;
                 }
                 Utils.Jobs.addJobListener(this, scheduler, a, jobInfo);
-                CompletableFuture.runAsync(() -> {
-                    try {
-                        log.info("Scheduling Azione {}", aID);
-                        scheduler.scheduleJob(jobInfo.jobDetail(), jobInfo.trigger());
-                        int maxWaitTime = 3600;
-                        JobDataCache.awaitData(aID + AZIONE,
-                                maxWaitTime,
-                                TimeUnit.SECONDS);
-                    } catch (Exception e) {
-                        log.error("Encountered an error while scheduling Azione {}", aID);
-                        throw new RuntimeException(e);
-                    }
-                }, service);
+                CompletableFuture.runAsync(() -> scheduleJob(a, jobInfo), service);
             }));
     }
 
 
-    private void scheduleJob(String id, Configurazione c, JobInfo jobInfo) {
+    private void scheduleJob(QuartzTask task, JobInfo jobInfo) {
+        final var id = task.getStringID();
+        final var latchID = task.getLatchID();
         try {
             scheduler.scheduleJob(jobInfo.jobDetail(), jobInfo.trigger());
-            long waitTime = Utils.calculateWaitTime(c, jobInfo);
+            long waitTime = Utils.calculateWaitTime(task, jobInfo);
             boolean dataAvailable = JobDataCache
-                    .awaitData(id + CONFIG, waitTime, TimeUnit.MILLISECONDS);
-            log.debug("Config {} scheduled. Data available: {}", id, dataAvailable);
+                    .awaitData(latchID, waitTime, TimeUnit.MILLISECONDS);
+            log.debug("Config {} scheduled. Output data available: {}", id, dataAvailable);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.error("Error waiting for job to complete. {}", e.getMessage(), e);
@@ -135,7 +124,7 @@ public class ManagerEJB {
             var configOutput = JobDataCache.getOutput(OUTPUT + cID);
             outputService.create(configOutput);
             log.info("Output from Config {} created.", cID);
-            scheduleActions(/*cID,*/ soglieIDs);
+            scheduleActions(soglieIDs);
         } catch (Exception e) {
             log.error("Error: {}", e.getMessage(), e);
         }
@@ -164,6 +153,7 @@ public class ManagerEJB {
         log.warn("Jobs {} encountered an error during execution. {}", aID, e.getMessage(), e);
     }
 
+    //TODO enable full SELECT functionality
     @PostConstruct
     public void init() {
         log.debug("Post-construct phase initialized.");
@@ -178,27 +168,29 @@ public class ManagerEJB {
             configs = new ArrayList<>();
             List<Controllo> controls = controlService.getAllOrdered();
             if(!controls.isEmpty()) {
-                log.info("Controls fetched: {}", controls.size());
                 log.debug("Controls fetched: {}", controls.size());
                 for(Controllo controllo : controls) {
                     if (dev) {
-                        if (!countOnly) {
-                            configs.addAll(controllo.getConfigurazioniOrdered()
-                                    .stream()
-                                    .filter(QueryResolver::acceptSelectOrCount)
-                                    .toList());
-                        } else {
+                        if (countOnly) {
+                            //Filter only select COUNT jobs
                             configs.addAll(controllo.getConfigurazioniOrdered()
                                     .stream()
                                     .filter(QueryResolver::acceptCount)
                                     .toList());
+                            return;
                         }
-                    } else {
+                        //Filter only SELECT && select COUNT jobs
                         configs.addAll(controllo.getConfigurazioniOrdered()
                                 .stream()
-                                .filter(QueryResolver::validateAndLog)
+                                .filter(QueryResolver::acceptSelectOrCount)
                                 .toList());
+                        return;
                     }
+                    //NO FILTER
+                    configs.addAll(controllo.getConfigurazioniOrdered()
+                            .stream()
+                            .filter(QueryResolver::validateAndLog)
+                            .toList());
                 }
             }
             log.debug("ManagerEJB initialized.");

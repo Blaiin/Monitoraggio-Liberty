@@ -35,7 +35,6 @@ public class AzioneJobListener implements JobListener {
 
     @Override
     public void jobWasExecuted (JobExecutionContext jobExecutionContext, JobExecutionException e) {
-        log.debug("Manager instance: {}", manager);
         if (e != null) {
             manager.onAzioneJobFail(aID, e);
         } else {

@@ -1,7 +1,5 @@
 package it.dmi.quartz.builders;
 
-import it.dmi.data.entities.FonteDati;
-import it.dmi.data.entities.SicurezzaFonteDati;
 import it.dmi.data.entities.task.Azione;
 import it.dmi.data.entities.task.Configurazione;
 import it.dmi.data.entities.task.QuartzTask;
@@ -27,15 +25,13 @@ public class JobDataMapBuilder {
     private static JobDataMap buildJobDataMap(Azione azione) throws JobBuildingException {
         var id = azione.getStringID();
         JobType jobType = Utils.Jobs.resolveJobType(azione);
-        FonteDati fd = azione.getFonteDati();
-        SicurezzaFonteDati sfd = azione.getUtenteFonteDati();
         if(devMode)
             log.debug("Dev Mode is enabled, logging sensitive data.");
         switch (jobType) {
             case SQL -> {
                 JobDataMap map = new JobDataMap();
-                Utils.DebugLogger.debug(devMode, azione, jobType, fd);
-                Utils.Jobs.createSQLJobDataMap(azione, map, id, jobType, fd, sfd);
+                Utils.DebugLogger.debug(devMode, azione, jobType, azione.getFonteDati());
+                Utils.Jobs.createSQLJobDataMap(azione, map, id, jobType, azione.getFonteDati(), azione.getUtenteFonteDati());
                 return map;
             }
             case PROGRAM -> {
@@ -61,15 +57,13 @@ public class JobDataMapBuilder {
     private static JobDataMap buildJobDataMap(Configurazione config) throws JobBuildingException {
         var id = config.getStringID();
         JobType jobType = Utils.Jobs.resolveJobType(config);
-        FonteDati fd = config.getFonteDati();
-        SicurezzaFonteDati sfd = config.getUtenteFonteDati();
         if(devMode)
             log.debug("Dev Mode is enabled, logging sensitive data.");
         switch (jobType) {
             case SQL -> {
                 JobDataMap map = new JobDataMap();
-                Utils.DebugLogger.debug(devMode, config, jobType, fd);
-                Utils.Jobs.createSQLJobDataMap(config, map, id, jobType, fd, sfd);
+                Utils.DebugLogger.debug(devMode, config, jobType, config.getFonteDati());
+                Utils.Jobs.createSQLJobDataMap(config, map, id, jobType, config.getFonteDati(), config.getUtenteFonteDati());
                 return map;
             }
             case PROGRAM -> {

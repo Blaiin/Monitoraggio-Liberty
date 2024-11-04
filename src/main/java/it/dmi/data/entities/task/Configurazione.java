@@ -10,6 +10,8 @@ import lombok.Setter;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static it.dmi.utils.constants.NamingConstants.CONFIG;
+
 @Entity
 @Table(name = "\"MON_Configurazione\"")
 @Getter
@@ -79,6 +81,10 @@ public non-sealed class Configurazione implements QuartzTask {
         this.fonteDati = fonteDati;
         this.utenteFonteDati = utenteFonteDati;
         this.ordineConfigurazione = ordineConfigurazione;
+    }
+
+    public String getLatchID() {
+        return this.getStringID() + CONFIG;
     }
 
     public String getStringID() {

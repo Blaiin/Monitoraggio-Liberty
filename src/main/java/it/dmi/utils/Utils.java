@@ -32,11 +32,19 @@ import static it.dmi.utils.constants.NamingConstants.*;
 @Slf4j
 public class Utils {
 
-    public static class StringHelper {
+    public static class Strings {
 
         public static String capitalize(String s) {
             if (s == null) throw new IllegalArgumentException("String to capitalize cannot be null");
             return s.substring(0, 1).toUpperCase() + s.substring(1);
+        }
+
+        public static String toReadableID(String key) {
+            if (key.contains(CONFIG))
+                return capitalize(CONFIG) + " " + key.replace(CONFIG, "");
+            if (key.contains(AZIONE))
+                return capitalize(AZIONE) + " " +key.replace(AZIONE, "");
+            return null;
         }
     }
 
@@ -67,8 +75,22 @@ public class Utils {
             boolean program = task.getProgramma() != null;
             boolean classe = task.getClasse() != null;
             if((sql && program) || (sql && classe) || (program && classe)) {
-                log.error("Configurazione n. {} has multiple conflicting fields set, skipping creation.", task.getId());
-                throw new JobBuildingException("Configurazione has multiple conflicting fields set, only one allowed.");
+                String logMsg = "%s {} has multiple conflicting fields set, skipping creation."
+                    , excMsg = "%s has multiple conflicting fields set, only one allowed.";
+                switch (task) {
+                    case Azione a -> {
+                        final var simpleName = a.getClass().getSimpleName();
+                        logMsg = String.format(logMsg, simpleName);
+                        excMsg = String.format(excMsg, simpleName);
+                    }
+                    case Configurazione c -> {
+                        final var simpleName = c.getClass().getSimpleName();
+                        logMsg = String.format(logMsg, simpleName);
+                        excMsg = String.format(excMsg, simpleName);
+                    }
+                }
+                log.error(logMsg, task.getId());
+                throw new JobBuildingException(excMsg);
             }
             if(sql) return JobType.SQL;
             if(program) return JobType.PROGRAM;
@@ -238,15 +260,21 @@ public class Utils {
         }
     }
 
-    public static long calculateWaitTime(Configurazione c, JobInfo info) {
-        if (c.getSchedulazione() == null) {
-            return info.trigger().getStartTime().getTime() - System.currentTimeMillis() + (10 * 1000);
-        } else {
-            return TimeUnit.SECONDS.toMillis(3600);
+    public static long calculateWaitTime(QuartzTask task, JobInfo info) {
+        final var maxDelay = TimeUnit.SECONDS.toMillis(3600);
+        switch (task) {
+            case Configurazione c -> {
+                if (c.getSchedulazione() == null)
+                    return info.trigger().getStartTime().getTime() - System.currentTimeMillis() + (10 * 1000);
+                else return maxDelay;
+            }
+            case Azione ignored -> {
+                return maxDelay;
+            }
         }
     }
 
-    public static <V> List<V> typeCheckAndReturn(Object toSanitize, Class<V> transformTo) {
+    public static <V> List<V> transformAndReturn(Object toSanitize, Class<V> transformTo) {
         Objects.requireNonNull(toSanitize, "Sanitization failed.");
         log.debug("Sanitizing output");
         var sanitized = new ArrayList<V>();

@@ -25,28 +25,31 @@ public class JobTriggerBuilder {
     }
 
     private static Trigger buildTrigger(Azione azione, TriggerKey triggerKey) {
-        log.debug("Scheduling trigger for Azione {}", azione.getId());
-        return TriggerBuilder.newTrigger()
+        var trigger = TriggerBuilder.newTrigger()
                 .withIdentity(triggerKey)
                 .startAt(DateBuilder.futureDate(defaultAzioneDelay, DateBuilder.IntervalUnit.SECOND))
                 .build();
+        log.debug("Trigger for Azione {} created.", azione.getId());
+        return trigger;
     }
 
     private static Trigger buildTrigger(Configurazione config, TriggerKey triggerKey) {
         var nullOrEmpty = NullChecks.nullOrEmpty(config.getSchedulazione());
         if (!nullOrEmpty) {
-            log.debug("Scheduling trigger for config . {}", config.getId());
-            return TriggerBuilder.newTrigger()
+            var trigger = TriggerBuilder.newTrigger()
                     .withIdentity(triggerKey)
                     .withSchedule(CronScheduleBuilder
                         .cronSchedule(config.getSchedulazione()))
                     .build();
+            log.debug("Trigger for Config {} created.", config.getId());
+            return trigger;
         } else {
-            log.debug("Scheduling trigger for config n. {} in {} seconds.", config.getId(), defaultConfigDelay);
-            return TriggerBuilder.newTrigger()
+            var trigger = TriggerBuilder.newTrigger()
                     .withIdentity(triggerKey)
                     .startAt(DateBuilder.futureDate(defaultConfigDelay, DateBuilder.IntervalUnit.SECOND))
                     .build();
+            log.debug("Trigger for Config {} ({}s delay) created.", config.getId(), defaultConfigDelay);
+            return trigger;
         }
     }
 }

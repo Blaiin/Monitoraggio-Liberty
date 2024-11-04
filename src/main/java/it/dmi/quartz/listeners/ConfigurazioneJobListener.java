@@ -40,17 +40,16 @@ public class ConfigurazioneJobListener implements JobListener {
     //TODO resolve Soglie not retrievable from jobDataMap
     @Override
     public void jobWasExecuted (JobExecutionContext jobExecutionContext, JobExecutionException e) {
-        log.debug("Manager instance: {}", manager);
         if (e != null) {
             manager.onConfigJobFail(cID, e);
         }
         log.debug("Jobs for Config {} executed.", cID);
         var fromJobDataMap = jobExecutionContext.getJobDetail().getJobDataMap().get(SOGLIE + cID);
-        List<String> soglieIDs = Utils.typeCheckAndReturn(fromJobDataMap, String.class);
+        List<String> soglieIDs = Utils.transformAndReturn(fromJobDataMap, String.class);
         if (!soglieIDs.isEmpty()) {
             manager.onConfigJobCompletion(cID, soglieIDs);
         } else {
-            log.warn("Soglie not retrievable for Config {}.", cID);
+            log.warn("No retrievable Soglie for Config {}.", cID);
         }
     }
 }

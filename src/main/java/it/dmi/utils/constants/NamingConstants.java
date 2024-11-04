@@ -6,6 +6,8 @@ public class NamingConstants {
 
     public static final String CONFIG = "config";
 
+    public static final String AZIONE = "azione";
+
     public static final String TASK = "TASK";
 
     public static final String SOGLIE = "soglie";
@@ -36,8 +38,6 @@ public class NamingConstants {
 
         //THREAD POOL
         public static final String WORKER = "V_Worker";
-        public static final String AZIONE = "Azione_";
-        public static final String CONFIGURAZIONE = "Configurazione_";
 
         //JOBS
 

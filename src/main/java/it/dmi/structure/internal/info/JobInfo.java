@@ -5,6 +5,7 @@ import org.quartz.Trigger;
 
 public record JobInfo(JobDetail jobDetail, Trigger trigger) implements Info {
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isValid() {
         return jobDetail != null && trigger != null;
     }

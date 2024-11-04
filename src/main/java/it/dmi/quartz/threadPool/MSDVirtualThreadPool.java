@@ -9,14 +9,14 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static it.dmi.utils.constants.NamingConstants.*;
+import static it.dmi.utils.constants.NamingConstants.WORKER;
 
 @Slf4j
 public class MSDVirtualThreadPool implements ThreadPool {
 
     private ExecutorService executorService;
     private final AtomicBoolean isShutdown = new AtomicBoolean(false);
-    private String schedulerInstanceName;
+    private String schedulerInstanceName = "MSD_SCHEDULER";
 
     @Override
     public int getPoolSize() {
@@ -93,18 +93,16 @@ public class MSDVirtualThreadPool implements ThreadPool {
 
     final class MSDVirtualThreadFactory implements ThreadFactory {
 
-        private final String baseThreadName;
+        private final String threadName;
         private final AtomicInteger threadUsageCount = new AtomicInteger(0);
 
         MSDVirtualThreadFactory() {
-            if(schedulerInstanceName.contains(AZIONE.toUpperCase())) this.baseThreadName = AZIONE + WORKER;
-            else if (schedulerInstanceName.contains(CONFIGURAZIONE.toUpperCase())) this.baseThreadName = CONFIGURAZIONE + WORKER;
-            else this.baseThreadName = WORKER;
+            this.threadName = schedulerInstanceName + WORKER;
         }
 
         @Override
         public Thread newThread(@NotNull Runnable r) {
-            return Thread.ofVirtual().name(baseThreadName + threadUsageCount.incrementAndGet()).unstarted(r);
+            return Thread.ofVirtual().name(threadName + threadUsageCount.incrementAndGet()).unstarted(r);
         }
     }
 }

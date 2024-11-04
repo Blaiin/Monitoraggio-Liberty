@@ -84,9 +84,15 @@ public interface ISQLJob extends Job {
     }
 
     default OutputDTO finalizeOutputDTO(OutputDTO out, Map<String, ?> results) {
-        log.debug("Finalizing (select query) output for Config {}", out.getConfigurazioneId());
+        if (out.getConfigurazioneId() != null)
+            log.debug("Finalizing (select) output for Config {}", out.getConfigurazioneId());
+        if (out.getAzioneId() != null)
+            log.debug("Finalizing (select) output for Azione {}", out.getAzioneId());
         if(results.isEmpty()) {
-            log.debug("Esito (select query) was negative for Config {}", out.getConfigurazioneId());
+            if (out.getConfigurazioneId() != null)
+                log.warn("Esito (select) was negative for Config {}", out.getConfigurazioneId());
+            if (out.getAzioneId() != null)
+                log.warn("Esito (select) was negative for Azione {}", out.getAzioneId());
             out.setEsito(NEGATIVE.getValue());
         }
         else out.setEsito(POSITIVE.getValue());
@@ -98,9 +104,15 @@ public interface ISQLJob extends Job {
     }
 
     default OutputDTO finalizeOutputDTO(OutputDTO out, int result) {
-        log.debug("Finalizing (select count query) output for Config {}", out.getConfigurazioneId());
+        if (out.getConfigurazioneId() != null)
+            log.debug("Finalizing (select count) output for Config {}", out.getConfigurazioneId());
+        if (out.getAzioneId() != null)
+            log.debug("Finalizing (select count) output for Azione {}", out.getAzioneId());
         if(result == 0) {
-            log.debug("Esito (select count query) was negative for Config {}", out.getConfigurazioneId());
+            if (out.getConfigurazioneId() != null)
+                log.warn("Esito (select count) was negative for Config {}", out.getConfigurazioneId());
+            if (out.getAzioneId() != null)
+                log.warn("Esito (select count) was negative for Azione {}", out.getAzioneId());
             out.setEsito(NEGATIVE.getValue());
         }
         else out.setEsito(POSITIVE.getValue());
@@ -112,43 +124,48 @@ public interface ISQLJob extends Job {
     }
 
     default void cacheOutputDTO(String id, OutputDTO out) {
-        if (out != null) {
+        if (out.getAzioneId() == null && out.getConfigurazioneId() == null) {
+            log.error("Invalid generated output, both id fields were null");
+            return;
+        }
+        if (out.getConfigurazioneId() != null) {
             log.debug("Caching output for Config {}", out.getConfigurazioneId());
             JobDataCache.put(OUTPUT + id, out);
             return;
         }
-        log.warn("Output for Config {} was null.", id);
+        log.debug("Caching output for Azione {}", out.getAzioneId());
+        JobDataCache.put(OUTPUT + id, out);
     }
 
     default void resolveException (Throwable e) throws JobExecutionException {
         switch (e) {
             case QueryFailureException qfE -> {
                 final String msg = "Error while executing query. " + qfE.getMessage();
-                log.error(msg, qfE.getCause());
+                log.error(msg, qfE);
                 throw new JobExecutionException(msg, e);
             }
             case DatabaseConnectionException dcE -> {
                 final String msg = "Error while connecting to database. " + dcE.getMessage();
-                log.error(msg, dcE.getCause());
+                log.error(msg, dcE);
                 throw new JobExecutionException(msg, e);
             }
             case InvalidCredentialsException icE -> {
                 final String msg = "Could not connect to database. " + icE.getMessage();
-                log.error(msg, e.getCause());
+                log.error(msg, icE);
                 throw new JobExecutionException(e);
             }
             case SQLException sqlE -> {
                 final String msg = "Query execution had problems. " + sqlE.getMessage();
-                log.error(msg, sqlE.getCause());
+                log.error(msg, sqlE);
                 throw new JobExecutionException(e);
             }
             case JobExecutionException jeE -> {
                 final String msg = "Jobs encountered an error while executing " + jeE.getMessage();
-                log.error(msg, jeE.getCause());
+                log.error(msg, jeE);
                 throw new JobExecutionException(e);
             }
             default -> {
-                final String msg = String.format("%s [Nested exception: %s]", e.getMessage(), e.getCause());
+                final String msg = String.format("%s [Nested exception: %s]", e.getMessage(), e);
                 log.error(msg);
                 throw new JobExecutionException(e);
             }
@@ -176,23 +193,12 @@ public interface ISQLJob extends Job {
         throw new IllegalArgumentException(message);
     }
 
-    @SuppressWarnings("unused")
-    private void loadDriverClass(String driverClassName) {
-        try {
-            Class.forName(driverClassName);
-            log.debug("{} driver loaded successfully.", driverClassName);
-        } catch (ClassNotFoundException e) {
-            log.error("Failed to load driver class: {}", driverClassName, e);
-            throw new RuntimeException(e);
-        }
-    }
-
     private void loadDriverClass(Map.Entry<String, String> entry) {
         try {
             Class.forName(entry.getValue());
-            log.debug("{} driver loading was successful.", Utils.StringHelper.capitalize(entry.getKey()));
+            log.debug("{} driver loading was successful.", Utils.Strings.capitalize(entry.getKey()));
         } catch (ClassNotFoundException e) {
-            log.error("Loading driver class failed: {}", Utils.StringHelper.capitalize(entry.getKey()), e);
+            log.error("Loading driver class failed: {}", Utils.Strings.capitalize(entry.getKey()), e);
             throw new RuntimeException(e);
         }
     }
