@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import static it.dmi.utils.constants.NamingConstants.AZIONE;
+
 @Entity
 @Table(name = "\"MON_Azione\"")
 @Getter
@@ -81,6 +83,9 @@ public non-sealed class Azione implements QuartzTask {
         else return "Azione: not valid.";
     }
 
+    public String getLatchID() {
+        return this.getStringID() + AZIONE;
+    }
     @Override
     public String getStringID() {
         return String.valueOf(this.id);
