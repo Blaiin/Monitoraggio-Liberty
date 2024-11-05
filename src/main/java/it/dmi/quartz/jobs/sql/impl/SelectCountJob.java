@@ -1,4 +1,4 @@
-package it.dmi.quartz.jobs.sql;
+package it.dmi.quartz.jobs.sql.impl;
 
 import it.dmi.caches.JobDataCache;
 import it.dmi.data.entities.task.Azione;
@@ -6,8 +6,11 @@ import it.dmi.data.entities.task.Configurazione;
 import it.dmi.data.entities.task.QuartzTask;
 import it.dmi.processors.ResultsProcessor;
 import it.dmi.processors.thresholds.ThresHoldComparator;
+import it.dmi.quartz.jobs.sql.BaseSQLJob;
 import it.dmi.structure.internal.info.DBInfo;
+import it.dmi.utils.jobs.OutputUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -17,7 +20,7 @@ import java.sql.ResultSet;
 import static it.dmi.utils.constants.NamingConstants.*;
 
 @Slf4j
-public class SelectCountJob implements ISQLJob {
+public class SelectCountJob extends BaseSQLJob implements Job {
 
     @Override
     public void execute (JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -28,7 +31,6 @@ public class SelectCountJob implements ISQLJob {
             case Azione a -> executeAzioneCountQuery(id, a, dataMap);
             case Configurazione c -> executeConfigCountQuery(id, c, dataMap);
         }
-
     }
 
     private void executeAzioneCountQuery(String id, Azione azione, JobDataMap dataMap) throws JobExecutionException {
@@ -37,9 +39,9 @@ public class SelectCountJob implements ISQLJob {
             return;
         }
         log.info("Exec job -> Azione {}", id);
-        DBInfo dbInfo = buildDBInfo(dataMap);
+        var dbInfo = DBInfo.build(dataMap);
         loadDriver(dbInfo);
-        var output = initializeOutputDTO(azione);
+        var output = OutputUtils.initializeOutputDTO(azione);
         try (ResultSet resultSet = queryDB(dbInfo)) {
             int result = ResultsProcessor.processCountResultSet(resultSet);
             if (result == 0) {
@@ -47,8 +49,8 @@ public class SelectCountJob implements ISQLJob {
                 return;
             }
             log.info("(A) Data found.");
-            output = finalizeOutputDTO(output, result);
-            cacheOutputDTO(id, output);
+            OutputUtils.finalizeOutputDTO(output, result);
+            OutputUtils.cacheOutputDTO(id, output);
         }  catch (Exception e) {
             resolveException(e);
         } finally {
@@ -63,9 +65,9 @@ public class SelectCountJob implements ISQLJob {
         }
         log.info("Exec job -> Config {}, name: {}.",
                 id, dataMap.getString(NOME));
-        DBInfo dbInfo = buildDBInfo(dataMap);
+        DBInfo dbInfo = DBInfo.build(dataMap);
         loadDriver(dbInfo);
-        var output = initializeOutputDTO(config);
+        var output = OutputUtils.initializeOutputDTO(config);
         try (ResultSet resultSet = queryDB(dbInfo)) {
             int result = ResultsProcessor.processCountResultSet(resultSet);
             if (result == 0) {
@@ -73,8 +75,8 @@ public class SelectCountJob implements ISQLJob {
                 return;
             }
             log.info("(C) Data found.");
-            output = finalizeOutputDTO(output, result);
-            cacheOutputDTO(id, output);
+            OutputUtils.finalizeOutputDTO(output, result);
+            OutputUtils.cacheOutputDTO(id, output);
             if (config.getSoglie().isEmpty()) {
                 log.warn("No thresholds for Config {}.", config.getId());
             } else {

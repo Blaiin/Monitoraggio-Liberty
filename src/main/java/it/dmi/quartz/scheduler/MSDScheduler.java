@@ -35,18 +35,14 @@ public class MSDScheduler {
             var configsList = configurazioneService.getAll();
             int configCount = configsList.size();
             log.info("Detected {} possible CONFIGS to be scheduled.", configCount);
-
             int azioniCount = configsList.stream()
                     .flatMap(Configurazione::getSoglieAsStream)
                     .mapToInt(Soglia::getAzioniSize)
                     .sum();
             log.info("Detected {} possible AZIONI to be executed.", azioniCount);
-
             var props = PropsLoader.loadQuartzProperties();
             StdSchedulerFactory configFactory = new StdSchedulerFactory(props);
-
             msdScheduler = configFactory.getScheduler();
-
             msdScheduler.start();
 
             log.debug("Initialized Quartz schedulers.");

@@ -16,7 +16,6 @@ public class MSDVirtualThreadPool implements ThreadPool {
 
     private ExecutorService executorService;
     private final AtomicBoolean isShutdown = new AtomicBoolean(false);
-    private String schedulerInstanceName = "MSD_SCHEDULER";
 
     @Override
     public int getPoolSize() {
@@ -29,7 +28,6 @@ public class MSDVirtualThreadPool implements ThreadPool {
 
     @Override
     public void setInstanceName (String s) {
-        this.schedulerInstanceName = s;
     }
 
     @Override
@@ -91,13 +89,13 @@ public class MSDVirtualThreadPool implements ThreadPool {
         return Integer.MAX_VALUE;
     }
 
-    final class MSDVirtualThreadFactory implements ThreadFactory {
+    private static final class MSDVirtualThreadFactory implements ThreadFactory {
 
         private final String threadName;
         private final AtomicInteger threadUsageCount = new AtomicInteger(0);
 
         MSDVirtualThreadFactory() {
-            this.threadName = schedulerInstanceName + WORKER;
+            this.threadName = "MSD_" + WORKER;
         }
 
         @Override
