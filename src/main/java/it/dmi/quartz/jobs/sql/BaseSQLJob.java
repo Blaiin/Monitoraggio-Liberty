@@ -1,5 +1,6 @@
 package it.dmi.quartz.jobs.sql;
 
+import it.dmi.structure.exceptions.impl.internal.InvalidStateException;
 import it.dmi.structure.exceptions.impl.persistence.DatabaseConnectionException;
 import it.dmi.structure.exceptions.impl.persistence.InvalidCredentialsException;
 import it.dmi.structure.exceptions.impl.persistence.QueryFailureException;
@@ -32,6 +33,7 @@ public abstract class BaseSQLJob {
             case SQLException sqlE -> "Query execution had problems. " + sqlE.getMessage();
             case JobExecutionException jeE -> "Jobs encountered an error while executing. " + jeE.getMessage();
             case NullPointerException npE -> "Necessary value was null. " + npE.getMessage();
+            case InvalidStateException isE -> "Active state for object was illegal." + isE.getMessage();
             default -> String.format("Nested exception: %s", exc.getMessage());
         };
         handleException(msg, exc);

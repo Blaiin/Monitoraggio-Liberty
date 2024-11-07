@@ -1,5 +1,6 @@
 package it.dmi.quartz.jobs.sql.impl;
 
+import it.dmi.caches.AzioneQueueCache;
 import it.dmi.caches.JobDataCache;
 import it.dmi.data.entities.task.Azione;
 import it.dmi.data.entities.task.Configurazione;
@@ -16,6 +17,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import java.sql.ResultSet;
+import java.util.List;
 
 import static it.dmi.utils.constants.NamingConstants.*;
 
@@ -53,18 +55,17 @@ public class SelectCountJob extends BaseSQLJob implements Job {
             OutputUtils.cacheOutputDTO(id, output);
         }  catch (Exception e) {
             resolveException(e);
-        } finally {
-            JobDataCache.countDown(id + AZIONE);
         }
     }
 
-    private void executeConfigCountQuery(String id, Configurazione config, JobDataMap dataMap) throws JobExecutionException {
+    private void executeConfigCountQuery(String cID, Configurazione config, JobDataMap dataMap)
+            throws JobExecutionException {
         if(config == null) {
             log.error("Config cannot be null since job execution depends on it.");
             return;
         }
         log.info("Exec job -> Config {}, name: {}.",
-                id, dataMap.getString(NOME));
+                cID, dataMap.getString(NOME));
         DBInfo dbInfo = DBInfo.build(dataMap);
         loadDriver(dbInfo);
         var output = OutputUtils.initializeOutputDTO(config);
@@ -76,16 +77,19 @@ public class SelectCountJob extends BaseSQLJob implements Job {
             }
             log.info("(C) Data found.");
             OutputUtils.finalizeOutputDTO(output, result);
-            OutputUtils.cacheOutputDTO(id, output);
-            if (config.getSoglie().isEmpty()) {
+            OutputUtils.cacheOutputDTO(cID, output);
+            if (config.getSoglie() == null || config.getSoglie().isEmpty())
                 log.warn("No thresholds for Config {}.", config.getId());
-            } else {
-                dataMap.put(SOGLIE + id, ThresHoldComparator.compareCountThresholds(config, result));
+            else {
+                List<String> soglieIDs = ThresHoldComparator.compareCountTH(config, result);
+                if (!soglieIDs.isEmpty()) {
+                    log.info("NOT EMPTY SOGLIE IDS LIST (Config {}): {}", cID, soglieIDs);
+                    AzioneQueueCache.put(SOGLIE + cID, soglieIDs);
+                } else log.error("EMPTY SOGLIE IDS LIST (Config {})", cID);
             }
+            JobDataCache.countDown(cID + CONFIG);
         }  catch (Exception e) {
             resolveException(e);
-        } finally {
-            JobDataCache.countDown(id + CONFIG);
         }
     }
 }

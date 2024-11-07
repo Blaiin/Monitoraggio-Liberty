@@ -68,9 +68,9 @@ public non-sealed class Azione implements QuartzTask {
     private int ordineAzione;
 
     public void queue() {
-        var cID = soglia.getConfigurazione().getStringID(); var sID = soglia.getStringID();
+        var cID = soglia.getConfigurazione().getStrID(); var sID = soglia.getStringID();
         log.debug("Queueing Azione {} for Soglia {}, Config {}", this.id, sID, cID);
-        AzioneQueueCache.put(sID, this);
+        AzioneQueueCache.queue(sID, this);
     }
 
     @Override
@@ -84,10 +84,10 @@ public non-sealed class Azione implements QuartzTask {
     }
 
     public String getLatchID() {
-        return this.getStringID() + AZIONE;
+        return this.getStrID() + AZIONE;
     }
     @Override
-    public String getStringID() {
+    public String getStrID() {
         return String.valueOf(this.id);
     }
 }

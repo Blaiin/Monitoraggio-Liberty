@@ -83,7 +83,7 @@ public class JobDetailBuilder {
     }
 
     private static JobType getJobType(JobDataMap jobDataMap, QuartzTask task) {
-        return JobType.valueOf(jobDataMap.getString(JOB_TYPE + task.getStringID()));
+        return JobType.valueOf(jobDataMap.getString(JOB_TYPE + task.getStrID()));
     }
 
 }

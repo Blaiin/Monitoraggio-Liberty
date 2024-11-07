@@ -16,7 +16,7 @@ import static it.dmi.utils.constants.NamingConstants.*;
 public class JobInfoBuilder extends MSDJobBuilder {
 
     public static JobInfo buildJobInfo(Scheduler scheduler, QuartzTask task) {
-        var id = task.getStringID();
+        var id = task.getStrID();
         try {
             var identity = resolveJobAndGroupName(id, task);
             JobDetail jobDetail = JobDetailBuilder.buildJobDetail(scheduler, task,
@@ -25,7 +25,7 @@ public class JobInfoBuilder extends MSDJobBuilder {
                     new TriggerKey(identity.triggerName(), identity.triggerGroup()));
             Objects.requireNonNull(jobDetail, "JobDetail is required.");
             Objects.requireNonNull(trigger, "Trigger is required.");
-            log.info("Jobs scheduled for {} {}.", identity.name(), task.getStringID());
+            log.info("Jobs scheduled for {} {}.", identity.name(), task.getStrID());
             return new JobInfo(jobDetail, trigger);
         } catch (Exception e) {
             return resolveJobBuildingException(e);

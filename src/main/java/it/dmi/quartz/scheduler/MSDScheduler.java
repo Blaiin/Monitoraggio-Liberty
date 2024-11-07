@@ -1,7 +1,7 @@
 package it.dmi.quartz.scheduler;
 
 import it.dmi.data.api.service.ConfigurazioneService;
-import it.dmi.data.entities.Soglia;
+import it.dmi.data.dto.SogliaDTO;
 import it.dmi.data.entities.task.Configurazione;
 import it.dmi.structure.exceptions.MSDRuntimeException;
 import it.dmi.utils.file.PropsLoader;
@@ -36,8 +36,8 @@ public class MSDScheduler {
             int configCount = configsList.size();
             log.info("Detected {} possible CONFIGS to be scheduled.", configCount);
             int azioniCount = configsList.stream()
-                    .flatMap(Configurazione::getSoglieAsStream)
-                    .mapToInt(Soglia::getAzioniSize)
+                    .flatMap(Configurazione::getSoglieDTOAsStream)
+                    .mapToInt(SogliaDTO::getAzioniSize)
                     .sum();
             log.info("Detected {} possible AZIONI to be executed.", azioniCount);
             var props = PropsLoader.loadQuartzProperties();

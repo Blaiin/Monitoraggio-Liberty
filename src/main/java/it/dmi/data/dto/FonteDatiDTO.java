@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FonteDatiDTO implements IDTO {
+public class FonteDatiDTO implements IDTO<FonteDatiDTO, FonteDati> {
 
     private Long id;
     private String descrizione;
@@ -21,19 +21,20 @@ public class FonteDatiDTO implements IDTO {
     private String jndiName;
 
     @Override
-    public <T> IDTO fromEntity (T entity) {
-        return entity instanceof FonteDati fd ? new FonteDatiDTO(
-                fd.getId(),
-                fd.getDescrizione(),
-                fd.getNomeDriver(),
-                fd.getNomeClasse(),
-                fd.getUrl(),
-                fd.getJndiName()
-        ) : null;
+    public FonteDatiDTO fromEntity(FonteDati fd) {
+        if (fd != null) {
+            this.id = fd.getId();
+            this.descrizione = fd.getDescrizione();
+            this.nomeDriver = fd.getNomeDriver();
+            this.nomeClasse = fd.getNomeClasse();
+            this.url = fd.getUrl();
+            this.jndiName = fd.getJndiName();
+            return this;
+        } return null;
     }
 
     @Override
-    public FonteDati toEntity () {
+    public FonteDati toEntity() {
         return new FonteDati(
                 this.id,
                 this.descrizione,

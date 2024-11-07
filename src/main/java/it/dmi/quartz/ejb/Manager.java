@@ -31,12 +31,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static it.dmi.utils.constants.NamingConstants.AZIONE;
 import static it.dmi.utils.constants.NamingConstants.OUTPUT;
 
 @ApplicationScoped
 @Slf4j
 @DependsOn("MSDScheduler")
-public class ManagerEJB {
+public class Manager {
 
     private static int maxMessages = 1;
     private static final boolean dev = true;
@@ -63,7 +64,7 @@ public class ManagerEJB {
 
         log.info("Scheduling configs..");
         configs.forEach(c -> {
-            final var id = c.getStringID();
+            final var id = c.getStrID();
             final var latchID = c.getLatchID();
             JobDataCache.createLatch(latchID, 1);
             final var jobInfo = JobInfoBuilder.buildJobInfo(scheduler, c);
@@ -83,8 +84,8 @@ public class ManagerEJB {
             return;
         }
         soglieIDs.forEach(sID ->
-            AzioneQueueCache.get(sID).forEach(a -> {
-                final var aID = a.getStringID();
+            AzioneQueueCache.getAzioni(sID).ifPresentOrElse(l -> l.forEach(a -> {
+                final var aID = a.getStrID();
                 final var latchID = a.getLatchID();
                 log.debug("Reading azione {} from Soglia {}", aID, sID);
                 JobDataCache.createLatch(latchID, 1);
@@ -95,12 +96,13 @@ public class ManagerEJB {
                 }
                 Utils.Jobs.addJobListener(this, scheduler, a, jobInfo);
                 CompletableFuture.runAsync(() -> scheduleJob(a, jobInfo), service);
-            }));
+            }), () -> log.debug("Could not find any Job (Azione) to be scheduled, " +
+                    "probably no Soglia for Config were present")));
     }
 
 
     private void scheduleJob(QuartzTask task, JobInfo jobInfo) {
-        final var id = task.getStringID();
+        final var id = task.getStrID();
         final var latchID = task.getLatchID();
         try {
             scheduler.scheduleJob(jobInfo.jobDetail(), jobInfo.trigger());
@@ -120,7 +122,7 @@ public class ManagerEJB {
     @Synchronized
     public void onConfigJobCompletion(String cID, List<String> soglieIDs) {
         try {
-            log.debug("CONFIG Jobs completion verification {}", cID);
+            log.debug("CONFIG Job completion verification {}", cID);
             var configOutput = JobDataCache.getOutput(OUTPUT + cID);
             outputService.create(configOutput);
             log.info("Output from Config {} created.", cID);
@@ -139,7 +141,8 @@ public class ManagerEJB {
     @Synchronized
     public void onAzioneJobCompletion(String aID) {
         try {
-            log.debug("AZIONE Jobs completion verification {}", aID);
+            log.debug("AZIONE Job completion verification {}", aID);
+            JobDataCache.countDown(aID + AZIONE);
             var azioneOutput = JobDataCache.getOutput(OUTPUT + aID);
             outputService.create(azioneOutput);
             log.info("Output from Azione {} created.", aID);
@@ -193,18 +196,18 @@ public class ManagerEJB {
                             .toList());
                 }
             }
-            log.debug("ManagerEJB initialized.");
+            log.debug("Manager initialized.");
             log.info("Initialization complete.");
         } catch (DependencyInjectionException e) {
             log.error("There was an internal D. Injection error. {}", e.getMessage(), e);
         } catch (Exception e) {
-            log.error("Failed to get configs for ManagerEJB", e);
+            log.error("Failed to get configs for Manager", e);
         }
     }
 
-    public ManagerEJB() {
+    public Manager() {
         if (maxMessages == 1) {
-            log.debug("ManagerEJB queued to be initialized.");
+            log.debug("Manager queued to be initialized.");
             maxMessages++;
         }
     }

@@ -12,23 +12,24 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AmbitoDTO implements IDTO {
+public class AmbitoDTO implements IDTO<AmbitoDTO, Ambito> {
 
         private Long id;
         private String nome;
         private String destinazione;
 
     @Override
-    public <T> IDTO fromEntity (T entity) {
-        return entity instanceof Ambito a ? new AmbitoDTO(
-                a.getId(),
-                a.getNome(),
-                a.getDestinazione()
-        ) : null;
+    public AmbitoDTO fromEntity(Ambito a) {
+        if (a != null) {
+            this.id = a.getId();
+            this.nome = a.getNome();
+            this.destinazione = a.getDestinazione();
+            return this;
+        } return null;
     }
 
     @Override
-    public Ambito toEntity () {
+    public Ambito toEntity() {
         return new Ambito(
                 this.getId(),
                 this.getNome(),

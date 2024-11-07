@@ -23,7 +23,7 @@ public class JobDataMapBuilder {
     }
 
     private static JobDataMap buildJobDataMap(Azione azione) throws JobBuildingException {
-        var id = azione.getStringID();
+        var id = azione.getStrID();
         JobType jobType = Utils.Jobs.resolveJobType(azione);
         if(devMode)
             log.debug("Dev Mode is enabled, logging sensitive data.");
@@ -55,33 +55,29 @@ public class JobDataMapBuilder {
     }
 
     private static JobDataMap buildJobDataMap(Configurazione config) throws JobBuildingException {
-        var id = config.getStringID();
+        var id = config.getStrID();
         JobType jobType = Utils.Jobs.resolveJobType(config);
         if(devMode)
             log.debug("Dev Mode is enabled, logging sensitive data.");
         switch (jobType) {
             case SQL -> {
-                JobDataMap map = new JobDataMap();
                 Utils.DebugLogger.debug(devMode, config, jobType, config.getFonteDati());
-                Utils.Jobs.createSQLJobDataMap(config, map, id, jobType, config.getFonteDati(), config.getUtenteFonteDati());
-                return map;
+                return Utils.Jobs.populateSQLJobDataMap(config, new JobDataMap(), jobType,
+                        config.getFonteDati(), config.getUtenteFonteDati());
             }
             case PROGRAM -> {
-                JobDataMap map = new JobDataMap();
                 Utils.DebugLogger.debug(devMode, config, jobType);
-                Utils.Jobs.createPROGRAMJobDataMap(config, map, id);
-                return map;
+                return Utils.Jobs.createPROGRAMJobDataMap(config, new JobDataMap(), id);
             }
             case CLASS -> {
-                JobDataMap map = new JobDataMap();
                 Utils.DebugLogger.debug(devMode, config, jobType);
-                Utils.Jobs.createCLASSEJobDataMap(config, map, id);
-                return map;
+                return Utils.Jobs.createCLASSEJobDataMap(config, new JobDataMap(), id);
             }
             default -> {
-                log.error("Configurazione n. {} has no valid fields set, skipping creation.", config.getId());
-                throw new IllegalArgumentException("Configurazione has no valid necessary fields set, configure exactly one" +
-                        "between SQLScript, Programma or Classe.");
+                log.error("Configurazione n. {} has no valid fields set, skipping creation.", id);
+                throw new IllegalArgumentException(String.format("Configurazione %s has no valid necessary fields set, " +
+                        "configure exactly one" +
+                        "between SQLScript, Programma or Classe.", id));
             }
         }
     }

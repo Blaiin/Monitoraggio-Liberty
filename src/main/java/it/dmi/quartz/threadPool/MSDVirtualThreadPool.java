@@ -1,5 +1,6 @@
 package it.dmi.quartz.threadPool;
 
+import it.dmi.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.quartz.SchedulerConfigException;
@@ -16,6 +17,7 @@ public class MSDVirtualThreadPool implements ThreadPool {
 
     private ExecutorService executorService;
     private final AtomicBoolean isShutdown = new AtomicBoolean(false);
+    private String instanceName;
 
     @Override
     public int getPoolSize() {
@@ -27,7 +29,8 @@ public class MSDVirtualThreadPool implements ThreadPool {
     }
 
     @Override
-    public void setInstanceName (String s) {
+    public void setInstanceName(String s) {
+        this.instanceName = s;
     }
 
     @Override
@@ -64,7 +67,7 @@ public class MSDVirtualThreadPool implements ThreadPool {
                 if (!executorService.isTerminated()) {
                     log.warn("Some tasks did not terminate gracefully.");
                 }
-                log.info("VirtualThreadPool shutdown complete.");
+                log.info("{} (V_ThreadPool) shutdown complete.", Utils.Strings.capitalize(this.instanceName));
             }
         }
     }

@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ControlloDTO implements IDTO {
+public class ControlloDTO implements IDTO<ControlloDTO, Controllo> {
 
     private Long id;
     private String descrizione;
@@ -28,20 +28,20 @@ public class ControlloDTO implements IDTO {
     private int ordineControllo;
 
     @Override
-    public <T> IDTO fromEntity (T entity) {
-        return entity instanceof Controllo c ? new ControlloDTO(
-                c.getId(),
-                c.getDescrizione(),
-                c.getTipoControllo(),
-                c.getAmbito(),
-                c.getAzioni(),
-                c.getConfigurazioni(),
-                c.getOrdineControllo()
-        ) : null;
+    public ControlloDTO fromEntity(Controllo c) {
+        if (c != null) {
+            this.id = c.getId();
+            this.descrizione = c.getDescrizione();
+            this.tipoControllo = c.getTipoControllo();
+            this.ambito = c.getAmbito();
+            this.azioni = c.getAzioni();
+            this.configurazioni = c.getConfigurazioni();
+            this.ordineControllo = c.getOrdineControllo();
+        } return null;
     }
 
     @Override
-    public Controllo toEntity () {
+    public Controllo toEntity() {
         return new Controllo(
                 this.id,
                 this.descrizione,

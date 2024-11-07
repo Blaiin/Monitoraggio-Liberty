@@ -13,7 +13,7 @@ import java.util.*;
 @NoArgsConstructor
 @Builder
 @Slf4j
-public class OutputDTO implements IDTO {
+public class OutputDTO implements IDTO<OutputDTO, Output> {
 
     private Long id;
     private Character esito;
@@ -67,22 +67,22 @@ public class OutputDTO implements IDTO {
     }
 
     @Override
-    public <T> IDTO fromEntity (T entity) {
-        return entity instanceof Output out ? new OutputDTO(
-                out.getId(),
-                out.getEsito(),
-                out.getContenuto(),
-                out.getConfigurazioneId(),
-                out.getAzioneId(),
-                out.getTipoAzioneId(),
-                out.getInizio(),
-                out.getFine(),
-                out.getDurata()
-        ) : null;
+    public OutputDTO fromEntity(Output o) {
+        if (o != null) {
+            this.id = o.getId();
+            this.esito = o.getEsito();
+            this.contenuto = o.getContenuto();
+            this.configurazioneId = o.getConfigurazioneId();
+            this.azioneId = o.getAzioneId();
+            this.tipoAzioneId = o.getTipoAzioneId();
+            this.inizio = o.getInizio();
+            this.fine = o.getFine();
+            this.durata = o.getDurata();
+        } return null;
     }
 
     @Override
-    public Output toEntity () {
+    public Output toEntity() {
         return new Output(
                 this.esito,
                 this.contenuto,

@@ -65,17 +65,17 @@ public class OutputUtils {
         out.setDurata(TimeUtils.duration(out.getInizio(), fine));
     }
 
-    public static void cacheOutputDTO(String id, OutputDTO out) {
+    public static void cacheOutputDTO(String taskID, OutputDTO out) {
         if (out.getAzioneId() == null && out.getConfigurazioneId() == null) {
             log.error("Invalid generated output, both id fields were null");
             return;
         }
         if (out.getConfigurazioneId() != null) {
             log.debug("Caching output for Config {}", out.getConfigurazioneId());
-            JobDataCache.put(OUTPUT + id, out);
+            JobDataCache.put(OUTPUT + taskID, out);
             return;
         }
         log.debug("Caching output for Azione {}", out.getAzioneId());
-        JobDataCache.put(OUTPUT + id, out);
+        JobDataCache.put(OUTPUT + taskID, out);
     }
 }

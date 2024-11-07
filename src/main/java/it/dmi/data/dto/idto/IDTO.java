@@ -1,8 +1,13 @@
 package it.dmi.data.dto.idto;
 
-public interface IDTO {
+/**
+ *
+ * @param <V> DTO
+ * @param <T> Entity class
+ */
+public interface IDTO<V, T> {
 
-    <T> IDTO fromEntity(T entity);
+    V fromEntity(T entity);
 
-    Object toEntity();
+    T toEntity();
 }
