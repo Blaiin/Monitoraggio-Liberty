@@ -11,6 +11,7 @@ import java.util.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Slf4j
 public class OutputDTO implements IDTO<OutputDTO, Output> {
@@ -25,22 +26,6 @@ public class OutputDTO implements IDTO<OutputDTO, Output> {
     private LocalDateTime inizio;
     private LocalDateTime fine;
     private Long durata;
-
-    public OutputDTO(Long id, Character esito,
-                      Map<String, ?> contenuto,
-                      Long configurazioneId, Long azioneId,
-                      Long tipoAzioneId, LocalDateTime inizio,
-                      LocalDateTime fine, Long durata) {
-        this.id = id;
-        this.esito = esito;
-        this.contenuto = adaptContent(contenuto);
-        this.configurazioneId = configurazioneId;
-        this.azioneId = azioneId;
-        this.tipoAzioneId = tipoAzioneId;
-        this.inizio = inizio;
-        this.fine = fine;
-        this.durata = durata;
-    }
 
     public void setContenuto(Map<String, ?> contenuto) {
         this.contenuto = adaptContent(contenuto);

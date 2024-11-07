@@ -45,11 +45,11 @@ public class MSDScheduler {
             msdScheduler = configFactory.getScheduler();
             msdScheduler.start();
 
-            log.debug("Initialized Quartz schedulers.");
-            log.info("Initialized Quartz schedulers.");
+            log.debug("Initialized Quartz scheduler.");
+            log.info("Initialized Quartz scheduler.");
         } catch (SchedulerException | RuntimeException e) {
-            log.error("Failed to start Quartz schedulers. {}", e.getMessage(), e.getCause());
-            throw new MSDRuntimeException("Failed to start Quartz schedulers", e);
+            log.error("Failed to start Quartz scheduler. {}", e.getMessage(), e.getCause());
+            throw new MSDRuntimeException("Failed to start Quartz scheduler", e);
         }
     }
 
@@ -61,8 +61,8 @@ public class MSDScheduler {
                 msdScheduler.shutdown();
             }
         } catch (SchedulerException e) {
-            log.error("Failed to shutdown Quartz schedulers. {}", e.getMessage(), e.getCause());
-            throw new MSDRuntimeException("Failed to shutdown Quartz schedulers", e);
+            log.error("Failed to shutdown Quartz scheduler. {}", e.getMessage(), e.getCause());
+            throw new MSDRuntimeException("Failed to shutdown Quartz scheduler", e);
         }
     }
 

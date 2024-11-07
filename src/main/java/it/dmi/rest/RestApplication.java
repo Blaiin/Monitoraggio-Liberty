@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.HashSet;
 import java.util.Set;
 
+@SuppressWarnings("unused")
 @ApplicationPath("/api")
 @Slf4j
 public class RestApplication extends Application {

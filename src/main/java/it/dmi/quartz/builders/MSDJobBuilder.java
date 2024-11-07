@@ -11,10 +11,10 @@ public abstract class MSDJobBuilder {
 
     static JobInfo resolveJobBuildingException(Throwable e) {
         switch (e) {
-            case SchedulerException sE -> log.error("Error while trying to build job: {}", sE.getMessage());
-            case JSQLParserException jsqlE -> log.error("Could not determine query functionality. {}", jsqlE.getMessage());
-            case JobTypeException jtE -> log.error("Jobs type resolution found a problem: {}", jtE.getMessage());
-            default -> log.error("Error: {}", e.getMessage());
+            case SchedulerException sE -> log.error("Error while trying to build job: {}", sE.getMessage(), sE);
+            case JSQLParserException jsqlE -> log.error("Could not determine query functionality. {}", jsqlE.getMessage(), jsqlE);
+            case JobTypeException jtE -> log.error("Jobs type resolution found a problem: {}", jtE.getMessage(), jtE);
+            default -> log.error("Error: {}", e.getMessage(), e);
         }
         return new JobInfo(null, null);
     }

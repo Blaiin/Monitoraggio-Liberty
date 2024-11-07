@@ -15,6 +15,7 @@ import it.dmi.structure.exceptions.impl.internal.DependencyInjectionException;
 import it.dmi.structure.exceptions.impl.internal.InvalidStateException;
 import it.dmi.structure.internal.info.JobInfo;
 import it.dmi.utils.Utils;
+import it.dmi.utils.jobs.JobUtils;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.DependsOn;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -73,7 +74,7 @@ public class Manager {
                 return;
             }
             log.debug("Processing Config {}", id);
-            Utils.Jobs.addJobListener(this, scheduler, c, jobInfo);
+            JobUtils.addJobListener(this, scheduler, c, jobInfo);
             CompletableFuture.runAsync(() -> scheduleJob(c, jobInfo), service);
         });
     }
@@ -94,7 +95,7 @@ public class Manager {
                     log.error("Could not construct job info for Azione {}", aID);
                     return;
                 }
-                Utils.Jobs.addJobListener(this, scheduler, a, jobInfo);
+                JobUtils.addJobListener(this, scheduler, a, jobInfo);
                 CompletableFuture.runAsync(() -> scheduleJob(a, jobInfo), service);
             }), () -> log.debug("Could not find any Job (Azione) to be scheduled, " +
                     "probably no Soglia for Config were present")));
@@ -205,6 +206,7 @@ public class Manager {
         }
     }
 
+    @SuppressWarnings("unused")
     public Manager() {
         if (maxMessages == 1) {
             log.debug("Manager queued to be initialized.");

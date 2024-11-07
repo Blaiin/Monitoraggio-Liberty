@@ -8,6 +8,7 @@ import jakarta.inject.Inject;
 import java.util.Comparator;
 import java.util.List;
 
+@SuppressWarnings("unused")
 @Stateless
 public class ControlloService {
 

@@ -1,13 +1,14 @@
 package it.dmi.caches;
 
 import it.dmi.data.entities.task.Azione;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+@SuppressWarnings("unused")
 @Slf4j
 public class AzioneQueueCache {
 
@@ -27,13 +28,12 @@ public class AzioneQueueCache {
         return Optional.ofNullable(queue.get(sogliaId));
     }
 
-    @Synchronized
     public static Optional<List<String>> getSoglieIDs(String soglieID) {
         log.info("SOGLIE IDS: {}", soglieID);
         return Optional.ofNullable(soglieIDs.get(soglieID));
     }
 
-    public static Map<String, List<Azione>> getAll() {
+    public static @NotNull Map<String, List<Azione>> getAll() {
         var entries = new HashMap<>(queue);
         queue.clear();
         return entries;

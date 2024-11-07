@@ -4,6 +4,7 @@ import it.dmi.data.api.repositories.ARepository;
 import it.dmi.data.entities.task.Azione;
 import jakarta.ejb.Stateless;
 
+@SuppressWarnings("unused")
 @Stateless
 public class AzioneRP extends ARepository<Azione> {
 

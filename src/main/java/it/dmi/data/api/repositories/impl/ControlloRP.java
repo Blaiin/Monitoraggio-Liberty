@@ -4,6 +4,7 @@ import it.dmi.data.api.repositories.ARepository;
 import it.dmi.data.entities.Controllo;
 import jakarta.ejb.Stateless;
 
+@SuppressWarnings("unused")
 @Stateless
 public class ControlloRP extends ARepository<Controllo> {
 

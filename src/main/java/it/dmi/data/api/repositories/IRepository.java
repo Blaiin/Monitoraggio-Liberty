@@ -2,6 +2,7 @@ package it.dmi.data.api.repositories;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public interface IRepository<T> {
 
     T save(T entity);

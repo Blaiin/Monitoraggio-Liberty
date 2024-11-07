@@ -2,6 +2,7 @@ package it.dmi.structure.exceptions.impl.internal;
 
 import it.dmi.structure.exceptions.MSDRuntimeException;
 
+@SuppressWarnings("unused")
 public class InvalidStateException extends MSDRuntimeException {
 
     public InvalidStateException() {

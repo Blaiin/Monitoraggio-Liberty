@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 @Stateless
 @Slf4j
 public class OutputService {
