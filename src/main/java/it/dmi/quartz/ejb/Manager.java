@@ -69,7 +69,7 @@ public class Manager {
             final var latchID = c.getLatchID();
             JobDataCache.createLatch(latchID, 1);
             final var jobInfo = JobInfoBuilder.buildJobInfo(scheduler, c);
-            if(!jobInfo.isValid()) {
+            if(!jobInfo.isValid() && jobInfo.alreadyDefined()) {
                 log.error("Could not construct job info for Config {}", id);
                 return;
             }
@@ -91,14 +91,25 @@ public class Manager {
                 log.debug("Reading azione {} from Soglia {}", aID, sID);
                 JobDataCache.createLatch(latchID, 1);
                 final var jobInfo = JobInfoBuilder.buildJobInfo(scheduler, a);
-                if(!jobInfo.isValid()) {
+                if (!jobInfo.isValid()) {
                     log.error("Could not construct job info for Azione {}", aID);
                     return;
                 }
+                if (jobInfo.alreadyDefined()) eraseJobData(jobInfo);
                 JobUtils.addJobListener(this, scheduler, a, jobInfo);
                 CompletableFuture.runAsync(() -> scheduleJob(a, jobInfo), service);
             }), () -> log.debug("Could not find any Job (Azione) to be scheduled, " +
-                    "probably no Soglia for Config were present")));
+                    "probably no Soglia [id: {}] for Config were present", sID)));
+    }
+
+    private void eraseJobData(JobInfo info) {
+        try {
+            scheduler.deleteJob(info.jobDetail().getKey());
+            log.debug("Deleted job key: {}", info.jobDetail().getKey());
+        } catch (Exception ex) {
+            log.error("Error trying to erase executed job data.");
+            throw new RuntimeException(ex);
+        }
     }
 
 
@@ -110,12 +121,12 @@ public class Manager {
             long waitTime = Utils.calculateWaitTime(task, jobInfo);
             boolean dataAvailable = JobDataCache
                     .awaitData(latchID, waitTime, TimeUnit.MILLISECONDS);
-            log.debug("Config {} scheduled. Output data available: {}", id, dataAvailable);
+            log.debug("Task {} scheduled. Output data available: {}", id, dataAvailable);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.error("Error waiting for job to complete. {}", e.getMessage(), e);
         } catch (SchedulerException e) {
-            log.error("Scheduler error for config {}: {}", id, e.getMessage(), e);
+            log.error("Scheduler error for Task {}: {}", id, e.getMessage(), e);
             throw new MSDRuntimeException(e);
         }
     }

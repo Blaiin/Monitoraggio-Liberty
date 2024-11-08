@@ -5,6 +5,7 @@ import it.dmi.data.entities.task.Azione;
 import it.dmi.data.entities.task.Configurazione;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +14,7 @@ import java.util.Map;
 @Slf4j
 public class ThresHoldComparator {
 
-    public static List<String> compareCountTH(final Configurazione config, final int result) {
+    public static @NotNull List<String> compareCountTH(final @NotNull Configurazione config, final int result) {
         var cID = config.getStrID();
         List<String> activeSoglieIDs = config.getSoglieDTOAsStream()
                 .filter(SogliaDTO::isMultiValue)
@@ -28,7 +29,7 @@ public class ThresHoldComparator {
     //TODO reactivate method usage and SELECT functionality
     @SuppressWarnings("unused")
     public void compareSelectThresholds (Configurazione config,
-                                         Map<String, List<Object>> mapToCompare) {
+                                         @NotNull Map<String, List<Object>> mapToCompare) {
         mapToCompare.forEach((k, v) ->
                 config.getSoglieDTOAsStream().forEach(s -> {
             if (v.isEmpty()) {

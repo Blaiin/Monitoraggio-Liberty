@@ -6,6 +6,7 @@ import it.dmi.data.entities.task.QuartzTask;
 import it.dmi.structure.internal.info.JobInfo;
 import it.dmi.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.quartz.*;
 
 import java.util.Objects;
@@ -15,7 +16,7 @@ import static it.dmi.utils.constants.NamingConstants.*;
 @Slf4j
 public class JobInfoBuilder extends MSDJobBuilder {
 
-    public static JobInfo buildJobInfo(Scheduler scheduler, QuartzTask task) {
+    public static @NotNull JobInfo buildJobInfo(Scheduler scheduler, @NotNull QuartzTask task) {
         var id = task.getStrID();
         try {
             var identity = resolveJobAndGroupName(id, task);
@@ -32,7 +33,7 @@ public class JobInfoBuilder extends MSDJobBuilder {
         }
     }
 
-    private static JobIdentity resolveJobAndGroupName(String id, QuartzTask task) {
+    private static @NotNull JobIdentity resolveJobAndGroupName(String id, @NotNull QuartzTask task) {
         return switch (task) {
             case Configurazione ignored -> new JobIdentity(CONFIG_JOB + id, CONFIG_GROUP,
                     CONFIG_TRIGGER + id, CONFIG_TRIGGER_GROUP, Utils.Strings.capitalize(CONFIG));

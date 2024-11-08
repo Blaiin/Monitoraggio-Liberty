@@ -49,7 +49,6 @@ public class EmailUtils {
 
         session = Session.getInstance(PROPS, auth);
         log.debug("Email service initialized successfully.");
-        log.info("Email service initialized successfully.");
     }
 
     //TODO resolve proxy requirements and activate functionality

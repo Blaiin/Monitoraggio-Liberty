@@ -37,7 +37,7 @@ public class MSDVirtualThreadPool implements ThreadPool {
     public void initialize() throws SchedulerConfigException {
         if (executorService == null || executorService.isShutdown()) {
             executorService = Executors.newThreadPerTaskExecutor(new MSDVirtualThreadFactory());
-            log.debug("Initialized MSD Thread Pool with virtual threads.");
+            log.debug("Initialized MSD Thread Pool.");
         } else {
             final String msg = "Attempted to re-initialize an active VirtualThreadPool.";
             log.error(msg);
