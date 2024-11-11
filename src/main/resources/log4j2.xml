@@ -2,15 +2,21 @@
 <Configuration status="WARN">
     <Appenders>
         <Console name="InfoConsole" target="SYSTEM_OUT">
-            <PatternLayout pattern="%-5p %d{HH:mm:ss} [%t] %c{1}:%L - %m%n"/>
+            <PatternLayout pattern=" %d{HH:mm:ss} [%t] %c{1}:%L - %m%n"/>
             <Filters>
                 <LevelRangeFilter minLevel="FATAL" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
         </Console>
 
-        <File name="DebugFile" fileName="${env:log4j}/debug.log">
-            <PatternLayout pattern="%-5p %d{HH:mm:ss} [%t] [DETAIL] %c{1}:%L - %m%n"/>
-        </File>
+        <RollingFile name="DebugFile" fileName="${env:log4j}/debug.log"
+                     filePattern="${env:log4j}/debug-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="%-5p %d{HH:mm:ss} [%t] %c{1}:%L - %m%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="1MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/> <!-- Backup files number -->
+        </RollingFile>
+
     </Appenders>
 
     <Loggers>
@@ -23,9 +29,9 @@
             <AppenderRef ref="DebugFile"/>
         </Logger>
 
-        <Logger name="it.dmi" level="DEBUG" additivity="false">
+        <!-- <Logger name="it.dmi" level="DEBUG" additivity="false">
             <AppenderRef ref="DebugFile"/>
             <AppenderRef ref="InfoConsole"/>
-        </Logger>
+        </Logger> -->
     </Loggers>
 </Configuration>

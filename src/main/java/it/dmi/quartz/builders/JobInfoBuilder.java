@@ -7,7 +7,10 @@ import it.dmi.structure.internal.info.JobInfo;
 import it.dmi.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.quartz.*;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.Trigger;
+import org.quartz.TriggerKey;
 
 import java.util.Objects;
 
@@ -16,17 +19,17 @@ import static it.dmi.utils.constants.NamingConstants.*;
 @Slf4j
 public class JobInfoBuilder extends MSDJobBuilder {
 
-    public static @NotNull JobInfo buildJobInfo(Scheduler scheduler, @NotNull QuartzTask task) {
+    public static @NotNull JobInfo buildJobInfo(@NotNull QuartzTask task) {
         var id = task.getStrID();
         try {
             var identity = resolveJobAndGroupName(id, task);
-            JobDetail jobDetail = JobDetailBuilder.buildJobDetail(scheduler, task,
+            JobDetail jobDetail = JobDetailBuilder.buildJobDetail(task,
                     new JobKey(identity.jobName(), identity.groupName()));
             Trigger trigger = JobTriggerBuilder.buildTrigger(task,
                     new TriggerKey(identity.triggerName(), identity.triggerGroup()));
             Objects.requireNonNull(jobDetail, "JobDetail is required.");
             Objects.requireNonNull(trigger, "Trigger is required.");
-            log.info("Jobs scheduled for {} {}.", identity.name(), task.getStrID());
+            log.info("Jobs identity for {} {} created.", identity.name(), task.getStrID());
             return new JobInfo(jobDetail, trigger);
         } catch (Exception e) {
             return resolveJobBuildingException(e);

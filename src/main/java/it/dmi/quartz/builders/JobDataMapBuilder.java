@@ -9,6 +9,7 @@ import it.dmi.structure.exceptions.impl.quartz.JobBuildingException;
 import it.dmi.structure.internal.JobType;
 import it.dmi.utils.jobs.JobUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.quartz.JobDataMap;
 
@@ -27,23 +28,23 @@ public class JobDataMapBuilder {
         };
     }
 
+    @Contract("_, _, _, _, _ -> param3")
     private static @NotNull JobDataMap createJobDataMap(@NotNull QuartzTask task,
-                                                       JobType jobType,
-                                                       @NotNull JobDataMap map,
-                                                       @NotNull FonteDati fd,
-                                                       @NotNull SicurezzaFonteDati sfd) {
+                                                        @NotNull JobType jobType,
+                                                        @NotNull JobDataMap map,
+                                                        @NotNull FonteDati fd,
+                                                        @NotNull SicurezzaFonteDati sfd) {
         final var taskID = task.getStrID();
         map.put(ID, taskID);
         map.put(TASK + taskID, task);
+        map.put(JOB_TYPE + taskID, jobType.getJobType());
         switch (task) {
             case Azione azione -> {
-                map.put(AZIONE + taskID, azione);
                 map.put(CLASS + taskID, azione.getClasse());
                 map.put(PROGRAMMA + taskID, azione.getProgramma());
                 map.put(SQL_SCRIPT + taskID, azione.getSqlScript());
             }
             case Configurazione config -> {
-                map.put(CONFIG + taskID, config);
                 map.put(NOME, config.getNome());
                 map.put(SQL_SCRIPT + taskID, config.getSqlScript());
                 map.put(CLASS + taskID, config.getClasse());
@@ -51,7 +52,6 @@ public class JobDataMapBuilder {
                 map.put(THRESHOLDS + taskID, config.getSoglie());
             }
         }
-        map.put(JOB_TYPE + taskID, jobType.getJobType());
         map.put(DRIVER_NAME + taskID, fd.getNomeDriver());
         map.put(URL + taskID, fd.getUrl());
         map.put(USERNAME + taskID, sfd.getUserID());

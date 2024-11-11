@@ -63,9 +63,9 @@ public class Utils {
                             sanitized.add(transformTo.cast(o));
                         }
                     }
-                } else log.debug("Could not sanitize objects from List, 99% not a bug, ignore");
+                } else log.debug("Could not sanitize objects from List cause it was empty");
         } catch (ClassCastException e) {
-            log.error("Could not process type checking process, skipping. {}", e.getMessage(), e.getCause());
+            log.error("Could not process type checking, skipping. {}", e.getMessage(), e.getCause());
         }
         return sanitized;
     }

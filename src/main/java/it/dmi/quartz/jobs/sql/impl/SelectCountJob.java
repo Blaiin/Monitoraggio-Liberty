@@ -35,12 +35,12 @@ public class SelectCountJob extends BaseSQLJob implements Job {
         }
     }
 
-    private void executeAzioneCountQuery(String id, Azione azione, JobDataMap dataMap) throws JobExecutionException {
+    private void executeAzioneCountQuery(String aID, Azione azione, JobDataMap dataMap) throws JobExecutionException {
         if(azione == null) {
             log.error("Azione cannot be null since job execution depends on it.");
             return;
         }
-        log.info("Exec job -> Azione {}", id);
+        log.info("Exec job -> Azione {}", aID);
         var dbInfo = DBInfo.build(dataMap);
         loadDriver(dbInfo);
         var output = OutputUtils.initializeOutputDTO(azione);
@@ -52,7 +52,8 @@ public class SelectCountJob extends BaseSQLJob implements Job {
             }
             log.info("(A) Data found.");
             OutputUtils.finalizeOutputDTO(output, result);
-            OutputUtils.cacheOutputDTO(id, output);
+            OutputUtils.cacheOutputDTO(aID, output);
+            JobDataCache.countDown(aID + AZIONE);
         }  catch (Exception e) {
             resolveException(e);
         }
@@ -85,6 +86,7 @@ public class SelectCountJob extends BaseSQLJob implements Job {
                 if (!soglieIDs.isEmpty()) {
                     log.info("NOT EMPTY SOGLIE IDS LIST (Config {}): {}", cID, soglieIDs);
                     AzioneQueueCache.put(SOGLIE + cID, soglieIDs);
+
                 } else log.error("EMPTY SOGLIE IDS LIST (Config {})", cID);
             }
             JobDataCache.countDown(cID + CONFIG);

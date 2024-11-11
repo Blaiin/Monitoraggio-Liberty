@@ -25,12 +25,12 @@ public class AzioneQueueCache {
     }
 
     public static Optional<List<Azione>> getAzioni(String sogliaId) {
-        return Optional.ofNullable(queue.get(sogliaId));
+        return Optional.ofNullable(queue.remove(sogliaId));
     }
 
     public static Optional<List<String>> getSoglieIDs(String soglieID) {
         log.info("SOGLIE IDS: {}", soglieID);
-        return Optional.ofNullable(soglieIDs.get(soglieID));
+        return Optional.ofNullable(soglieIDs.remove(soglieID));
     }
 
     public static @NotNull Map<String, List<Azione>> getAll() {

@@ -26,10 +26,8 @@ import static it.dmi.utils.constants.NamingConstants.JOB_TYPE;
 @Slf4j
 public class JobDetailBuilder {
 
-    public static @Nullable JobDetail buildJobDetail(Scheduler scheduler, QuartzTask task, JobKey jobKey)
+    public static @Nullable JobDetail buildJobDetail(QuartzTask task, JobKey jobKey)
             throws SchedulerException, JSQLParserException, JobTypeException, JobAlreadyDefinedException {
-        if (checkIfJobExists(scheduler, jobKey, task))
-            throw new JobAlreadyDefinedException(String.format("Job with key %s already defined.", jobKey));
         JobDataMap jobDataMap;
         try {
             jobDataMap = JobDataMapBuilder.buildJobDataMap(task);
@@ -51,12 +49,10 @@ public class JobDetailBuilder {
             case PROGRAM -> JobBuilder.newJob(ProgramJob.class)
                     .withIdentity(jobKey)
                     .usingJobData(jobDataMap)
-                    .storeDurably(false)
                     .build();
             case CLASS -> JobBuilder.newJob(ClassJob.class)
                     .withIdentity(jobKey)
                     .usingJobData(jobDataMap)
-                    .storeDurably(false)
                     .build();
             case OTHER -> throw new JobTypeException("JobType not supported.");
         };
@@ -76,53 +72,20 @@ public class JobDetailBuilder {
         };
     }
 
-    private static JobDetail defineJobDurability(QuartzTask task, Class<? extends Job> jobClass,
+    private static JobDetail defineJobDurability(@NotNull QuartzTask task, Class<? extends Job> jobClass,
                                                  JobKey key, JobDataMap map) {
         return switch (task) {
-            //In caso di Azione il job dev'essere eseguito una sola volta per design
             case Azione ignored -> JobBuilder
                     .newJob(jobClass)
                     .withIdentity(key)
                     .usingJobData(map)
-                    .storeDurably(false)
                     .build();
-            //in caso di configurazione si controlla che la schedulazione sia
-            //      valorizzata -> il job deve rimanere in memoria così che il check in caso di nuova schedulazione
-            //                      possa fare lo skip
-            //      nulla -> il job viene trattato come singola esecuzione
-            case Configurazione c -> {
-                if (c.getSchedulazione() != null) {
-                    yield JobBuilder
-                            .newJob(jobClass)
-                            .withIdentity(key)
-                            .usingJobData(map)
-                            .build();
-                } else {
-                    yield JobBuilder
-                            .newJob(jobClass)
-                            .withIdentity(key)
-                            .usingJobData(map)
-                            .build();
-                }
-            }
+            case Configurazione ignored -> JobBuilder
+                    .newJob(jobClass)
+                    .withIdentity(key)
+                    .usingJobData(map)
+                    .build();
         };
-    }
-
-    private static boolean checkIfJobExists(@NotNull Scheduler scheduler, JobKey jobKey, QuartzTask task)
-            throws SchedulerException {
-        if (scheduler.checkExists(jobKey)) {
-            switch (task) {
-                case Configurazione c -> {
-                    log.warn("Jobs with key {}, Configurazione {} already exists, skipping creation.",
-                            jobKey, c.getId());
-                    return true;
-                }
-                case Azione a -> {
-                    log.warn("Jobs with key {}, Azione {} already exists, skipping creation.", jobKey, a.getId());
-                    return true;
-                }
-            }
-        } return false;
     }
 
     private static Optional<JobType> getJobType(@NotNull JobDataMap jobDataMap, String taskID) {

@@ -17,27 +17,26 @@ import it.dmi.structure.internal.info.JobInfo;
 import it.dmi.utils.Utils;
 import it.dmi.utils.jobs.JobUtils;
 import jakarta.annotation.PostConstruct;
-import jakarta.ejb.DependsOn;
+import jakarta.ejb.Stateful;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import lombok.Getter;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static it.dmi.utils.constants.NamingConstants.AZIONE;
 import static it.dmi.utils.constants.NamingConstants.OUTPUT;
 
+@Stateful
 @ApplicationScoped
 @Slf4j
-@DependsOn("MSDScheduler")
 public class Manager {
 
     private static int maxMessages = 1;
@@ -55,9 +54,8 @@ public class Manager {
 
     private List<Configurazione> configs;
 
-    private final ExecutorService service = Executors.newVirtualThreadPerTaskExecutor();
-
-    private Scheduler scheduler;
+    @Getter
+    private volatile Scheduler scheduler;
 
     public void scheduleConfigs() {
         if(configs.isEmpty())
@@ -68,18 +66,18 @@ public class Manager {
             final var id = c.getStrID();
             final var latchID = c.getLatchID();
             JobDataCache.createLatch(latchID, 1);
-            final var jobInfo = JobInfoBuilder.buildJobInfo(scheduler, c);
+            final var jobInfo = JobInfoBuilder.buildJobInfo(c);
             if(!jobInfo.isValid() && jobInfo.alreadyDefined()) {
                 log.error("Could not construct job info for Config {}", id);
                 return;
             }
             log.debug("Processing Config {}", id);
             JobUtils.addJobListener(this, scheduler, c, jobInfo);
-            CompletableFuture.runAsync(() -> scheduleJob(c, jobInfo), service);
+            CompletableFuture.runAsync(() -> scheduleJob(c, jobInfo));
         });
     }
 
-    private void scheduleActions(List<String> soglieIDs) {
+    private void scheduleActions(@NotNull List<String> soglieIDs) {
         if (soglieIDs.isEmpty()) {
             log.error("List of Azioni to be scheduled is empty");
             return;
@@ -90,33 +88,23 @@ public class Manager {
                 final var latchID = a.getLatchID();
                 log.debug("Reading azione {} from Soglia {}", aID, sID);
                 JobDataCache.createLatch(latchID, 1);
-                final var jobInfo = JobInfoBuilder.buildJobInfo(scheduler, a);
+                var jobInfo = JobInfoBuilder.buildJobInfo(a);
                 if (!jobInfo.isValid()) {
                     log.error("Could not construct job info for Azione {}", aID);
                     return;
                 }
-                if (jobInfo.alreadyDefined()) eraseJobData(jobInfo);
                 JobUtils.addJobListener(this, scheduler, a, jobInfo);
-                CompletableFuture.runAsync(() -> scheduleJob(a, jobInfo), service);
+                CompletableFuture.runAsync(() -> scheduleJob(a, jobInfo));
             }), () -> log.debug("Could not find any Job (Azione) to be scheduled, " +
                     "probably no Soglia [id: {}] for Config were present", sID)));
     }
 
-    private void eraseJobData(JobInfo info) {
-        try {
-            scheduler.deleteJob(info.jobDetail().getKey());
-            log.debug("Deleted job key: {}", info.jobDetail().getKey());
-        } catch (Exception ex) {
-            log.error("Error trying to erase executed job data.");
-            throw new RuntimeException(ex);
-        }
-    }
-
-
-    private void scheduleJob(QuartzTask task, JobInfo jobInfo) {
+    private void scheduleJob(@NotNull QuartzTask task, @NotNull JobInfo jobInfo) {
         final var id = task.getStrID();
         final var latchID = task.getLatchID();
         try {
+            if (JobUtils.checkIfJobExists(scheduler, jobInfo.jobDetail().getKey(), task))
+                JobUtils.eraseJobData(this, jobInfo.jobDetail().getKey());
             scheduler.scheduleJob(jobInfo.jobDetail(), jobInfo.trigger());
             long waitTime = Utils.calculateWaitTime(task, jobInfo);
             boolean dataAvailable = JobDataCache
@@ -144,7 +132,6 @@ public class Manager {
         }
     }
 
-    //TODO implement logic for config job failure
     @Synchronized
     public void onConfigJobFail(String cID, Throwable e) {
         log.warn("Jobs {} encountered an error during execution. {}", cID, e.getMessage(), e);
@@ -154,7 +141,6 @@ public class Manager {
     public void onAzioneJobCompletion(String aID) {
         try {
             log.debug("AZIONE Job completion verification {}", aID);
-            JobDataCache.countDown(aID + AZIONE);
             var azioneOutput = JobDataCache.getOutput(OUTPUT + aID);
             outputService.create(azioneOutput);
             log.info("Output from Azione {} created.", aID);
@@ -224,6 +210,4 @@ public class Manager {
             maxMessages++;
         }
     }
-
-
 }

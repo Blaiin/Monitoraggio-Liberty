@@ -3,6 +3,7 @@ package it.dmi.caches;
 import it.dmi.data.dto.OutputDTO;
 import it.dmi.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,7 +55,7 @@ public class JobDataCache {
         return false;
     }
 
-    public static OutputDTO getOutput(String key) {
+    public static @NotNull OutputDTO getOutput(String key) {
         var out = outputCache.remove(key);
         if (out.getAzioneId() != null)
             log.debug("Output retrieved for Azione {}", out.getAzioneId());

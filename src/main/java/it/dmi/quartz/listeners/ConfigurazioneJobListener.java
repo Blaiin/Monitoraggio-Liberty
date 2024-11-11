@@ -10,6 +10,7 @@ import org.quartz.JobExecutionException;
 import org.quartz.JobListener;
 
 import java.util.List;
+import java.util.Optional;
 
 import static it.dmi.utils.constants.NamingConstants.SOGLIE;
 
@@ -44,8 +45,8 @@ public class ConfigurazioneJobListener implements JobListener {
             manager.onConfigJobFail(cID, e);
         }
         log.debug("Job (Config {}) executed.", cID);
-        var fromCache = AzioneQueueCache.getSoglieIDs(SOGLIE + cID);
-        final List<String> toSanitize = fromCache.orElseGet(List::of);
+        Optional<List<String>> fromCache = AzioneQueueCache.getSoglieIDs(SOGLIE + cID);
+        List<String> toSanitize = fromCache.orElseGet(List::of);
         List<String> soglieIDs = Utils.transformAndReturn(toSanitize, String.class);
         if (!soglieIDs.isEmpty()) {
             manager.onConfigJobCompletion(cID, soglieIDs);
