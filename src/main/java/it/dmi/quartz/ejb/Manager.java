@@ -10,6 +10,7 @@ import it.dmi.data.entities.task.QuartzTask;
 import it.dmi.processors.jobs.QueryResolver;
 import it.dmi.quartz.builders.JobInfoBuilder;
 import it.dmi.quartz.scheduler.MSDScheduler;
+import it.dmi.quartz.threadPool.MSDThreadFactory;
 import it.dmi.structure.exceptions.MSDRuntimeException;
 import it.dmi.structure.exceptions.impl.internal.DependencyInjectionException;
 import it.dmi.structure.exceptions.impl.internal.InvalidStateException;
@@ -30,6 +31,8 @@ import org.quartz.SchedulerException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static it.dmi.utils.constants.NamingConstants.OUTPUT;
@@ -57,6 +60,8 @@ public class Manager {
     @Getter
     private volatile Scheduler scheduler;
 
+    private final ExecutorService defaultMSDService;
+
     public void scheduleConfigs() {
         if(configs.isEmpty())
             throw new InvalidStateException("No configs available to be scheduled.");
@@ -73,7 +78,7 @@ public class Manager {
             }
             log.debug("Processing Config {}", id);
             JobUtils.addJobListener(this, scheduler, c, jobInfo);
-            CompletableFuture.runAsync(() -> scheduleJob(c, jobInfo));
+            CompletableFuture.runAsync(() -> scheduleJob(c, jobInfo), defaultMSDService);
         });
     }
 
@@ -94,7 +99,7 @@ public class Manager {
                     return;
                 }
                 JobUtils.addJobListener(this, scheduler, a, jobInfo);
-                CompletableFuture.runAsync(() -> scheduleJob(a, jobInfo));
+                CompletableFuture.runAsync(() -> scheduleJob(a, jobInfo), defaultMSDService);
             }), () -> log.debug("Could not find any Job (Azione) to be scheduled, " +
                     "probably no Soglia [id: {}] for Config were present", sID)));
     }
@@ -209,5 +214,6 @@ public class Manager {
             log.debug("Manager queued to be initialized.");
             maxMessages++;
         }
+        this.defaultMSDService = Executors.newThreadPerTaskExecutor(new MSDThreadFactory(false));
     }
 }
