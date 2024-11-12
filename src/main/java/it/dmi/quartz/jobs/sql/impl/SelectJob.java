@@ -28,7 +28,7 @@ public class SelectJob extends BaseSQLJob implements Job {
         Configurazione config = (Configurazione) dataMap.get(CONFIG + id);
         log.info("Trying to execute job for Configurazione id: {}, name: {}.",
                 id, dataMap.getString(NOME));
-        DBInfo dbInfo = DBInfo.build(dataMap);
+        DBInfo dbInfo = DBInfo.create(dataMap);
         loadDriver(dbInfo);
         var output = OutputUtils.initializeOutputDTO(config);
         try (ResultSet resultSet = queryDB(dbInfo)) {

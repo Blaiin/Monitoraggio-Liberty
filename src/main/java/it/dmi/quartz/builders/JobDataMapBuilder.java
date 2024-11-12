@@ -45,13 +45,14 @@ public class JobDataMapBuilder {
                 map.put(SQL_SCRIPT + taskID, azione.getSqlScript());
             }
             case Configurazione config -> {
-                map.put(NOME, config.getNome());
+                map.put(NOME + taskID, config.getNome());
                 map.put(SQL_SCRIPT + taskID, config.getSqlScript());
                 map.put(CLASS + taskID, config.getClasse());
                 map.put(PROGRAMMA + taskID, config.getProgramma());
                 map.put(THRESHOLDS + taskID, config.getSoglie());
             }
         }
+        map.put(JNDI + taskID, fd.getJndiName());
         map.put(DRIVER_NAME + taskID, fd.getNomeDriver());
         map.put(URL + taskID, fd.getUrl());
         map.put(USERNAME + taskID, sfd.getUserID());

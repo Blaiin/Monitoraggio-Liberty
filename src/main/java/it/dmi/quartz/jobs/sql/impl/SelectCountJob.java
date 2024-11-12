@@ -41,7 +41,7 @@ public class SelectCountJob extends BaseSQLJob implements Job {
             return;
         }
         log.info("Exec job -> Azione {}", aID);
-        var dbInfo = DBInfo.build(dataMap);
+        var dbInfo = DBInfo.create(dataMap);
         loadDriver(dbInfo);
         var output = OutputUtils.initializeOutputDTO(azione);
         try (ResultSet resultSet = queryDB(dbInfo)) {
@@ -67,7 +67,7 @@ public class SelectCountJob extends BaseSQLJob implements Job {
         }
         log.info("Exec job -> Config {}, name: {}.",
                 cID, dataMap.getString(NOME));
-        DBInfo dbInfo = DBInfo.build(dataMap);
+        DBInfo dbInfo = DBInfo.create(dataMap);
         loadDriver(dbInfo);
         var output = OutputUtils.initializeOutputDTO(config);
         try (ResultSet resultSet = queryDB(dbInfo)) {

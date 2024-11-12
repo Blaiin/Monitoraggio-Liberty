@@ -15,7 +15,7 @@ public abstract class MSDJobBuilder {
     @Contract("_ -> new")
     protected static @NotNull JobInfo resolveJobBuildingException(@NotNull Throwable e) {
         switch (e) {
-            case SchedulerException sE -> log.error("Error while trying to build job: {}", sE.getMessage(), sE);
+            case SchedulerException sE -> log.error("Error while trying to create job: {}", sE.getMessage(), sE);
             case JSQLParserException jsqlE -> log.error("Could not determine query functionality. {}",
                     jsqlE.getMessage(), jsqlE);
             case JobTypeException jtE -> log.error("Jobs type resolution found a problem: {}", jtE.getMessage(), jtE);

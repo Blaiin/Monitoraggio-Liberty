@@ -22,6 +22,8 @@ public class NamingConstants {
 
     public static final String CLASS = "classe";
 
+    public static final String JNDI = "jndi";
+
     public static final String DRIVER_NAME = "driverName";
 
     public static final String URL = "url";
