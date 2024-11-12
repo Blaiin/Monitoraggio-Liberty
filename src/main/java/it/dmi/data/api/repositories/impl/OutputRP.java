@@ -3,45 +3,12 @@ package it.dmi.data.api.repositories.impl;
 import it.dmi.data.api.repositories.ARepository;
 import it.dmi.data.entities.Output;
 import jakarta.ejb.Stateless;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
 
-import java.util.List;
-
+@SuppressWarnings("unused")
 @Stateless
-public class OutputRP extends ARepository {
-
-    final Class<Output> entity = Output.class;
+public class OutputRP extends ARepository<Output> {
 
     public OutputRP() {
-        super();
-    }
-
-    public void save(Output output) {
-        super.getEm().persist(output);
-    }
-
-    public Output findByID(Long id) {
-        return super.getEm().find(entity, id);
-    }
-
-    public List<Output> findAll() {
-        CriteriaBuilder builder = super.getEm().getCriteriaBuilder();
-        CriteriaQuery<Output> query = builder.createQuery(entity);
-        Root<Output> rootEntry = query.from(entity);
-        query.select(rootEntry);
-        return super.getEm().createQuery(query).getResultList();
-    }
-
-    public void update(Output output) {
-        super.getEm().merge(output);
-    }
-
-    public void delete(Long id) {
-        Output output = findByID(id);
-        if (output != null) {
-            super.getEm().remove(output);
-        }
+        super(Output.class);
     }
 }

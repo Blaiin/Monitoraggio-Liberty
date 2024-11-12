@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConfigurazioneDTO implements IDTO {
+public class ConfigurazioneDTO implements IDTO<ConfigurazioneDTO, Configurazione> {
 
     private Long id;
     private String nome;
@@ -28,25 +28,25 @@ public class ConfigurazioneDTO implements IDTO {
     private int ordineConfigurazione;
 
     @Override
-    public <T> IDTO fromEntity (T entity) {
-        return entity instanceof Configurazione c ? new ConfigurazioneDTO(
-                c.getId(),
-                c.getNome(),
-                c.getSqlScript(),
-                c.getProgramma(),
-                c.getClasse(),
-                c.getSchedulazione(),
-                c.getControllo(),
-                c.getTipoControllo(),
-                c.getAmbito(),
-                c.getFonteDati(),
-                c.getUtenteFonteDati(),
-                c.getOrdineConfigurazione()
-        ) : null;
+    public ConfigurazioneDTO fromEntity(Configurazione c) {
+        if (c != null) {
+            this.id = c.getId();
+            this.nome = c.getNome();
+            this.sqlScript = c.getSqlScript();
+            this.programma = c.getProgramma();
+            this.classe = c.getClasse();
+            this.schedulazione = c.getSchedulazione();
+            this.controllo = c.getControllo();
+            this.tipoControllo = c.getTipoControllo();
+            this.ambito = c.getAmbito();
+            this.fonteDati = c.getFonteDati();
+            this.utenteFonteDati = c.getUtenteFonteDati();
+            this.ordineConfigurazione = c.getOrdineConfigurazione();
+        } return null;
     }
 
     @Override
-    public Configurazione toEntity () {
+    public Configurazione toEntity() {
         return new Configurazione(
                 this.id,
                 this.nome,

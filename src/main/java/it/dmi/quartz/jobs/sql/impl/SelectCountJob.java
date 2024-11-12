@@ -1,23 +1,28 @@
-package it.dmi.quartz.jobs.sql;
+package it.dmi.quartz.jobs.sql.impl;
 
+import it.dmi.caches.AzioneQueueCache;
 import it.dmi.caches.JobDataCache;
 import it.dmi.data.entities.task.Azione;
 import it.dmi.data.entities.task.Configurazione;
 import it.dmi.data.entities.task.QuartzTask;
 import it.dmi.processors.ResultsProcessor;
 import it.dmi.processors.thresholds.ThresHoldComparator;
+import it.dmi.quartz.jobs.sql.BaseSQLJob;
 import it.dmi.structure.internal.info.DBInfo;
+import it.dmi.utils.jobs.OutputUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import java.sql.ResultSet;
+import java.util.List;
 
 import static it.dmi.utils.constants.NamingConstants.*;
 
 @Slf4j
-public class SelectCountJob implements ISQLJob {
+public class SelectCountJob extends BaseSQLJob implements Job {
 
     @Override
     public void execute (JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -28,18 +33,17 @@ public class SelectCountJob implements ISQLJob {
             case Azione a -> executeAzioneCountQuery(id, a, dataMap);
             case Configurazione c -> executeConfigCountQuery(id, c, dataMap);
         }
-
     }
 
-    private void executeAzioneCountQuery(String id, Azione azione, JobDataMap dataMap) throws JobExecutionException {
+    private void executeAzioneCountQuery(String aID, Azione azione, JobDataMap dataMap) throws JobExecutionException {
         if(azione == null) {
             log.error("Azione cannot be null since job execution depends on it.");
             return;
         }
-        log.info("Exec job -> Azione {}", id);
-        DBInfo dbInfo = buildDBInfo(dataMap);
+        log.info("Exec job -> Azione {}", aID);
+        var dbInfo = DBInfo.create(dataMap);
         loadDriver(dbInfo);
-        var output = initializeOutputDTO(azione);
+        var output = OutputUtils.initializeOutputDTO(azione);
         try (ResultSet resultSet = queryDB(dbInfo)) {
             int result = ResultsProcessor.processCountResultSet(resultSet);
             if (result == 0) {
@@ -47,25 +51,25 @@ public class SelectCountJob implements ISQLJob {
                 return;
             }
             log.info("(A) Data found.");
-            output = finalizeOutputDTO(output, result);
-            cacheOutputDTO(id, output);
+            OutputUtils.finalizeOutputDTO(output, result);
+            OutputUtils.cacheOutputDTO(aID, output);
+            JobDataCache.countDown(aID + AZIONE);
         }  catch (Exception e) {
             resolveException(e);
-        } finally {
-            JobDataCache.countDown(id + AZIONE);
         }
     }
 
-    private void executeConfigCountQuery(String id, Configurazione config, JobDataMap dataMap) throws JobExecutionException {
+    private void executeConfigCountQuery(String cID, Configurazione config, JobDataMap dataMap)
+            throws JobExecutionException {
         if(config == null) {
             log.error("Config cannot be null since job execution depends on it.");
             return;
         }
         log.info("Exec job -> Config {}, name: {}.",
-                id, dataMap.getString(NOME));
-        DBInfo dbInfo = buildDBInfo(dataMap);
+                cID, dataMap.getString(NOME));
+        DBInfo dbInfo = DBInfo.create(dataMap);
         loadDriver(dbInfo);
-        var output = initializeOutputDTO(config);
+        var output = OutputUtils.initializeOutputDTO(config);
         try (ResultSet resultSet = queryDB(dbInfo)) {
             int result = ResultsProcessor.processCountResultSet(resultSet);
             if (result == 0) {
@@ -73,17 +77,21 @@ public class SelectCountJob implements ISQLJob {
                 return;
             }
             log.info("(C) Data found.");
-            output = finalizeOutputDTO(output, result);
-            cacheOutputDTO(id, output);
-            if (config.getSoglie().isEmpty()) {
+            OutputUtils.finalizeOutputDTO(output, result);
+            OutputUtils.cacheOutputDTO(cID, output);
+            if (config.getSoglie() == null || config.getSoglie().isEmpty())
                 log.warn("No thresholds for Config {}.", config.getId());
-            } else {
-                dataMap.put(SOGLIE + id, ThresHoldComparator.compareCountThresholds(config, result));
+            else {
+                List<String> soglieIDs = ThresHoldComparator.compareCountTH(config, result);
+                if (!soglieIDs.isEmpty()) {
+                    log.info("NOT EMPTY SOGLIE IDS LIST (Config {}): {}", cID, soglieIDs);
+                    AzioneQueueCache.put(SOGLIE + cID, soglieIDs);
+
+                } else log.error("EMPTY SOGLIE IDS LIST (Config {})", cID);
             }
+            JobDataCache.countDown(cID + CONFIG);
         }  catch (Exception e) {
             resolveException(e);
-        } finally {
-            JobDataCache.countDown(id + CONFIG);
         }
     }
 }

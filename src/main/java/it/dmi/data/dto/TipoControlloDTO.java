@@ -11,20 +11,21 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TipoControlloDTO implements IDTO {
+public class TipoControlloDTO implements IDTO<TipoControlloDTO, TipoControllo> {
+
     private Long id;
     private String descrizione;
 
     @Override
-    public <T> IDTO fromEntity (T entity) {
-        return entity instanceof TipoControllo tc ? new TipoAzioneDTO(
-                tc.getId(),
-                tc.getDescrizione()
-        ) : null;
+    public TipoControlloDTO fromEntity(TipoControllo tc) {
+        if (tc != null) {
+            this.id = tc.getId();
+            this.descrizione = tc.getDescrizione();
+        } return null;
     }
 
     @Override
-    public TipoControllo toEntity () {
+    public TipoControllo toEntity() {
         return new TipoControllo(
                 this.id,
                 this.descrizione

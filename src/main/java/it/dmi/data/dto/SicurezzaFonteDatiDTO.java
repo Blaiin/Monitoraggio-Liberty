@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SicurezzaFonteDatiDTO implements IDTO {
+public class SicurezzaFonteDatiDTO implements IDTO<SicurezzaFonteDatiDTO, SicurezzaFonteDati> {
 
     private Long id;
     private String descrizione;
@@ -19,17 +19,17 @@ public class SicurezzaFonteDatiDTO implements IDTO {
     private String password;
 
     @Override
-    public <T> IDTO fromEntity (T entity) {
-        return entity instanceof SicurezzaFonteDati sfd ? new SicurezzaFonteDatiDTO(
-                sfd.getId(),
-                sfd.getDescrizione(),
-                sfd.getUserID(),
-                sfd.getPassword()
-        ) : null;
+    public SicurezzaFonteDatiDTO fromEntity(SicurezzaFonteDati sfd) {
+        if (sfd != null) {
+            this.id = sfd.getId();
+            this.descrizione = sfd.getDescrizione();
+            this.userID = sfd.getUserID();
+            this.password = sfd.getPassword();
+        } return null;
     }
 
     @Override
-    public SicurezzaFonteDati toEntity () {
+    public SicurezzaFonteDati toEntity() {
         return new SicurezzaFonteDati(
                 this.id,
                 this.descrizione,

@@ -7,6 +7,7 @@ import jakarta.inject.Inject;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 @Stateless
 public class FonteDatiService {
 

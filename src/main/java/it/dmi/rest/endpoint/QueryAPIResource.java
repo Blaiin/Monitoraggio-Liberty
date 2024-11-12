@@ -1,6 +1,6 @@
 package it.dmi.rest.endpoint;
 
-import it.dmi.quartz.ejb.ManagerEJB;
+import it.dmi.quartz.ejb.Manager;
 import it.dmi.rest.endpoint.interfaces.QueryAPI;
 import it.dmi.structure.io.QueryResponse;
 import jakarta.enterprise.context.RequestScoped;
@@ -22,12 +22,12 @@ public class QueryAPIResource implements QueryAPI {
     }
 
     @Inject
-    private ManagerEJB managerEJB;
+    private Manager manager;
 
     @Override
     public Response activate() {
         try {
-            managerEJB.scheduleConfigs();
+            manager.scheduleConfigs();
             return Response.accepted().build();
         } catch (Exception e) {
             log.error("Could not process configurations: ", e);

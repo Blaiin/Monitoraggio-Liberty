@@ -11,9 +11,10 @@ import java.util.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Slf4j
-public class OutputDTO implements IDTO {
+public class OutputDTO implements IDTO<OutputDTO, Output> {
 
     private Long id;
     private Character esito;
@@ -25,22 +26,6 @@ public class OutputDTO implements IDTO {
     private LocalDateTime inizio;
     private LocalDateTime fine;
     private Long durata;
-
-    public OutputDTO(Long id, Character esito,
-                      Map<String, ?> contenuto,
-                      Long configurazioneId, Long azioneId,
-                      Long tipoAzioneId, LocalDateTime inizio,
-                      LocalDateTime fine, Long durata) {
-        this.id = id;
-        this.esito = esito;
-        this.contenuto = adaptContent(contenuto);
-        this.configurazioneId = configurazioneId;
-        this.azioneId = azioneId;
-        this.tipoAzioneId = tipoAzioneId;
-        this.inizio = inizio;
-        this.fine = fine;
-        this.durata = durata;
-    }
 
     public void setContenuto(Map<String, ?> contenuto) {
         this.contenuto = adaptContent(contenuto);
@@ -67,22 +52,22 @@ public class OutputDTO implements IDTO {
     }
 
     @Override
-    public <T> IDTO fromEntity (T entity) {
-        return entity instanceof Output out ? new OutputDTO(
-                out.getId(),
-                out.getEsito(),
-                out.getContenuto(),
-                out.getConfigurazioneId(),
-                out.getAzioneId(),
-                out.getTipoAzioneId(),
-                out.getInizio(),
-                out.getFine(),
-                out.getDurata()
-        ) : null;
+    public OutputDTO fromEntity(Output o) {
+        if (o != null) {
+            this.id = o.getId();
+            this.esito = o.getEsito();
+            this.contenuto = o.getContenuto();
+            this.configurazioneId = o.getConfigurazioneId();
+            this.azioneId = o.getAzioneId();
+            this.tipoAzioneId = o.getTipoAzioneId();
+            this.inizio = o.getInizio();
+            this.fine = o.getFine();
+            this.durata = o.getDurata();
+        } return null;
     }
 
     @Override
-    public Output toEntity () {
+    public Output toEntity() {
         return new Output(
                 this.esito,
                 this.contenuto,

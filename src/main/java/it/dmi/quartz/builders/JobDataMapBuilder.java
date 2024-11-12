@@ -7,88 +7,56 @@ import it.dmi.data.entities.task.Configurazione;
 import it.dmi.data.entities.task.QuartzTask;
 import it.dmi.structure.exceptions.impl.quartz.JobBuildingException;
 import it.dmi.structure.internal.JobType;
-import it.dmi.utils.Utils;
+import it.dmi.utils.jobs.JobUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.quartz.JobDataMap;
 
-@SuppressWarnings("LoggingSimilarMessage")
+import static it.dmi.utils.constants.NamingConstants.*;
+
 @Slf4j
 public class JobDataMapBuilder {
 
-    private static final boolean devMode = false;
-
-    public static JobDataMap buildJobDataMap(QuartzTask task) throws JobBuildingException {
+    public static @NotNull JobDataMap buildJobDataMap(@NotNull QuartzTask task) throws JobBuildingException {
+        JobType jobType = JobUtils.resolveJobType(task);
         return switch (task) {
-            case Configurazione c -> buildJobDataMap(c);
-            case Azione a -> buildJobDataMap(a);
+            case Azione a -> createJobDataMap(a, jobType, new JobDataMap(),
+                    a.getFonteDati(), a.getUtenteFonteDati());
+            case Configurazione c -> createJobDataMap(c, jobType, new JobDataMap(),
+                    c.getFonteDati(), c.getUtenteFonteDati());
         };
     }
 
-    private static JobDataMap buildJobDataMap(Azione azione) throws JobBuildingException {
-        var id = azione.getStringID();
-        JobType jobType = Utils.JobHelper.resolveJobType(azione);
-        FonteDati fd = azione.getFonteDati();
-        SicurezzaFonteDati sfd = azione.getUtenteFonteDati();
-        if(devMode)
-            log.debug("Dev Mode is enabled, logging sensitive data.");
-        switch (jobType) {
-            case SQL -> {
-                JobDataMap map = new JobDataMap();
-                Utils.DebugLogger.debug(devMode, azione, jobType, fd);
-                Utils.JobHelper.createSQLJobDataMap(azione, map, id, jobType, fd, sfd);
-                return map;
+    @Contract("_, _, _, _, _ -> param3")
+    private static @NotNull JobDataMap createJobDataMap(@NotNull QuartzTask task,
+                                                        @NotNull JobType jobType,
+                                                        @NotNull JobDataMap map,
+                                                        @NotNull FonteDati fd,
+                                                        @NotNull SicurezzaFonteDati sfd) {
+        final var taskID = task.getStrID();
+        map.put(ID, taskID);
+        map.put(TASK + taskID, task);
+        map.put(JOB_TYPE + taskID, jobType.getJobType());
+        switch (task) {
+            case Azione azione -> {
+                map.put(CLASS + taskID, azione.getClasse());
+                map.put(PROGRAMMA + taskID, azione.getProgramma());
+                map.put(SQL_SCRIPT + taskID, azione.getSqlScript());
             }
-            case PROGRAM -> {
-                JobDataMap map = new JobDataMap();
-                Utils.DebugLogger.debug(devMode, azione, jobType);
-                Utils.JobHelper.createPROGRAMJobDataMap(azione, map, id);
-                return map;
-            }
-            case CLASS -> {
-                JobDataMap map = new JobDataMap();
-                Utils.DebugLogger.debug(devMode, azione, jobType);
-                Utils.JobHelper.createCLASSEJobDataMap(azione, map, id);
-                return map;
-            }
-            default -> {
-                log.error("Configurazione n. {} has no valid fields set, skipping creation.", azione.getId());
-                throw new IllegalArgumentException("Configurazione has no valid necessary fields set, configure exactly one" +
-                        "between SQLScript, Programma or Classe.");
+            case Configurazione config -> {
+                map.put(NOME + taskID, config.getNome());
+                map.put(SQL_SCRIPT + taskID, config.getSqlScript());
+                map.put(CLASS + taskID, config.getClasse());
+                map.put(PROGRAMMA + taskID, config.getProgramma());
+                map.put(THRESHOLDS + taskID, config.getSoglie());
             }
         }
-    }
-
-    private static JobDataMap buildJobDataMap(Configurazione config) throws JobBuildingException {
-        var id = config.getStringID();
-        JobType jobType = Utils.JobHelper.resolveJobType(config);
-        FonteDati fd = config.getFonteDati();
-        SicurezzaFonteDati sfd = config.getUtenteFonteDati();
-        if(devMode)
-            log.debug("Dev Mode is enabled, logging sensitive data.");
-        switch (jobType) {
-            case SQL -> {
-                JobDataMap map = new JobDataMap();
-                Utils.DebugLogger.debug(devMode, config, jobType, fd);
-                Utils.JobHelper.createSQLJobDataMap(config, map, id, jobType, fd, sfd);
-                return map;
-            }
-            case PROGRAM -> {
-                JobDataMap map = new JobDataMap();
-                Utils.DebugLogger.debug(devMode, config, jobType);
-                Utils.JobHelper.createPROGRAMJobDataMap(config, map, id);
-                return map;
-            }
-            case CLASS -> {
-                JobDataMap map = new JobDataMap();
-                Utils.DebugLogger.debug(devMode, config, jobType);
-                Utils.JobHelper.createCLASSEJobDataMap(config, map, id);
-                return map;
-            }
-            default -> {
-                log.error("Configurazione n. {} has no valid fields set, skipping creation.", config.getId());
-                throw new IllegalArgumentException("Configurazione has no valid necessary fields set, configure exactly one" +
-                        "between SQLScript, Programma or Classe.");
-            }
-        }
+        map.put(JNDI + taskID, fd.getJndiName());
+        map.put(DRIVER_NAME + taskID, fd.getNomeDriver());
+        map.put(URL + taskID, fd.getUrl());
+        map.put(USERNAME + taskID, sfd.getUserID());
+        map.put(PASSWORD + taskID, sfd.getPassword());
+        return map;
     }
 }

@@ -11,7 +11,6 @@ public class ResultsProcessor {
 
     public static Map<String, List<Object>> processSelectResultSet(ResultSet resultSet)
             throws SQLException, NullPointerException {
-
         Map<String, List<Object>> results = new HashMap<>();
         Objects.requireNonNull(resultSet, "ResultSet for select query was null.");
         log.info("Reading select result set...");
@@ -37,9 +36,7 @@ public class ResultsProcessor {
         Objects.requireNonNull(set, "ResultSet for count query was null.");
         log.debug("Reading count result set..");
         try {
-            if (set.next()) {
-                result = set.getInt(1);
-            }
+            if (set.next()) result = set.getInt(1);
         } catch (SQLException e) {
             log.error("Failed to process count result set.", e);
         }

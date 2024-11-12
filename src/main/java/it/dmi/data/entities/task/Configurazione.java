@@ -1,5 +1,6 @@
 package it.dmi.data.entities.task;
 
+import it.dmi.data.dto.SogliaDTO;
 import it.dmi.data.entities.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,8 @@ import lombok.Setter;
 
 import java.util.List;
 import java.util.stream.Stream;
+
+import static it.dmi.utils.constants.NamingConstants.CONFIG;
 
 @Entity
 @Table(name = "\"MON_Configurazione\"")
@@ -81,11 +84,16 @@ public non-sealed class Configurazione implements QuartzTask {
         this.ordineConfigurazione = ordineConfigurazione;
     }
 
-    public String getStringID() {
+    public String getLatchID() {
+        return this.getStrID() + CONFIG;
+    }
+
+    public String getStrID() {
         return String.valueOf(this.id);
     }
 
-    public Stream<Soglia> getSoglieAsStream() {
-        return this.soglie.stream();
+    public Stream<SogliaDTO> getSoglieDTOAsStream() {
+        return this.soglie.stream()
+                .map(s -> new SogliaDTO().fromEntity(s));
     }
 }

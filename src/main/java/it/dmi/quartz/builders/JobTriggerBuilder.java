@@ -3,17 +3,18 @@ package it.dmi.quartz.builders;
 import it.dmi.data.entities.task.Azione;
 import it.dmi.data.entities.task.Configurazione;
 import it.dmi.data.entities.task.QuartzTask;
-import it.dmi.utils.NullChecks;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.quartz.*;
 
 @Slf4j
 public class JobTriggerBuilder {
 
-    private final static int defaultConfigDelay = 10;
-    private final static int defaultAzioneDelay = 10;
+    private static final int DEFAULT_CONFIG_DELAY = 10;
+    private static final int DEFAULT_AZIONE_DELAY = 10;
 
-    public static Trigger buildTrigger(QuartzTask task, TriggerKey key) {
+    public static Trigger buildTrigger(@NotNull QuartzTask task, TriggerKey key) {
         switch (task) {
             case Azione a -> {
                 return buildTrigger(a, key);
@@ -24,29 +25,38 @@ public class JobTriggerBuilder {
         }
     }
 
-    private static Trigger buildTrigger(Azione azione, TriggerKey triggerKey) {
-        log.debug("Scheduling trigger for Azione {}", azione.getId());
-        return TriggerBuilder.newTrigger()
+    private static Trigger buildTrigger(@NotNull Azione azione, TriggerKey triggerKey) {
+        var trigger = TriggerBuilder.newTrigger()
                 .withIdentity(triggerKey)
-                .startAt(DateBuilder.futureDate(defaultAzioneDelay, DateBuilder.IntervalUnit.SECOND))
+                .startAt(DateBuilder.futureDate(DEFAULT_AZIONE_DELAY, DateBuilder.IntervalUnit.SECOND))
                 .build();
+        log.debug("Trigger for Azione {} created.", azione.getId());
+        return trigger;
     }
 
-    private static Trigger buildTrigger(Configurazione config, TriggerKey triggerKey) {
-        var nullOrEmpty = NullChecks.nullOrEmpty(config.getSchedulazione());
-        if (!nullOrEmpty) {
-            log.debug("Scheduling trigger for config . {}", config.getId());
-            return TriggerBuilder.newTrigger()
+    private static @Nullable Trigger buildTrigger(@NotNull Configurazione config, TriggerKey triggerKey) {
+        var sched = config.getSchedulazione();
+        if (sched == null || sched.isEmpty()) {
+            var trigger = TriggerBuilder.newTrigger()
                     .withIdentity(triggerKey)
-                    .withSchedule(CronScheduleBuilder
-                        .cronSchedule(config.getSchedulazione()))
+                    .startAt(DateBuilder.futureDate(DEFAULT_CONFIG_DELAY, DateBuilder.IntervalUnit.SECOND))
                     .build();
+            log.debug("Trigger for Config {} ({}s delay) created.", config.getId(), DEFAULT_CONFIG_DELAY);
+            return trigger;
         } else {
-            log.debug("Scheduling trigger for config n. {} in {} seconds.", config.getId(), defaultConfigDelay);
-            return TriggerBuilder.newTrigger()
-                    .withIdentity(triggerKey)
-                    .startAt(DateBuilder.futureDate(defaultConfigDelay, DateBuilder.IntervalUnit.SECOND))
-                    .build();
+            try {
+                var trigger = TriggerBuilder.newTrigger()
+                        .withIdentity(triggerKey)
+                        .withSchedule(CronScheduleBuilder
+                            .cronSchedule(config.getSchedulazione()))
+                        .build();
+                log.debug("Trigger for Config {} created.", config.getId());
+                return trigger;
+            } catch (RuntimeException e) {
+                if (e.getMessage().contains("CronExpression") && e.getMessage().contains("is invalid."))
+                    log.error("Error while building trigger for Config {}", config.getStrID(), e);
+                return null;
+            }
         }
     }
 }
