@@ -1,10 +1,31 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { MenuConfigurazioniComponent } from './components/menu-configurazioni/menu-configurazioni.component';
+import { HomepageComponent } from './components/homepage/homepage.component';
+import { MonitoraggioStatiComponent } from './components/monitoraggio-stati/monitoraggio-stati.component';
 
-const routes: Routes = [];
+const routes: Routes = [
+  {
+    path: 'monitoraggio-sistema-documentale/menu-configurazioni',
+    component: MenuConfigurazioniComponent,
+  },
+  {
+    path: 'monitoraggio-sistema-documentale/monitoraggio-stati',
+    component: MonitoraggioStatiComponent,
+  },
+  {
+    path: 'monitoraggio-sistema-documentale/home',
+    component: HomepageComponent,
+  },
+  {
+    path: '',
+    redirectTo: 'monitoraggio-sistema-documentale/home',
+    pathMatch: 'full',
+  },
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

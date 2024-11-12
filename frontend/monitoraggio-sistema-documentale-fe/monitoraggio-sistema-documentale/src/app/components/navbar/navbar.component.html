@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+
+  <mat-toolbar color="primary">
+    <!-- Logo -->
+    <img [routerLink]="['/monitoraggio-sistema-documentale/home']" src="assets/img/sogei_palladium.png"  alt="logo" class="logo" style="height: 40px; margin-right: 16px;">
+
+    <!-- Menu Links -->
+    <a mat-button [routerLink]="['/monitoraggio-sistema-documentale/menu-configurazioni']">Menu Configurazioni</a>
+    <a mat-button [routerLink]="['/monitoraggio-sistema-documentale/monitoraggio-stati']">Monitoraggio Stati</a>
+
+    <!-- Spacer to push items to the right -->
+    <span class="example-spacer" style="flex: 1 1 auto;"></span>
+  </mat-toolbar>
+
+
+
+</body>
+</html>
