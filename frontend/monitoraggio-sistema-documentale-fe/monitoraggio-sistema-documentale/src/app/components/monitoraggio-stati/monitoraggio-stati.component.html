@@ -7,14 +7,20 @@
   </head>
   <body>
     <div class="container-fluid">
-    <app-navbar></app-navbar>
+      <app-navbar></app-navbar>
       <div class="row">
         <div class="col-12">
           <h1>monitoraggio stati</h1>
-          <div style="max-width: 600px; margin: auto;">
-            <canvas #sinCanvas width="600" height="400"></canvas>
-          </div>
-                  </div>
+        </div>
+      </div>
+      <div style="display: block">
+        <canvas
+          baseChart
+          [data]="chartData"
+          [options]="chartOptions"
+          [type]="'bar'"
+        >
+        </canvas>
       </div>
     </div>
   </body>

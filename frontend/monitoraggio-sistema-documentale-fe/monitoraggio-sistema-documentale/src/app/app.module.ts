@@ -11,6 +11,7 @@ import { MenuConfigurazioniComponent } from './components/menu-configurazioni/me
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { HomepageComponent } from './components/homepage/homepage.component';
 import { MonitoraggioStatiComponent } from './components/monitoraggio-stati/monitoraggio-stati.component';
+import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { MonitoraggioStatiComponent } from './components/monitoraggio-stati/moni
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    NgChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent],
