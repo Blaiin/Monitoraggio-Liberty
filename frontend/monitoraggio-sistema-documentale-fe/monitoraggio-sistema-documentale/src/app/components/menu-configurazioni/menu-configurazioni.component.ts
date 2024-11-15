@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -30,6 +30,8 @@ export class MenuConfigurazioniComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+
+
   constructor(private router: Router,private fb: FormBuilder) {
     this.configurazioneForm = this.fb.group({
       soglie: this.fb.group({
@@ -45,7 +47,10 @@ export class MenuConfigurazioniComponent implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+
+  }
+
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
