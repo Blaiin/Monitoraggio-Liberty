@@ -15,32 +15,43 @@ const configurazioni = [
   styleUrls: ['./monitoraggio-stati.component.css'],
 })
 export class MonitoraggioStatiComponent implements OnInit {
-  ngOnInit(): void {
-    throw new Error('Method not implemented.');
+  title = 'Grafico Sinusoidale di Memoria';
+
+  constructor(){
+
   }
-  title = 'Monitoraggio Sistema Documentale';
 
-  // Esempio di dati di configurazioni con consumo di memoria
-  public configurazioni = [
-    { nome: 'Config1', memoria: 120 },
-    { nome: 'Config2', memoria: 150 },
-    { nome: 'Config3', memoria: 100 },
-    { nome: 'Config4', memoria: 180 },
-    { nome: 'Config5', memoria: 220 },
-  ];
+ngOnInit(): void {
 
-  // Prepara i dati del grafico
+}
+
+  // Generiamo dati simulati per un grafico sinusoidale
+  public generareDatiSinusoidali(): number[] {
+    const dati = [];
+    const frequenza = 0.1;  // Frequenza dell'onda sinusoidale
+    const ampiezza = 50;  // Ampiezza della curva
+    const offset = 100;  // Offset per il consumo di memoria
+
+    // Genera 100 punti per la curva sinusoidale
+    for (let x = 0; x < 100; x++) {
+      const valoreSin = Math.sin(frequenza * x) * ampiezza + offset;
+      dati.push(valoreSin);
+    }
+    return dati;
+  }
+
+  // Dati per il grafico (sinusoidale)
   public chartData: ChartData = {
-    labels: this.configurazioni.map((c) => c.nome), // Etichette: nomi delle configurazioni
+    labels: Array.from({ length: 100 }, (_, i) => i),  // Etichette: punti temporali o altre variabili
     datasets: [
       {
-        data: this.configurazioni.map((c) => c.memoria), // Dati: consumo di memoria
+        data: this.generareDatiSinusoidali(),  // Consumo di memoria simulato tramite funzione sinusoidale
         label: 'Consumo di Memoria (MB)',
-        backgroundColor: 'rgba(0, 123, 255, 0.5)',
-        borderColor: 'rgba(0, 123, 255, 1)',
-        borderWidth: 1,
-      },
-    ],
+        fill: false,
+        borderColor: 'rgba(75, 192, 192, 1)',
+        tension: 0.4  // La curvatura della linea
+      }
+    ]
   };
 
   // Opzioni del grafico
@@ -50,16 +61,16 @@ export class MonitoraggioStatiComponent implements OnInit {
       x: {
         title: {
           display: true,
-          text: 'Configurazioni',
-        },
+          text: 'Tempo'
+        }
       },
       y: {
         title: {
           display: true,
-          text: 'Memoria (MB)',
+          text: 'Memoria (MB)'
         },
-        beginAtZero: true, // Inizia l'asse Y da zero
-      },
-    },
+        beginAtZero: true  // L'asse Y inizia da zero
+      }
+    }
   };
 }

@@ -10,17 +10,19 @@
       <app-navbar></app-navbar>
       <div class="row">
         <div class="col-12">
-          <h1>monitoraggio stati</h1>
+          <h1 class="title">Monitoraggio stati</h1>
         </div>
       </div>
-      <div style="display: block">
-        <canvas
-          baseChart
-          [data]="chartData"
-          [options]="chartOptions"
-          [type]="'bar'"
-        >
-        </canvas>
+      <div class="row">
+        <div class="col-12">
+          <canvas
+            baseChart
+            [data]="chartData"
+            [options]="chartOptions"
+            [type]="'line'"
+          >
+          </canvas>
+        </div>
       </div>
     </div>
   </body>
