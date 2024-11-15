@@ -1,0 +1,129 @@
+.full-width {
+  width: 100%;
+}
+
+mat-form-field {
+  margin-bottom: 16px;
+}
+
+.title {
+  text-align: center;
+}
+
+
+/* Imposta un padding e margine generale */
+form {
+  padding: 20px;
+  margin: 0 auto;
+  max-width: 800px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Aggiungi margine tra i gruppi di campo */
+.form-group {
+  margin-bottom: 20px;
+}
+
+/* Migliora l'aspetto dei campi di input */
+input.form-control, select.form-select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+/* Aggiungi un bordo con focus */
+input.form-control:focus, select.form-select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Etichette dei campi di input */
+label {
+  font-weight: bold;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Formattazione del pulsante aggiungi/rimuovi */
+button {
+  margin-top: 10px;
+  padding: 10px 15px;
+  border-radius: 4px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Separazione tra i gruppi di soglie */
+.soglia-group {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+/* Aggiungi padding e margine tra i vari step */
+mat-step {
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+/* Stile per il passo di conferma */
+mat-step mat-form-field {
+  margin-bottom: 20px;
+}
+
+mat-step button {
+  background-color: #28a745;
+  color: white;
+  font-size: 16px;
+}
+
+mat-step button:hover {
+  background-color: #218838;
+}
+
+/* Pulsante per l'aggiunta di una nuova soglia */
+.add-soglia-button {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  border: none;
+  font-size: 14px;
+}
+
+.add-soglia-button:hover {
+  background-color: #218838;
+}
+
+/* Formattazione per la tabella, se necessaria */
+.mat-table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+.mat-table th, .mat-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.mat-table th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+}

@@ -59,6 +59,7 @@ export class MenuConfigurazioniComponent implements OnInit {
 
   toggleNew() {
     this.new = !this.new;
+    this.router.navigate(['/monitoraggio-sistema-documentale/menu-configurazioni/create-configurazione']);
   }
 
   onSubmit(): void {
