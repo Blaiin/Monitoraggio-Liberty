@@ -4,79 +4,84 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 @Component({
   selector: 'app-create-configurazione',
   templateUrl: './create-configurazione.component.html',
-  styleUrls: ['./create-configurazione.component.css']
+  styleUrls: ['./create-configurazione.component.css'],
 })
 export class CreateConfigurazioneComponent implements OnInit {
   configurazioneForm: FormGroup;
 
   constructor(private fb: FormBuilder) {
     this.configurazioneForm = this.fb.group({
-      tipoControllo: ['', Validators.required],
-      controlloDescrizione: ['', Validators.required],
-      tipoControlloID: ['', Validators.required],
-      ambitoID: ['', Validators.required],
-      ordineControllo: ['', Validators.required],
-      ambitoNome: ['', Validators.required],
-      ambitoDestinazione: ['', Validators.required],
-      fonteDatiDescrizione: ['', Validators.required],
-      nomeDriver: ['', Validators.required],
-      nomeClasse: ['', Validators.required],
-      url: ['', Validators.required],
-      jndiName: ['', Validators.required],
-      utenteFonteDatiDescrizione: ['', Validators.required],
-      utenteFonteDatiUsername: ['', Validators.required],
-      utenteFonteDatiPassword: ['', Validators.required],
-      nomeConfigurazione: ['', Validators.required],
-      sqlScript: ['', Validators.required],
-      programma: ['', Validators.required],
-      classe: ['', Validators.required],
-      schedulazione: ['', Validators.required],
-      ordineConfigurazione: ['', Validators.required],
+      tipoControllo: this.fb.group({
+        descrizione: ['', Validators.required],
+      }),
+      controllo: this.fb.group({
+        descrizione: ['', Validators.required],
+        tipoControlloID: [null, Validators.required],
+        ambitoID: [null, Validators.required],
+        ordineControllo: [null, Validators.required],
+      }),
+      ambito: this.fb.group({
+        nome: ['', Validators.required],
+        destinazione: ['', Validators.required],
+      }),
+      fonteDati: this.fb.group({
+        descrizione: ['', Validators.required],
+        nomeDriver: ['', Validators.required],
+        nomeClasse: ['', Validators.required],
+        url: ['', [Validators.required, Validators.pattern('https?://.+')]],
+        JNDIName: ['', Validators.required],
+      }),
+      utenteFonteDati: this.fb.group({
+        descrizione: ['', Validators.required],
+        username: ['', Validators.required],
+        password: ['', Validators.required],
+      }),
+      configurazione: this.fb.group({
+        nome: ['', Validators.required],
+        sqlScript: ['', Validators.required],
+        programma: ['', Validators.required],
+        classe: ['', Validators.required],
+        schedulazione: ['', Validators.required],
+        ordineConfigurazione: [null, Validators.required],
+      }),
       soglie: this.fb.array([]),
     });
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
 
-  }
-
-  // Getter per le soglie
-  get soglie() {
+  get soglie(): FormArray {
     return this.configurazioneForm.get('soglie') as FormArray;
   }
 
-  createSoglia(): FormGroup {
-    return this.fb.group({
-      sogliaInferiore: ['', [Validators.required, Validators.min(0)]],
-      sogliaSuperiore: ['', [Validators.required, Validators.min(0)]],
+  addSoglia() {
+    const sogliaGroup = this.fb.group({
+      sogliaInferiore: ['', Validators.required],
+      sogliaSuperiore: ['', Validators.required],
       valore: ['', Validators.required],
       operatore: ['', Validators.required],
     });
+
+    this.soglie.push(sogliaGroup);
   }
 
-  // Aggiungi una nuova soglia
-  addSoglia(): void {
-    this.soglie.push(this.createSoglia());
-  }
-
-  // Rimuovi una soglia
-  removeSoglia(index: number): void {
-    if (this.soglie.length > 1) {
-      this.soglie.removeAt(index);
-    } else {
-      // alert('Deve esserci almeno una soglia.');
-      this.soglie.removeAt(index);
-
-    }
+  removeSoglia(index: number) {
+    this.soglie.removeAt(index);
   }
 
 
-  // Submit del form
+  // Metodo di invio del form
   onSubmit() {
     if (this.configurazioneForm.valid) {
-      console.log(this.configurazioneForm.value);
+
+      const body = {
+        content: this.configurazioneForm.value
+      };
+      console.log(
+        'Form valid, data ready to send:',
+       JSON.stringify(body)
+      );
     } else {
-      console.log('Form non valido');
     }
   }
 }
