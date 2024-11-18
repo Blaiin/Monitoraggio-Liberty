@@ -44,7 +44,15 @@ export class CreateConfigurazioneComponent implements OnInit {
         schedulazione: ['', Validators.required],
         ordineConfigurazione: [null, Validators.required],
       }),
-      soglie: this.fb.array([]),
+      soglie: this.fb.array([
+        this.fb.group({
+          sogliaInferiore: ['', Validators.required],
+          sogliaSuperiore: ['', Validators.required],
+          valore: ['', Validators.required],
+          operatore: ['', Validators.required]
+        }),
+
+      ])
     });
   }
 
@@ -69,19 +77,27 @@ export class CreateConfigurazioneComponent implements OnInit {
     this.soglie.removeAt(index);
   }
 
-
   // Metodo di invio del form
   onSubmit() {
     if (this.configurazioneForm.valid) {
-
       const body = {
         content: this.configurazioneForm.value
       };
       console.log(
         'Form valid, data ready to send:',
-       JSON.stringify(body)
+        JSON.stringify(body)
       );
+      // Aggiungi qui la logica per inviare il form al server
     } else {
+      console.log('Form non valido, visualizzare messaggi di errore');
+      this.markAllAsTouched(); // Segna tutti i campi come "toccati" per visualizzare gli errori
     }
+  }
+
+  // Metodo per segnare tutti i campi come "toccati" per mostrare gli errori
+  markAllAsTouched() {
+    Object.values(this.configurazioneForm.controls).forEach((control) => {
+      control.markAsTouched();
+    });
   }
 }
