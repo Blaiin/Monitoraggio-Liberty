@@ -3,7 +3,8 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-create-configurazione',
-  templateUrl: './create-configurazione.component.html'
+  templateUrl: './create-configurazione.component.html',
+  styleUrls: ['./create-configurazione.component.css']
 })
 export class CreateConfigurazioneComponent implements OnInit {
   configurazioneForm: FormGroup;
@@ -31,20 +32,7 @@ export class CreateConfigurazioneComponent implements OnInit {
       classe: ['', Validators.required],
       schedulazione: ['', Validators.required],
       ordineConfigurazione: ['', Validators.required],
-      soglie: this.fb.array([
-        this.fb.group({
-          sogliaInferiore: ['', Validators.required],
-          sogliaSuperiore: ['', Validators.required],
-          valore: ['', Validators.required],
-          operatore: ['', Validators.required]
-        }),
-        this.fb.group({
-          sogliaInferiore: ['', Validators.required],
-          sogliaSuperiore: ['', Validators.required],
-          valore: ['', Validators.required],
-          operatore: ['', Validators.required]
-        })
-      ])
+      soglie: this.fb.array([]),
     });
   }
 
@@ -57,20 +45,31 @@ export class CreateConfigurazioneComponent implements OnInit {
     return this.configurazioneForm.get('soglie') as FormArray;
   }
 
-  // Aggiungi una nuova soglia
-  addSoglia() {
-    this.soglie.push(this.fb.group({
-      sogliaInferiore: ['', Validators.required],
-      sogliaSuperiore: ['', Validators.required],
+  createSoglia(): FormGroup {
+    return this.fb.group({
+      sogliaInferiore: ['', [Validators.required, Validators.min(0)]],
+      sogliaSuperiore: ['', [Validators.required, Validators.min(0)]],
       valore: ['', Validators.required],
-      operatore: ['', Validators.required]
-    }));
+      operatore: ['', Validators.required],
+    });
+  }
+
+  // Aggiungi una nuova soglia
+  addSoglia(): void {
+    this.soglie.push(this.createSoglia());
   }
 
   // Rimuovi una soglia
-  removeSoglia(index: number) {
-    this.soglie.removeAt(index);
+  removeSoglia(index: number): void {
+    if (this.soglie.length > 1) {
+      this.soglie.removeAt(index);
+    } else {
+      // alert('Deve esserci almeno una soglia.');
+      this.soglie.removeAt(index);
+
+    }
   }
+
 
   // Submit del form
   onSubmit() {

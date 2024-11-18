@@ -1,4 +1,5 @@
 <div class="container-fluid">
+  <app-navbar></app-navbar>
   <div class="row">
     <div class="col-12">
       <h1 class="title">Creazione Configurazione</h1>
@@ -14,147 +15,312 @@
               <div class="col-md-4">
                 <div class="form-group">
                   <label for="tipoControllo">Tipo Controllo Descrizione</label>
-                  <input id="tipoControllo" formControlName="tipoControllo" class="form-control" matInput placeholder="Descrizione Tipo Controllo" />
+                  <input
+                    id="tipoControllo"
+                    formControlName="tipoControllo"
+                    class="form-control"
+                    placeholder="Descrizione Tipo Controllo"
+                  />
                 </div>
-                <button mat-button matStepperNext>Avanti</button>
+                <mat-error *ngIf="configurazioneForm.get('tipoControllo')?.hasError('required')">
+                  Questo campo è obbligatorio.
+                </mat-error>
               </div>
             </div>
 
+            <div class="row">
+              <div class="col-12 d-flex justify-content-center" id="step-button">
+                <button mat-flat-button color="primary" matStepperNext>Avanti ► </button>
+              </div>
+            </div>
           </form>
+
         </mat-step>
 
         <!-- Step Controllo -->
         <mat-step [stepControl]="configurazioneForm.get('controlloDescrizione')!" label="Controllo">
           <form [formGroup]="configurazioneForm">
-            <div class="form-group">
-              <label for="controlloDescrizione">Controllo Descrizione</label>
-              <input id="controlloDescrizione" formControlName="controlloDescrizione" class="form-control" matInput placeholder="Descrizione Controllo" />
+            <div class="row">
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="controlloDescrizione">Controllo Descrizione</label>
+                  <input
+                    id="controlloDescrizione"
+                    formControlName="controlloDescrizione"
+                    class="form-control"
+                    placeholder="Descrizione Controllo"
+                  />
+                  <mat-error *ngIf="configurazioneForm.get('controlloDescrizione')?.hasError('required')">
+                    Questo campo è obbligatorio.
+                  </mat-error>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="tipoControlloID">Tipo Controllo ID</label>
+                  <input
+                    id="tipoControlloID"
+                    formControlName="tipoControlloID"
+                    class="form-control"
+                    placeholder="Inserire tipo controllo id"
+                    type="number"
+                  />
+                  <mat-error *ngIf="configurazioneForm.get('tipoControlloID')?.hasError('required')">
+                    Questo campo è obbligatorio.
+                  </mat-error>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="ambitoID">Ambito ID</label>
+                  <input
+                    id="ambitoID"
+                    formControlName="ambitoID"
+                    class="form-control"
+                    placeholder="Inserire ambito id"
+                    type="number"
+                  />
+                  <mat-error *ngIf="configurazioneForm.get('ambitoID')?.hasError('required')">
+                    Questo campo è obbligatorio.
+                  </mat-error>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="ordineControllo">Ordine Controllo</label>
+                  <input
+                    id="ordineControllo"
+                    formControlName="ordineControllo"
+                    placeholder="Inserire ordine controllo"
+                    class="form-control"
+                    type="number"
+                  />
+                  <mat-error *ngIf="configurazioneForm.get('ordineControllo')?.hasError('required')">
+                    Questo campo è obbligatorio.
+                  </mat-error>
+                </div>
+              </div>
             </div>
 
-            <div class="form-group">
-              <label for="tipoControlloID">Tipo Controllo ID</label>
-              <input id="tipoControlloID" formControlName="tipoControlloID" class="form-control" matInput type="number" />
+            <div class="row">
+              <div class="col-12 d-flex justify-content-center">
+                <button mat-flat-button color="primary" matStepperNext>
+                  Avanti ►
+                </button>
+              </div>
             </div>
-
-            <div class="form-group">
-              <label for="ambitoID">Ambito ID</label>
-              <input id="ambitoID" formControlName="ambitoID" matInput class="form-control" type="number" />
-            </div>
-
-            <div class="form-group">
-              <label for="ordineControllo">Ordine Controllo</label>
-              <input id="ordineControllo" formControlName="ordineControllo" class="form-control" matInput type="number" />
-            </div>
-
-            <button mat-button matStepperNext>Avanti</button>
           </form>
+
         </mat-step>
 
         <!-- Step Ambito -->
         <mat-step [stepControl]="configurazioneForm.get('ambitoNome')!" label="Ambito">
           <form [formGroup]="configurazioneForm">
-            <div class="form-group">
-              <label for="ambitoNome">Ambito Nome</label>
-              <input id="ambitoNome" formControlName="ambitoNome" class="form-control" matInput placeholder="Nome Ambito" />
-            </div>
 
-            <div class="form-group">
-              <label for="ambitoDestinazione">Ambito Destinazione</label>
-              <input id="ambitoDestinazione" formControlName="ambitoDestinazione" class="form-control" matInput placeholder="Destinazione Ambito" />
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="ambitoNome">Ambito Nome</label>
+                  <input id="ambitoNome" formControlName="ambitoNome" class="form-control"  placeholder="Nome Ambito" />
+                  <mat-error *ngIf="configurazioneForm.get('ambitoNome')?.hasError('required')">
+                    Questo campo è obbligatorio.
+                  </mat-error>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="ambitoDestinazione">Ambito Destinazione</label>
+                  <input id="ambitoDestinazione" formControlName="ambitoDestinazione" class="form-control"  placeholder="Destinazione Ambito" />
+                  <mat-error *ngIf="configurazioneForm.get('ambitoDestinazione')?.hasError('required')">
+                    Questo campo è obbligatorio.
+                  </mat-error>
+                </div>
+              </div>
             </div>
-
-            <button mat-button matStepperNext>Avanti</button>
+            <div class="row">
+              <div class="col-12 d-flex justify-content-center">
+                <button mat-flat-button color="primary" matStepperNext>
+                  Avanti ►
+                </button>
+              </div>
+            </div>
           </form>
         </mat-step>
 
         <!-- Step Fonte Dati -->
         <mat-step [stepControl]="configurazioneForm.get('fonteDatiDescrizione')!" label="Fonte Dati">
           <form [formGroup]="configurazioneForm">
-            <div class="form-group">
-              <label for="fonteDatiDescrizione">Fonte Dati Descrizione</label>
-              <input id="fonteDatiDescrizione" formControlName="fonteDatiDescrizione" class="form-control" matInput placeholder="Descrizione Fonte Dati" />
-            </div>
+            <div class="row">
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="fonteDatiDescrizione">Fonte Dati Descrizione</label>
+                  <input id="fonteDatiDescrizione" formControlName="fonteDatiDescrizione" class="form-control"  placeholder="Descrizione Fonte Dati" />
+                  <mat-error *ngIf="configurazioneForm.get('fonteDatiDescrizione')?.hasError('required')">
+                    Questo campo è obbligatorio.
+                  </mat-error>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="nomeDriver">Nome Driver</label>
+                  <input id="nomeDriver" formControlName="nomeDriver" class="form-control"  placeholder="Nome Driver" />
+                  <mat-error *ngIf="configurazioneForm.get('nomeDriver')?.hasError('required')">
+                    Questo campo è obbligatorio.
+                  </mat-error>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="nomeClasse">Nome Classe</label>
+                  <input id="nomeClasse" formControlName="nomeClasse" class="form-control"  placeholder="Nome Classe" />
+                  <mat-error *ngIf="configurazioneForm.get('nomeClasse')?.hasError('required')">
+                    Questo campo è obbligatorio.
+                  </mat-error>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="url">URL</label>
+                  <input id="url" formControlName="url"  class="form-control" placeholder="URL" />
 
-            <div class="form-group">
-              <label for="nomeDriver">Nome Driver</label>
-              <input id="nomeDriver" formControlName="nomeDriver" class="form-control" matInput placeholder="Nome Driver" />
+                  <mat-error *ngIf="configurazioneForm.get('url')?.hasError('required')">
+                    Questo campo è obbligatorio.
+                  </mat-error></div>
+              </div>
             </div>
-
-            <div class="form-group">
-              <label for="nomeClasse">Nome Classe</label>
-              <input id="nomeClasse" formControlName="nomeClasse" class="form-control" matInput placeholder="Nome Classe" />
+          <div class="row">
+            <div class="col-md-3">
+              <div class="form-group">
+                <label for="jndiName">JNDI Name</label>
+                <input id="jndiName" formControlName="jndiName" class="form-control"  placeholder="JNDI Name" />
+                <mat-error *ngIf="configurazioneForm.get('jndiName')?.hasError('required')">
+                  Questo campo è obbligatorio.
+                </mat-error>
+              </div>
             </div>
-
-            <div class="form-group">
-              <label for="url">URL</label>
-              <input id="url" formControlName="url" matInput class="form-control" placeholder="URL" />
+          </div>
+          <div class="row">
+            <div class="col-12 d-flex justify-content-center">
+              <button mat-flat-button color="primary" matStepperNext>
+                Avanti ►
+              </button>
             </div>
-
-            <div class="form-group">
-              <label for="jndiName">JNDI Name</label>
-              <input id="jndiName" formControlName="jndiName" class="form-control" matInput placeholder="JNDI Name" />
-            </div>
-
-            <button mat-button matStepperNext>Avanti</button>
+          </div>
           </form>
         </mat-step>
 
         <!-- Step Utente Fonte Dati -->
         <mat-step [stepControl]="configurazioneForm.get('utenteFonteDatiDescrizione')!" label="Utente Fonte Dati">
           <form [formGroup]="configurazioneForm">
-            <div class="form-group">
-              <label for="utenteFonteDatiDescrizione">Utente Fonte Dati Descrizione</label>
-              <input id="utenteFonteDatiDescrizione" class="form-control" formControlName="utenteFonteDatiDescrizione" matInput placeholder="Descrizione Utente Fonte Dati" />
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="utenteFonteDatiDescrizione">Utente Fonte Dati Descrizione</label>
+                  <input id="utenteFonteDatiDescrizione" class="form-control" formControlName="utenteFonteDatiDescrizione"  placeholder="Descrizione Utente Fonte Dati" />
+                  <mat-error *ngIf="configurazioneForm.get('utenteFonteDatiDescrizione')?.hasError('required')">
+                    Questo campo è obbligatorio.
+                  </mat-error>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="utenteFonteDatiUsername">Username</label>
+                  <input id="utenteFonteDatiUsername" class="form-control" formControlName="utenteFonteDatiUsername"  placeholder="Username" />
+                  <mat-error *ngIf="configurazioneForm.get('utenteFonteDatiUsername')?.hasError('required')">
+                    Questo campo è obbligatorio.
+                  </mat-error>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="utenteFonteDatiPassword">Password</label>
+                  <input id="utenteFonteDatiPassword" class="form-control" formControlName="utenteFonteDatiPassword"  type="password" placeholder="Password" />
+                  <mat-error *ngIf="configurazioneForm.get('utenteFonteDatiPassword')?.hasError('required')">
+                    Questo campo è obbligatorio.
+                  </mat-error>
+                </div>
+              </div>
             </div>
-
-            <div class="form-group">
-              <label for="utenteFonteDatiUsername">Username</label>
-              <input id="utenteFonteDatiUsername" class="form-control" formControlName="utenteFonteDatiUsername" matInput placeholder="Username" />
+            <div class="row">
+              <div class="col-12 d-flex justify-content-center">
+                <button mat-flat-button color="primary" matStepperNext>
+                  Avanti ►
+                </button>
+              </div>
             </div>
-
-            <div class="form-group">
-              <label for="utenteFonteDatiPassword">Password</label>
-              <input id="utenteFonteDatiPassword" class="form-control" formControlName="utenteFonteDatiPassword" matInput type="password" placeholder="Password" />
-            </div>
-
-            <button mat-button matStepperNext>Avanti</button>
-          </form>
+         </form>
         </mat-step>
 
         <!-- Step Configurazione -->
         <mat-step [stepControl]="configurazioneForm.get('nomeConfigurazione')!" label="Configurazione">
           <form [formGroup]="configurazioneForm">
-            <div class="form-group">
-              <label for="nomeConfigurazione">Nome Configurazione</label>
-              <input id="nomeConfigurazione" formControlName="nomeConfigurazione" class="form-control" matInput placeholder="Nome Configurazione" />
-            </div>
 
-            <div class="form-group">
-              <label for="sqlScript">SQL Script</label>
-              <textarea id="sqlScript" formControlName="sqlScript" class="form-control" matInput placeholder="SQL Script"></textarea>
+            <div class="row">
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="nomeConfigurazione">Nome Configurazione</label>
+                  <input id="nomeConfigurazione" formControlName="nomeConfigurazione" class="form-control"  placeholder="Nome Configurazione" />
+                  <mat-error *ngIf="configurazioneForm.get('nomeConfigurazione')?.hasError('required')">
+                    Questo campo è obbligatorio.
+                  </mat-error>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="sqlScript">SQL Script</label>
+                  <textarea id="sqlScript" formControlName="sqlScript" class="form-control"  placeholder="SQL Script"></textarea>
+                  <mat-error *ngIf="configurazioneForm.get('sqlScript')?.hasError('required')">
+                    Questo campo è obbligatorio.
+                  </mat-error>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="programma">Programma</label>
+                  <input id="programma" formControlName="programma" class="form-control" placeholder="Programma" />
+                  <mat-error *ngIf="configurazioneForm.get('programma')?.hasError('required')">
+                    Questo campo è obbligatorio.
+                  </mat-error>
+                </div>
+              </div>
             </div>
-
-            <div class="form-group">
-              <label for="programma">Programma</label>
-              <input id="programma" formControlName="programma" class="form-control" matInput placeholder="Programma" />
-            </div>
-
-            <div class="form-group">
-              <label for="classe">Classe</label>
-              <input id="classe" formControlName="classe" class="form-control" matInput placeholder="Classe" />
-            </div>
-
-            <div class="form-group">
-              <label for="schedulazione">Schedulazione</label>
-              <input id="schedulazione" formControlName="schedulazione" class="form-control" matInput placeholder="Schedulazione" />
-            </div>
+            <div class="row">
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="classe">Classe</label>
+                  <input id="classe" formControlName="classe" class="form-control"  placeholder="Classe" />
+                  <mat-error *ngIf="configurazioneForm.get('classe')?.hasError('required')">
+                    Questo campo è obbligatorio.
+                  </mat-error>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="schedulazione">Schedulazione</label>
+                  <input id="schedulazione" formControlName="schedulazione" class="form-control"  placeholder="Schedulazione" />
+                  <mat-error *ngIf="configurazioneForm.get('schedulazione')?.hasError('required')">
+                    Questo campo è obbligatorio.
+                  </mat-error>
+                </div>
+              </div>
+              <div class="col-md-3">
 
             <div class="form-group">
               <label for="ordineConfigurazione">Ordine Configurazione</label>
-              <input id="ordineConfigurazione" formControlName="ordineConfigurazione" class="form-control" matInput type="number" />
+              <input id="ordineConfigurazione" formControlName="ordineConfigurazione" class="form-control"  type="number" />
+              <mat-error *ngIf="configurazioneForm.get('ordineConfigurazione')?.hasError('required')">
+                Questo campo è obbligatorio.
+              </mat-error>
             </div>
-
-            <button mat-button matStepperNext>Avanti</button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 d-flex justify-content-center">
+                <button mat-flat-button color="primary" matStepperNext>
+                  Avanti ►
+                </button>
+              </div>
+            </div>
           </form>
         </mat-step>
 
@@ -162,34 +328,91 @@
           <form [formGroup]="configurazioneForm">
             <div formArrayName="soglie">
               <div *ngFor="let soglia of soglie.controls; let i = index" [formGroupName]="i" class="soglia-group">
-                <div class="form-group">
-                  <label for="sogliaInferiore-{{ i }}">Soglia Inferiore</label>
-                  <input class="form-control" id="sogliaInferiore-{{ i }}" formControlName="sogliaInferiore" matInput type="number" placeholder="Soglia Inferiore" />
+                <div class="row">
+                  <!-- Soglia Inferiore -->
+                  <div class="col-md-3">
+                      <mat-label>Soglia Inferiore</mat-label>
+                      <input
+                        class="form-control"
+                        type="number"
+                        formControlName="sogliaInferiore"
+                        placeholder="Inserisci soglia inferiore"
+                      />
+                      <mat-error *ngIf="soglia.get('sogliaInferiore')?.hasError('required')">
+                        Soglia inferiore è obbligatoria.
+                      </mat-error>
+                      <mat-error *ngIf="soglia.get('sogliaInferiore')?.hasError('min')">
+                        Deve essere maggiore o uguale a 0.
+                      </mat-error>
+                  </div>
+
+                  <!-- Soglia Superiore -->
+                  <div class="col-md-3">
+                      <mat-label>Soglia Superiore</mat-label>
+                      <input
+                        class="form-control"
+                        type="number"
+                        formControlName="sogliaSuperiore"
+                        placeholder="Inserisci soglia superiore"
+                      />
+                      <mat-error *ngIf="soglia.get('sogliaSuperiore')?.hasError('required')">
+                        Soglia superiore è obbligatoria.
+                      </mat-error>
+                      <mat-error *ngIf="soglia.get('sogliaSuperiore')?.hasError('min')">
+                        Deve essere maggiore o uguale a 0.
+                      </mat-error>
+                  </div>
+
+                  <!-- Valore -->
+                  <div class="col-md-3">
+                      <mat-label>Valore</mat-label>
+                      <input class="form-control" type="text" formControlName="valore" placeholder="Inserisci valore" />
+                      <mat-error *ngIf="soglia.get('valore')?.hasError('required')">
+                        Valore è obbligatorio.
+                      </mat-error>
+                  </div>
+
+                  <!-- Operatore -->
+                  <div class="col-md-3">
+                      <mat-label>Operatore</mat-label>
+                      <select formControlName="operatore" class="form-select" >
+                        <option value="">Seleziona operatore</option>
+                        <option value="+">+</option>
+                        <option value="-">-</option>
+                        <option value="*">*</option>
+                        <option value="/">/</option>
+                      </select>
+                      <mat-error *ngIf="soglia.get('operatore')?.hasError('required')">
+                        Operatore è obbligatorio.
+                      </mat-error>
+                  </div>
                 </div>
-                <div class="form-group">
-                  <label for="sogliaSuperiore-{{ i }}">Soglia Superiore</label>
-                  <input class="form-control" id="sogliaSuperiore-{{ i }}" formControlName="sogliaSuperiore" matInput type="number" placeholder="Soglia Superiore" />
+
+                <!-- Pulsante Rimuovi -->
+                <div class="mt-2">
+                  <button mat-flat-button color="warn" (click)="removeSoglia(i)">Rimuovi</button>
                 </div>
-                <div class="form-group">
-                  <label for="valore-{{ i }}">Valore</label>
-                  <input class="form-control" id="valore-{{ i }}" formControlName="valore" matInput placeholder="Valore" />
-                </div>
-                <div class="form-group">
-                  <label for="operatore-{{ i }}">Operatore</label>
-                  <select id="operatore-{{ i }}" formControlName="operatore" matNativeControl class="form-select">
-                    <option value="+">+</option>
-                    <option value="-">-</option>
-                    <option value="*">*</option>
-                    <option value="/">/</option>
-                  </select>
-                </div>
-                <button mat-button (click)="removeSoglia(i)">Rimuovi</button>
+                <hr />
               </div>
             </div>
-            <button mat-button (click)="addSoglia()">Aggiungi Soglia</button>
-            <button mat-button matStepperNext>Next</button>
-          </form>
+
+            <!-- Pulsante Aggiungi Soglia -->
+            <div class="row">
+              <div class="col-12 d-flex justify-content-center">
+                <button mat-flat-button style="border: 1px solid black;" (click)="addSoglia()">Aggiungi Soglia <mat-icon>add</mat-icon> </button>
+              </div>
+            </div>
+
+            <!-- Pulsante Next -->
+            <div class="row">
+              <div class="col-12 d-flex justify-content-center">
+                <button mat-flat-button color="primary" matStepperNext>
+                  Avanti ►
+                </button>
+              </div>
+            </div>          </form>
         </mat-step>
+
 
         <!-- Step di Conferma (Ultimo Step) -->
         <mat-step label="Conferma">
@@ -198,8 +421,6 @@
           </div>
         </mat-step>
       </mat-horizontal-stepper>
-
-
     </div>
   </div>
 </div>
