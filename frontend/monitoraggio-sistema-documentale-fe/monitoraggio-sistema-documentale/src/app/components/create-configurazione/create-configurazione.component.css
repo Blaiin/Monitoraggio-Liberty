@@ -14,10 +14,6 @@ textarea.ng-invalid.ng-touched {
   background-color: #ffe6e6;
 }
 
-/* Campo valido */
-/* input.ng-valid.ng-touched,
-select.ng-valid.ng-touched,
-textarea.ng-valid.ng-touched {
-  border: 2px solid green;
-  background-color: #e6ffe6;
-} */
+.step-buttons{
+  text-align: center;
+}
