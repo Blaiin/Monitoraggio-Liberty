@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Configurazione } from 'src/app/entities/Configurazione';
+import { ConfigurazioneService } from './configurazione.service';
 
 @Component({
   selector: 'app-create-configurazione',
@@ -9,7 +11,10 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class CreateConfigurazioneComponent implements OnInit {
   configurazioneForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private configurazioneService: ConfigurazioneService
+  ) {
     this.configurazioneForm = this.fb.group({
       tipoControllo: this.fb.group({
         descrizione: ['', Validators.required],
@@ -49,10 +54,9 @@ export class CreateConfigurazioneComponent implements OnInit {
           sogliaInferiore: ['', Validators.required],
           sogliaSuperiore: ['', Validators.required],
           valore: ['', Validators.required],
-          operatore: ['', Validators.required]
+          operatore: ['', Validators.required],
         }),
-
-      ])
+      ]),
     });
   }
 
@@ -80,17 +84,25 @@ export class CreateConfigurazioneComponent implements OnInit {
   // Metodo di invio del form
   onSubmit() {
     if (this.configurazioneForm.valid) {
-      const body = {
-        content: this.configurazioneForm.value
-      };
-      console.log(
-        'Form valid, data ready to send:',
-        JSON.stringify(body)
+      const formData: Configurazione['content'] = this.configurazioneForm.value;
+      const body: Configurazione = { content: formData };
+
+      console.log('Form valid, data ready to send:', JSON.stringify(body));
+
+      this.configurazioneService.aggiungiConfigurazione(body).subscribe(
+        (response: any) => {
+          console.log('Configurazione aggiunta con successo:', response);
+        },
+        (error: any) => {
+          console.error(
+            "Errore durante l'aggiunta della configurazione:",
+            error
+          );
+        }
       );
-      // Aggiungi qui la logica per inviare il form al server
     } else {
       console.log('Form non valido, visualizzare messaggi di errore');
-      this.markAllAsTouched(); // Segna tutti i campi come "toccati" per visualizzare gli errori
+      this.markAllAsTouched();
     }
   }
 
