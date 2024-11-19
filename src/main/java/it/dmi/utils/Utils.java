@@ -37,6 +37,12 @@ public class Utils {
         }
     }
 
+    public static class Math {
+        public static long calculateMB(long from) {
+            return from / (long) (java.lang.Math.pow(1024, 2));
+        }
+    }
+
     public static long calculateWaitTime(@NotNull QuartzTask task, JobInfo info) {
         final var maxDelay = TimeUnit.SECONDS.toMillis(3600);
         switch (task) {
