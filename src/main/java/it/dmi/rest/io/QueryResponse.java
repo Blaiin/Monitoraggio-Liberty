@@ -1,7 +1,9 @@
-package it.dmi.structure.io;
+package it.dmi.rest.io;
 
 import lombok.Getter;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +27,7 @@ public class QueryResponse {
         this(code, message, createErrorMap(code, message));
     }
 
-    private static List<Map<String, List<?>>> createErrorMap(String code, String message) {
+    private static @NotNull @Unmodifiable List<Map<String, List<?>>> createErrorMap(String code, String message) {
         if (Objects.equals(code, "500")) {
             Map<String, List<?>> messageMap = Collections.singletonMap("error", Collections.singletonList(message));
             return Collections.singletonList(messageMap);

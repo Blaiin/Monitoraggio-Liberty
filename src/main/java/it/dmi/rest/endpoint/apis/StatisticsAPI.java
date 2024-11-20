@@ -1,6 +1,6 @@
-package it.dmi.rest.endpoint.interfaces;
+package it.dmi.rest.endpoint.apis;
 
-import it.dmi.structure.io.RamUsageResponse;
+import it.dmi.rest.io.RamUsageResponse;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -16,15 +16,11 @@ public interface StatisticsAPI {
     @Path("/ram-usage")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Activate the system",
-            description = "This endpoint allows you to submit a query to the system.")
+    @Operation(summary = "Ram usage of system",
+            description = "Measure ram statistics")
     @APIResponse(responseCode = "200",
             description = "Succesfully returned statistics",
             content = @Content(schema = @Schema(implementation = RamUsageResponse.class)))
-    @APIResponse(responseCode = "204",
-            description = "No content")
-    @APIResponse(responseCode = "400",
-            description = "Bad request")
     @APIResponse(responseCode = "500",
             description = "Internal server error")
     RamUsageResponse ramUsage();

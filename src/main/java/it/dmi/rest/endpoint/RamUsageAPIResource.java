@@ -1,8 +1,8 @@
 package it.dmi.rest.endpoint;
 
 import com.sun.management.OperatingSystemMXBean;
-import it.dmi.rest.endpoint.interfaces.StatisticsAPI;
-import it.dmi.structure.io.RamUsageResponse;
+import it.dmi.rest.endpoint.apis.StatisticsAPI;
+import it.dmi.rest.io.RamUsageResponse;
 import it.dmi.utils.Utils;
 import jakarta.enterprise.context.RequestScoped;
 import lombok.extern.slf4j.Slf4j;

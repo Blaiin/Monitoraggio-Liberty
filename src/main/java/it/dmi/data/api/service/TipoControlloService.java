@@ -1,9 +1,11 @@
 package it.dmi.data.api.service;
 
 import it.dmi.data.api.repositories.impl.TipoControlloRP;
+import it.dmi.data.dto.TipoControlloDTO;
 import it.dmi.data.entities.TipoControllo;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -14,8 +16,15 @@ public class TipoControlloService {
     @Inject
     private TipoControlloRP repository;
 
-    private void create(TipoControllo tipoControllo) {
-        repository.save(tipoControllo);
+    private boolean create(TipoControllo tipoControllo) {
+        if (tipoControllo == null) return false;
+        if (repository.findByID(tipoControllo.getId()) != null) return false;
+        return repository.save(tipoControllo) != null;
+    }
+
+    public TipoControlloDTO createOrFind(@NotNull TipoControlloDTO dto) {
+        if(create(dto.toEntity())) return dto;
+        else return null;
     }
 
     public TipoControllo getByID(Long id) {

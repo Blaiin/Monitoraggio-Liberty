@@ -20,6 +20,14 @@ public class FonteDatiDTO implements IDTO<FonteDatiDTO, FonteDati> {
     private String url;
     private String jndiName;
 
+    public FonteDatiDTO(String jndiName, String url, String nomeClasse, String descrizione, String nomeDriver) {
+        this.jndiName = jndiName;
+        this.url = url;
+        this.nomeClasse = nomeClasse;
+        this.descrizione = descrizione;
+        this.nomeDriver = nomeDriver;
+    }
+
     @Override
     public FonteDatiDTO fromEntity(FonteDati fd) {
         if (fd != null) {
