@@ -7,19 +7,24 @@
         <feature>microProfile-6.1</feature>
     </featureManager>
 
-    <dataSource id="defaultDataSource" jndiName="jdbc/defaultDataSource">
-        <jdbcDriver libraryRef="PostgreSQLLib"/>
-        <properties>
-            <databaseName>${env.DATABASE_NAME}</databaseName>
-            <serverName>${env.DATABASE_HOST}</serverName>
-            <portNumber>${env.DATABASE_PORT}</portNumber>
+    <dataSource id="msdDataSource" jndiName="jdbc/msdDataSource">
+        <jdbcDriver libraryRef="pluginGenLib"/>
+        <!-- <properties>
+            <url>${env.DATABASE_URL}</url>
             <user>${env.DATABASE_USER}</user>
             <password>${env.DATABASE_PASSWORD}</password>
-        </properties>
+        </properties> -->
+        <properties.oracle URL="${env.DATABASE_URL}"
+                           user="${env.DATABASE_USER}"
+                           password="${env.DATABASE_PASSWORD}"/>
     </dataSource>
 
-    <library id="PostgreSQLLib">
-        <file name="${env.POSTGRES_DRIVER_LOCATION}"/>
+    <library id="oracleLib">
+        <file name="${env.ORACLE_DRIVER_LOCATION}"/>
+    </library>
+
+    <library id="pluginGenLib">
+        <fileset dir="jdbc" includes="*.jar"/>
     </library>
 
     <basicRegistry id="basic" realm="BasicRealm">
