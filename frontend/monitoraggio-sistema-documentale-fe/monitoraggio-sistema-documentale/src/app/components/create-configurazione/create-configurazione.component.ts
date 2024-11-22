@@ -1,5 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { Configurazione } from 'src/app/entities/Configurazione';
 import { ConfigurazioneService } from './configurazione.service';
 
@@ -21,9 +27,21 @@ export class CreateConfigurazioneComponent implements OnInit {
       }),
       controllo: this.fb.group({
         descrizione: ['', Validators.required],
-        tipoControlloID: [null, Validators.required],
-        ambitoID: [null, Validators.required],
-        ordineControllo: [null, Validators.required],
+        tipoControlloID: [
+          '',
+          Validators.required,
+          // Validators.pattern(/^[0-9]*[1-9][0-9]*$/)
+        ],
+        ambitoID: [
+          '',
+          Validators.required,
+          // Validators.pattern(/^[0-9]*[1-9][0-9]*$/)
+        ],
+        ordineControllo: [
+          '',
+          Validators.required,
+          // Validators.pattern(/^[0-9]*[1-9][0-9]*$/)
+        ],
       }),
       ambito: this.fb.group({
         nome: ['', Validators.required],
@@ -46,8 +64,21 @@ export class CreateConfigurazioneComponent implements OnInit {
         sqlScript: ['', Validators.required],
         programma: ['', Validators.required],
         classe: ['', Validators.required],
-        schedulazione: ['', Validators.required],
-        ordineConfigurazione: [null, Validators.required],
+        schedulazione: [
+          '',
+          [
+            Validators.required,
+            Validators.pattern(
+              /^(?:\d+|\*|\?)(\/\d+)?(\s+(?:\d+|\*|\?)(\/\d+)?){4}(\s+(MON|TUE|WED|THU|FRI|SAT|SUN)(-(MON|TUE|WED|THU|FRI|SAT|SUN))?)?(\s+(\*|\?|(\d+))(\s+(\*|\?|(\d+)))?)*$/
+            ),
+          ],
+        ],
+
+        ordineConfigurazione: [
+          null,
+          Validators.required,
+          // Validators.pattern(/^[0-9]*[1-9][0-9]*$/)
+        ],
       }),
       soglie: this.fb.array([
         this.fb.group({
@@ -79,6 +110,10 @@ export class CreateConfigurazioneComponent implements OnInit {
 
   removeSoglia(index: number) {
     this.soglie.removeAt(index);
+  }
+
+  get schedulazioneControl() {
+    return this.configurazioneForm.get('configurazione.schedulazione');
   }
 
   // Metodo di invio del form
