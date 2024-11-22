@@ -27,9 +27,21 @@ export class CreateConfigurazioneComponent implements OnInit {
       }),
       controllo: this.fb.group({
         descrizione: ['', Validators.required],
-        tipoControlloID: [null, Validators.required],
-        ambitoID: [null, Validators.required],
-        ordineControllo: [null, Validators.required],
+        tipoControlloID: [
+          '',
+          Validators.required,
+          // Validators.pattern(/^[0-9]*[1-9][0-9]*$/)
+        ],
+        ambitoID: [
+          '',
+          Validators.required,
+          // Validators.pattern(/^[0-9]*[1-9][0-9]*$/)
+        ],
+        ordineControllo: [
+          '',
+          Validators.required,
+          // Validators.pattern(/^[0-9]*[1-9][0-9]*$/)
+        ],
       }),
       ambito: this.fb.group({
         nome: ['', Validators.required],
@@ -62,7 +74,11 @@ export class CreateConfigurazioneComponent implements OnInit {
           ],
         ],
 
-        ordineConfigurazione: [null, Validators.required],
+        ordineConfigurazione: [
+          null,
+          Validators.required,
+          // Validators.pattern(/^[0-9]*[1-9][0-9]*$/)
+        ],
       }),
       soglie: this.fb.array([
         this.fb.group({

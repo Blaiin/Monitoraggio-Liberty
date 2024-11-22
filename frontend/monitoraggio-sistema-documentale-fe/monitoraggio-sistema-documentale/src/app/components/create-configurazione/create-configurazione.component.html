@@ -41,16 +41,33 @@
                   </div>
                   <div class="col-md-3 form-group">
                     <label for="controlloTipoControlloID">Tipo Controllo ID</label>
-                    <input placeholder="Inserire tipo controllo id" id="controlloTipoControlloID" formControlName="tipoControlloID" type="number" min="0"  class="form-control">
+                    <input
+                      placeholder="Inserire tipo controllo id"
+                      id="controlloTipoControlloID"
+                      formControlName="tipoControlloID"
+                      type="number"
+                      class="form-control">
+
+                    <!-- Mat Error per 'required' -->
                     <mat-error *ngIf="configurazioneForm.get('controllo.tipoControlloID')?.hasError('required')">
                       Il campo id tipo controllo è obbligatorio
                     </mat-error>
+
+                    <!-- Mat Error per 'pattern' -->
+                    <mat-error *ngIf="configurazioneForm.get('controllo.tipoControlloID')?.hasError('pattern')">
+                      Il campo id tipo controllo accetta solo valori interi positivi
+                    </mat-error>
                   </div>
+
+
                   <div class="col-md-3 form-group">
                     <label for="controlloAmbitoID">Ambito ID</label>
                     <input placeholder="Inserire ambito id" id="controlloAmbitoID" formControlName="ambitoID" type="number" min="0"  class="form-control">
                     <mat-error *ngIf="configurazioneForm.get('controllo.ambitoID')?.hasError('required')">
                       Il campo id ambito è obbligatorio
+                    </mat-error>
+                    <mat-error *ngIf="configurazioneForm.get('controllo.ambitoID')?.hasError('pattern')">
+                      Il campo id ambito accetta solo valori interi positivi
                     </mat-error>
                   </div>
 
@@ -59,6 +76,9 @@
                     <input placeholder="Inserire ordine controllo" id="controlloOrdineControllo" formControlName="ordineControllo" type="number" min="0"  class="form-control">
                     <mat-error *ngIf="configurazioneForm.get('controllo.ordineControllo')?.hasError('required')">
                       Il campo ordine controllo è obbligatorio
+                    </mat-error>
+                    <mat-error *ngIf="configurazioneForm.get('controllo.ordineControllo')?.hasError('pattern')">
+                      Il campo ordine controllo accetta solo valori interi positivi
                     </mat-error>
                   </div>
 
@@ -222,16 +242,19 @@
                     </mat-error>
                   </div>
                   <div class="col-md-4">
-                    <label for="schedulazione">Schedulazione     <mat-icon matTooltip="Esegui ogni giorno alle 12:00:  0 0 12 * * ? —
+                    <label for="schedulazione">Schedulazione  </label>
+                    <!--
+                    <mat-icon matTooltip="Esegui ogni giorno alle 12:00:  0 0 12 * * ? —
                       Esegui ogni 5 minuti a partire dalle 08:00: 0 0/5 8 * * ? —
                       Esegui ogni 15 minuti a partire dalle 14: 0 0/15 14 * * ?
                       "
-                      >info</mat-icon> </label>
+                      >info</mat-icon>
+                    -->
                     <input
                       id="schedulazione"
                       formControlName="schedulazione"
                       class="form-control"
-                      placeholder="Inserisci cron expression">
+                      placeholder="Inserisci schedulazione">
 
 
                     <mat-error *ngIf="schedulazioneControl?.hasError('required')">
@@ -248,6 +271,9 @@
                 <input placeholder="Inserire ordine configurazione" id="configurazioneOrdineConfigurazione" formControlName="ordineConfigurazione" type="number" min="0"  class="form-control">
                 <mat-error *ngIf="configurazioneForm.get('configurazione.ordineConfigurazione')?.hasError('required')">
                   Il campo ordine configurazione è obbligatorio
+                </mat-error>
+                <mat-error *ngIf="configurazioneForm.get('configurazione.ordineConfigurazione')?.hasError('pattern')">
+                  Il campo ordine configurazione accetta solo valori interi positivi.
                 </mat-error>
               </div>
                 </div>
