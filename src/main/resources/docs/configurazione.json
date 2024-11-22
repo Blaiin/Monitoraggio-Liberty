@@ -1,0 +1,59 @@
+{
+  "content": {
+
+    "tipoControllo": {
+      "descrizione": "Sample Tipo Controllo"
+    },
+
+    "controllo": {
+      "descrizione": "Sample Controllo Descrizione",
+      "tipoControlloID": 1,
+      "ambitoID": 1,
+      "ordineControllo": 1
+    },
+
+    "ambito": {
+      "nome": "Sample Ambito Nome",
+      "destinazione": "Sample Ambito Destinazione"
+    },
+
+    "fonteDati": {
+      "descrizione": "Sample Fonte Dati Descrizione",
+      "nomeDriver": "Sample Nome Driver",
+      "nomeClasse": "Sample Nome Classe",
+      "url": "Sample URL",
+      "JNDIName": "Sample JNDI Name"
+    },
+
+    "utenteFonteDati": {
+      "descrizione": "Sample Sicurezza Fonte Dati Descrizione",
+      "username": "Sample Username",
+      "password": "Sample Password"
+    },
+
+    "configurazione": {
+      "nome": "Sample Nome",
+      "sqlScript": "SELECT * FROM table",
+      "programma": "Sample Programma",
+      "classe": "Sample Classe",
+      "schedulazione": "0 0/5 * * * ?",
+      "ordineConfigurazione": 10
+    },
+
+    "soglie": [
+      {
+        "sogliaInferiore": 10,
+        "sogliaSuperiore": 50,
+        "valore": "pippo",
+        "operatore": "+"
+      },
+      {
+        "sogliaInferiore": 1,
+        "sogliaSuperiore": 9,
+        "valore": "topolino",
+        "operatore": "-"
+      }
+    ]
+  }
+} 
+  
