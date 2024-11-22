@@ -18,6 +18,12 @@ public class SicurezzaFonteDatiDTO implements IDTO<SicurezzaFonteDatiDTO, Sicure
     private String userID;
     private String password;
 
+    public SicurezzaFonteDatiDTO(String password, String descrizione, String userID) {
+        this.password = password;
+        this.descrizione = descrizione;
+        this.userID = userID;
+    }
+
     @Override
     public SicurezzaFonteDatiDTO fromEntity(SicurezzaFonteDati sfd) {
         if (sfd != null) {

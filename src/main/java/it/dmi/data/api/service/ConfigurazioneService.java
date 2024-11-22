@@ -4,18 +4,23 @@ import it.dmi.data.api.repositories.impl.ConfigurazioneRP;
 import it.dmi.data.entities.task.Configurazione;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
-@SuppressWarnings("unused")
 @Stateless
+@Slf4j
 public class ConfigurazioneService {
 
     @Inject
     private ConfigurazioneRP repository;
 
-    public void create(Configurazione config) {
-        repository.save(config);
+    @Transactional
+    public boolean create(Configurazione config) {
+        if (config == null) return false;
+        if (repository.findByID(config.getId()) != null) return false;
+        return repository.save(config) != null;
     }
 
     public Configurazione getByID(Long id) {

@@ -1,6 +1,7 @@
 package it.dmi.rest;
 
 import it.dmi.rest.endpoint.QueryAPIResource;
+import it.dmi.rest.endpoint.RamUsageAPIResource;
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.HashSet;
 import java.util.Set;
 
-@SuppressWarnings("unused")
 @ApplicationPath("/api")
 @Slf4j
 public class RestApplication extends Application {
@@ -26,6 +26,7 @@ public class RestApplication extends Application {
     public Set<Class<?>> getClasses() {
         Set<Class<?>> classes = new HashSet<>();
         classes.add(QueryAPIResource.class);
+        classes.add(RamUsageAPIResource.class);
         return classes;
     }
 

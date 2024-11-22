@@ -1,68 +1,76 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChartData, ChartOptions } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
 
+const configurazioni = [
+  { nome: 'Config1', memoria: 120 },
+  { nome: 'Config2', memoria: 150 },
+  { nome: 'Config3', memoria: 100 },
+  { nome: 'Config4', memoria: 180 },
+  { nome: 'Config5', memoria: 220 },
+];
 @Component({
   selector: 'app-monitoraggio-stati',
   templateUrl: './monitoraggio-stati.component.html',
   styleUrls: ['./monitoraggio-stati.component.css'],
 })
 export class MonitoraggioStatiComponent implements OnInit {
-  @ViewChild('sinCanvas', { static: true })
-  sinCanvas!: ElementRef<HTMLCanvasElement>;
+  title = 'Grafico Sinusoidale di Memoria';
 
-  constructor() {}
+  constructor(){
 
-  ngOnInit() {
-    this.drawSinusoidalGraph();
   }
 
-  drawSinusoidalGraph() {
-    const canvas = this.sinCanvas.nativeElement;
-    const ctx = canvas.getContext('2d');
+ngOnInit(): void {
 
-    if (!ctx) {
-      console.error('Impossibile ottenere il contesto del canvas');
-      return;
+}
+
+  // Generiamo dati simulati per un grafico sinusoidale
+  public generareDatiSinusoidali(): number[] {
+    const dati = [];
+    const frequenza = 0.1;  // Frequenza dell'onda sinusoidale
+    const ampiezza = 50;  // Ampiezza della curva
+    const offset = 100;  // Offset per il consumo di memoria
+
+    // Genera 100 punti per la curva sinusoidale
+    for (let x = 0; x < 100; x++) {
+      const valoreSin = Math.sin(frequenza * x) * ampiezza + offset;
+      dati.push(valoreSin);
     }
+    return dati;
+  }
 
-    // Imposta il contesto
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.strokeStyle = 'blue';
-    ctx.lineWidth = 2;
+  // Dati per il grafico (sinusoidale)
+  public chartData: ChartData = {
+    labels: Array.from({ length: 100 }, (_, i) => i),  // Etichette: punti temporali o altre variabili
+    datasets: [
+      {
+        data: this.generareDatiSinusoidali(),  // Consumo di memoria simulato tramite funzione sinusoidale
+        label: 'Consumo di Memoria (MB)',
+        fill: false,
+        borderColor: 'rgba(75, 192, 192, 1)',
+        tension: 0.4  // La curvatura della linea
+      }
+    ]
+  };
 
-    // Parametri della sinusoide
-    const amplitude = 100; // Altezza dell'onda
-    const frequency = 2; // Frequenza dell'onda
-    const offsetX = 50; // Margine sinistro
-    const offsetY = canvas.height / 2; // Linea centrale
-
-    // Disegna la sinusoide
-    ctx.beginPath();
-    for (let x = 0; x < canvas.width; x++) {
-      const y =
-        offsetY -
-        amplitude * Math.sin((x / canvas.width) * frequency * 2 * Math.PI);
-      x === 0 ? ctx.moveTo(x + offsetX, y) : ctx.lineTo(x + offsetX, y);
+  // Opzioni del grafico
+  public chartOptions: ChartOptions = {
+    responsive: true,
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Tempo'
+        }
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'Memoria (MB)'
+        },
+        beginAtZero: true  // L'asse Y inizia da zero
+      }
     }
-    ctx.stroke();
-
-    // Disegna gli assi
-    this.drawAxes(ctx, canvas);
-  }
-
-  drawAxes(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 1;
-
-    // Asse X
-    ctx.beginPath();
-    ctx.moveTo(0, canvas.height / 2);
-    ctx.lineTo(canvas.width, canvas.height / 2);
-    ctx.stroke();
-
-    // Asse Y
-    ctx.beginPath();
-    ctx.moveTo(50, 0);
-    ctx.lineTo(50, canvas.height);
-    ctx.stroke();
-  }
+  };
 }

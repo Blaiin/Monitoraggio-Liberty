@@ -1,0 +1,19 @@
+.title{
+  text-align: center;
+}
+
+.row{
+  padding: 1%;
+}
+
+/* Campo invalido */
+input.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched,
+textarea.ng-invalid.ng-touched {
+  border: 1px solid red;
+  background-color: #ffe6e6;
+}
+
+.step-buttons{
+  text-align: center;
+}
