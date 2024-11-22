@@ -222,12 +222,27 @@
                     </mat-error>
                   </div>
                   <div class="col-md-4">
-                    <label for="configurazioneSchedulazione">Schedulazione</label>
-                <input placeholder="Inserire schedulazione" id="configurazioneSchedulazione" formControlName="schedulazione" class="form-control">
-                <mat-error *ngIf="configurazioneForm.get('configurazione.schedulazione')?.hasError('required')">
-                  Il campo schedulazione è obbligatorio
-                </mat-error>
+                    <label for="schedulazione">Schedulazione     <mat-icon matTooltip="Esegui ogni giorno alle 12:00:  0 0 12 * * ? —
+                      Esegui ogni 5 minuti a partire dalle 08:00: 0 0/5 8 * * ? —
+                      Esegui ogni 15 minuti a partire dalle 14: 0 0/15 14 * * ?
+                      "
+                      >info</mat-icon> </label>
+                    <input
+                      id="schedulazione"
+                      formControlName="schedulazione"
+                      class="form-control"
+                      placeholder="Inserisci cron expression">
+
+
+                    <mat-error *ngIf="schedulazioneControl?.hasError('required')">
+                      Il campo schedulazione è obbligatorio.
+                    </mat-error>
+
+                    <mat-error *ngIf="schedulazioneControl?.hasError('pattern')"  >
+                      Inserisci una cron expression valida
+                    </mat-error>
                   </div>
+
                   <div class="col-md-4">
                     <label for="configurazioneOrdineConfigurazione">Ordine Configurazione</label>
                 <input placeholder="Inserire ordine configurazione" id="configurazioneOrdineConfigurazione" formControlName="ordineConfigurazione" type="number" min="0"  class="form-control">
