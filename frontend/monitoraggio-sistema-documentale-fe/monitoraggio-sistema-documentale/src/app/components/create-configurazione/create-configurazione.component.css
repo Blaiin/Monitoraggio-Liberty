@@ -17,3 +17,47 @@ textarea.ng-invalid.ng-touched {
 .step-buttons{
   text-align: center;
 }
+
+.soglia-card,
+.azione-card {
+  margin-bottom: 20px;
+}
+
+.azioni-container {
+  margin-left: 20px;
+}
+
+.step-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+mat-card{
+  border: 1px solid #f3f3f3;
+}
+
+.soglie-list, .azioni-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.soglia-item, .azione-item {
+  margin-bottom: 20px;
+}
+
+.soglia-fields li, .azione-fields li {
+  margin-bottom: 10px;
+}
+
+.azioni-list {
+  margin-left: 20px;
+  border-left: 2px solid #ccc;
+  padding-left: 15px;
+}
+
+.step-buttons {
+  margin-top: 20px;
+  text-align: right;
+}
