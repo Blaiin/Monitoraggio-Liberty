@@ -9,7 +9,7 @@
     <div class="col-12">
       <mat-card>
         <form [formGroup]="configurazioneForm" (ngSubmit)="onSubmit()">
-          <mat-stepper [linear]="true" [formGroup]="configurazioneForm" #stepper>
+          <mat-stepper  [formGroup]="configurazioneForm" #stepper> <!--[linear]="true"-->
             <!-- Step 1: Tipo Controllo -->
             <mat-step label="Tipo Controllo" [stepControl]="configurazioneForm.get('tipoControllo')!" >
               <div class="row">
@@ -287,8 +287,14 @@
 
             <!-- Step 7: Soglie -->
             <mat-step label="Soglie" [stepControl]="configurazioneForm.get('soglie')!">
-              <div formArrayName="soglie" >
+              <div formArrayName="soglie">
                 <div *ngFor="let soglia of soglie.controls; let i = index" [formGroupName]="i">
+                  <mat-card>
+                    <mat-card-title>
+                      <legend>Soglia {{i+1}}</legend>
+                    </mat-card-title>
+                    <mat-card-content>
+                       <!-- Sezione Soglie -->
                   <div class="row">
                     <div class="col-md-3">
                       <label for="sogliaInferiore{{i}}">Soglia Inferiore</label>
@@ -304,16 +310,13 @@
                         Il campo soglia superiore è obbligatorio.
                       </mat-error>
                     </div>
-                    <!-- Valore -->
                     <div class="col-md-3">
                       <label for="valore{{i}}">Valore</label>
-                      <input placeholder="Inserire valore" class="form-control" type="text" formControlName="valore" placeholder="Inserisci valore" />
+                      <input placeholder="Inserire valore" class="form-control" type="text" formControlName="valore" />
                       <mat-error *ngIf="soglia.get('valore')?.hasError('required')">
                         Valore è obbligatorio.
                       </mat-error>
                     </div>
-
-                    <!-- Operatore -->
                     <div class="col-md-3">
                       <mat-label>Operatore</mat-label>
                       <select formControlName="operatore" id="operatore{{i}}" class="form-select">
@@ -328,21 +331,87 @@
                       </mat-error>
                     </div>
                   </div>
-                  <button mat-flat-button color="warn" (click)="removeSoglia(i)">
-                   Rimuovi <mat-icon>remove_circle</mat-icon>
-                  </button>
+                    </mat-card-content>
+                  </mat-card>
+
+                  <!-- Pulsanti per Azioni -->
+                  <div formArrayName="azioni">
+                    <div *ngFor="let azione of getAzioni(i).controls; let j = index" [formGroupName]="j">
+                      <br>
+                      <mat-card>
+                        <mat-card-title>
+                          <legend>Azione {{j+1}}</legend>
+                        </mat-card-title>
+                        <mat-card-content>
+                          <div class="row">
+                            <div class="col-md-4">
+                              <label for="sqlScript{{i}}{{j}}">SQL Script</label>
+                              <input formControlName="sqlScript" placeholder="Inserisci SQL Script" id="sqlScript{{i}}{{j}}" class="form-control" />
+                              <mat-error *ngIf="azione.get('sqlScript')?.hasError('required')">
+                                SQL Script è obbligatorio.
+                              </mat-error>
+                            </div>
+                            <div class="col-md-4">
+                              <label for="programma{{i}}{{j}}">Programma</label>
+                              <input formControlName="programma" placeholder="Inserisci Programma" id="programma{{i}}{{j}}" class="form-control" />
+                              <mat-error *ngIf="azione.get('programma')?.hasError('required')">
+                                Programma è obbligatorio.
+                              </mat-error>
+                            </div>
+                            <div class="col-md-4">
+                              <label for="classe{{i}}{{j}}">Classe</label>
+                              <input formControlName="classe" placeholder="Inserisci Classe" id="classe{{i}}{{j}}" class="form-control" />
+                              <mat-error *ngIf="azione.get('classe')?.hasError('required')">
+                                Classe è obbligatorio.
+                              </mat-error>
+                            </div>
+                          </div>
+
+                        </mat-card-content>
+                        <mat-card-footer>
+                          <button mat-flat-button color="warn" (click)="removeAzione(i, j)">
+                            Rimuovi Azione <mat-icon>remove_circle</mat-icon>
+                          </button>
+                        </mat-card-footer>
+                      </mat-card>
+                    </div>
+                  </div>
+
+                  <!-- Pulsante per aggiungere azione -->
+                  <div class="row">
+                    <div class="col-md-12">
+                      <button mat-flat-button color="primary" (click)="addAzione(i)">
+                        Aggiungi Azione <mat-icon>add</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Pulsante per rimuovere soglia -->
+                  <div class="row">
+                    <div class="col-md-12">
+                      <button mat-flat-button color="warn" (click)="removeSoglia(i)">
+                        Rimuovi Soglia <mat-icon>remove_circle</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+
                 </div>
               </div>
+
+              <!-- Pulsante per aggiungere soglia -->
               <div class="row">
                 <div class="col-md-4">
-                  <button mat-flat-button color="primary" (click)="addSoglia()">Aggiungi Soglia <mat-icon>add</mat-icon> </button>
+                  <button mat-flat-button color="primary" (click)="addSoglia()">Aggiungi Soglia <mat-icon>add</mat-icon></button>
                 </div>
               </div>
+
               <div class="step-buttons">
-                <button mat-button matStepperPrevious>◄ Indietro </button>
-                <button mat-flat-button color="primary" [disabled]="!configurazioneForm.valid">Salva <mat-icon>save</mat-icon> </button>
+                <button mat-button matStepperPrevious>◄ Indietro</button>
+                <button mat-flat-button color="primary" [disabled]="!configurazioneForm.valid">Salva <mat-icon>save</mat-icon></button>
               </div>
             </mat-step>
+
+
 
           </mat-stepper>
 

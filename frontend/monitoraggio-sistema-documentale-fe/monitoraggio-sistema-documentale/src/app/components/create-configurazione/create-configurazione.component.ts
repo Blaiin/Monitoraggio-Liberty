@@ -80,36 +80,55 @@ export class CreateConfigurazioneComponent implements OnInit {
           // Validators.pattern(/^[0-9]*[1-9][0-9]*$/)
         ],
       }),
-      soglie: this.fb.array([
-        this.fb.group({
-          sogliaInferiore: ['', Validators.required],
-          sogliaSuperiore: ['', Validators.required],
-          valore: ['', Validators.required],
-          operatore: ['', Validators.required],
-        }),
-      ]),
+      soglie: this.fb.array([this.createSoglia()]),
+
     });
   }
 
   ngOnInit(): void {}
 
-  get soglie(): FormArray {
-    return this.configurazioneForm.get('soglie') as FormArray;
-  }
-
-  addSoglia() {
-    const sogliaGroup = this.fb.group({
+  createSoglia() {
+    return this.fb.group({
       sogliaInferiore: ['', Validators.required],
       sogliaSuperiore: ['', Validators.required],
       valore: ['', Validators.required],
       operatore: ['', Validators.required],
+      azioni: this.fb.array([]),
     });
+  }
 
+  createAzione() {
+    return this.fb.group({
+      sqlScript: ['', Validators.required],
+      programma: ['', Validators.required],
+      classe: ['', Validators.required],
+    });
+  }
+
+  get soglie(): FormArray {
+    return this.configurazioneForm.get('soglie') as FormArray;
+  }
+
+  getAzioni(sogliaIndex: number): FormArray {
+    return this.soglie.at(sogliaIndex).get('azioni') as FormArray;
+  }
+
+  addSoglia() {
+    const sogliaGroup = this.createSoglia();
     this.soglie.push(sogliaGroup);
   }
 
   removeSoglia(index: number) {
     this.soglie.removeAt(index);
+  }
+
+  addAzione(sogliaIndex: number) {
+    const azioneGroup = this.createAzione();
+    this.getAzioni(sogliaIndex).push(azioneGroup);
+  }
+
+  removeAzione(sogliaIndex: number, azioneIndex: number) {
+    this.getAzioni(sogliaIndex).removeAt(azioneIndex);
   }
 
   get schedulazioneControl() {
