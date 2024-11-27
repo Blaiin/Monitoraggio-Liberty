@@ -9,7 +9,7 @@
     <div class="col-12">
       <mat-card>
         <form [formGroup]="configurazioneForm" (ngSubmit)="onSubmit()">
-          <mat-stepper  [formGroup]="configurazioneForm"  #stepper> <!--[linear]="true"-->
+          <mat-stepper  [formGroup]="configurazioneForm" [linear]="true" #stepper> <!---->
             <!-- Step 1: Tipo Controllo -->
             <mat-step label="Tipo Controllo" [stepControl]="configurazioneForm.get('tipoControllo')!" >
               <div class="row">
