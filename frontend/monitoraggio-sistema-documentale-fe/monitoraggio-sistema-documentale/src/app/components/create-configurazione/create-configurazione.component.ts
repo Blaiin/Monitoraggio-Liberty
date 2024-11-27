@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { Configurazione } from 'src/app/entities/Configurazione';
 import { ConfigurazioneService } from './configurazione.service';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 @Component({
   selector: 'app-create-configurazione',
@@ -16,6 +17,12 @@ import { ConfigurazioneService } from './configurazione.service';
 })
 export class CreateConfigurazioneComponent implements OnInit {
   configurazioneForm: FormGroup;
+  readonly panelOpenState = signal(false);
+  schedulazioneOptions: string[] = [
+    '0 0 12 * * ?',
+    '0 0/5 8 * * ?',
+    '0 0/15 14 * * ?'
+  ];
 
   constructor(
     private fb: FormBuilder,
