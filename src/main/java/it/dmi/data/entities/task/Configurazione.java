@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import static it.dmi.utils.constants.NamingConstants.CONFIG;
 
 @Entity
-@Table(name = "\"MON_Configurazione\"")
+@Table(name = "MON_Configurazione")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,45 +22,45 @@ import static it.dmi.utils.constants.NamingConstants.CONFIG;
 public non-sealed class Configurazione implements QuartzTask {
 
     @Id
-    @Column(name = "\"ConfigurazioneID\"")
+    @Column(name = "ConfigurazioneID")
     private Long id;
 
-    @Column(name = "\"Nome\"")
+    @Column(name = "Nome")
     private String nome;
 
-    @Column(name = "\"SQLScript\"")
+    @Column(name = "SQLScript")
     private String sqlScript;
 
-    @Column(name = "\"Programma\"")
+    @Column(name = "Programma")
     private String programma;
 
-    @Column(name = "\"Classe\"")
+    @Column(name = "Classe")
     private String classe;
 
-    @Column(name = "\"Schedulazione\"")
+    @Column(name = "Schedulazione")
     private String schedulazione;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "\"ControlloID\"")
+    @JoinColumn(name = "ControlloID")
     private Controllo controllo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "\"TipoControlloID\"")
+    @JoinColumn(name = "TipoControlloID")
     private TipoControllo tipoControllo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "\"AmbitoID\"")
+    @JoinColumn(name = "AmbitoID")
     private Ambito ambito;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "\"FonteDatiID\"")
+    @JoinColumn(name = "FonteDatiID")
     private FonteDati fonteDati;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "\"UtenteFonteDatiID\"")
+    @JoinColumn(name = "UtenteFonteDatiID")
     private SicurezzaFonteDati utenteFonteDati;
 
-    @Column(name = "\"ORDINECONFIGURAZIONE\"")
+    @Column(name = "ORDINECONFIGURAZIONE")
     private int ordineConfigurazione;
 
     @OneToMany(mappedBy = "configurazione", fetch = FetchType.LAZY)
