@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { Configurazione } from 'src/app/entities/Configurazione';
 import { ConfigurazioneService } from './configurazione.service';
-import {MatExpansionModule} from '@angular/material/expansion';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-create-configurazione',
@@ -21,7 +21,7 @@ export class CreateConfigurazioneComponent implements OnInit {
   schedulazioneOptions: string[] = [
     '0 0 12 * * ?',
     '0 0/5 8 * * ?',
-    '0 0/15 14 * * ?'
+    '0 0/15 14 * * ?',
   ];
 
   constructor(
@@ -88,7 +88,6 @@ export class CreateConfigurazioneComponent implements OnInit {
         ],
       }),
       soglie: this.fb.array([this.createSoglia()]),
-
     });
   }
 
