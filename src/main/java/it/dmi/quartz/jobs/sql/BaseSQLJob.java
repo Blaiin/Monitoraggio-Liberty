@@ -8,6 +8,7 @@ import it.dmi.structure.internal.info.DBInfo;
 import it.dmi.utils.Utils;
 import it.dmi.utils.jobs.DbConnector;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.quartz.JobExecutionException;
 
 import java.sql.Connection;
@@ -22,10 +23,10 @@ public abstract class BaseSQLJob {
 
     private final Map<String, String> DRIVER_MAP = Map.of(
             "postgres", "org.postgresql.Driver",
-            "oracle", "oracle.jdbc.driver.OracleDriver"
+            "oracle", "oracle.driver.OracleDriver"
     );
 
-    protected void resolveException(Throwable exc) throws JobExecutionException {
+    protected void resolveException(@NotNull Throwable exc) throws JobExecutionException {
         final String msg = switch (exc) {
             case QueryFailureException qfE -> "Error while executing query. " + qfE.getMessage();
             case DatabaseConnectionException dcE -> "Error while connecting to database. " + dcE.getMessage();
@@ -75,7 +76,7 @@ public abstract class BaseSQLJob {
         throw new IllegalArgumentException(message);
     }
 
-    private void loadDriverClass(Map.Entry<String, String> entry) {
+    private void loadDriverClass(Map.@NotNull Entry<String, String> entry) {
         try {
             Class.forName(entry.getValue());
             log.debug("{} driver loading was successful.", Utils.Strings.capitalize(entry.getKey()));

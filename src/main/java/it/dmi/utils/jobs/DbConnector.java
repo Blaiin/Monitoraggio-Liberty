@@ -19,19 +19,16 @@ public class DbConnector {
     public static @Nullable Connection connect(@NotNull DBInfo dbInfo)
             throws DatabaseConnectionException {
         try {
-
             if (!dbInfo.jndi().isEmpty()) {
                 DataSource source = (DataSource) new InitialContext().lookup(dbInfo.jndi());
                 if (source != null) return source.getConnection();
                 else log.debug("No JNDI was provided.");
             }
-
             //Fallback to classic db connection method
             if ((dbInfo.url() != null && !dbInfo.url().isEmpty()) &&
                     (dbInfo.user() != null && !dbInfo.user().isEmpty()) &&
                     (dbInfo.password() != null && !dbInfo.password().isEmpty()))
                 return DriverManager.getConnection(dbInfo.url(), dbInfo.user(), dbInfo.password());
-
             final String msg = "Could not make a connection to database, " +
                     "neither JNDI or canonical parameters were valid";
             log.error(msg);

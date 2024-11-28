@@ -29,6 +29,14 @@ public class SogliaDTO implements IDTO<SogliaDTO, Soglia> {
     private Configurazione configurazione;
     private List<Azione> azioni;
 
+    //TODO check for appropriate soglia type -> double, long, float or just int
+    public SogliaDTO(double sogliaInferiore, double sogliaSuperiore, String valore, String operatore) {
+        this.sogliaInferiore = BigInteger.valueOf((long) sogliaInferiore);
+        this.sogliaSuperiore = BigInteger.valueOf((long) sogliaSuperiore);
+        this.valore = valore;
+        this.operatore = operatore;
+    }
+
     public int getAzioniSize() {
         return azioni.size();
     }

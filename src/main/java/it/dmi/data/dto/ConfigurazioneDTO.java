@@ -27,6 +27,16 @@ public class ConfigurazioneDTO implements IDTO<ConfigurazioneDTO, Configurazione
     private SicurezzaFonteDati utenteFonteDati;
     private int ordineConfigurazione;
 
+    public ConfigurazioneDTO(String nome, String sqlScript, String programma, String classe,
+                             String schedulazione, int ordineConfigurazione) {
+        this.nome = nome;
+        this.sqlScript = sqlScript;
+        this.programma = programma;
+        this.classe = classe;
+        this.schedulazione = schedulazione;
+        this.ordineConfigurazione = ordineConfigurazione;
+    }
+
     @Override
     public ConfigurazioneDTO fromEntity(Configurazione c) {
         if (c != null) {

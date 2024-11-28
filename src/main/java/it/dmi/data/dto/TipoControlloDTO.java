@@ -16,6 +16,10 @@ public class TipoControlloDTO implements IDTO<TipoControlloDTO, TipoControllo> {
     private Long id;
     private String descrizione;
 
+    public TipoControlloDTO(String descrizione) {
+        this.descrizione = descrizione;
+    }
+
     @Override
     public TipoControlloDTO fromEntity(TipoControllo tc) {
         if (tc != null) {

@@ -1,0 +1,54 @@
+<div class="container-fluid">
+  <app-navbar></app-navbar>
+  <div class="row">
+    <div class="col-12">
+      <h1 class="title">Elenco configurazioni</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        matSort
+        class="mat-elevation-z8"
+      >
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
+          <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+        </ng-container>
+
+        <!-- Stato Column -->
+        <ng-container matColumnDef="stato">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Stato</th>
+          <td mat-cell *matCellDef="let element">{{ element.stato }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 20]"
+        showFirstLastButtons
+      ></mat-paginator>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <button mat-flat-button color="primary" (click)="toggleNew()" class="new">
+        Nuova configurazione <mat-icon>add</mat-icon>
+      </button>
+    </div>
+  </div>
+  <!-- <div class="row" *ngIf="new">
+
+    <div class="col-12">
+      <app-create-configurazione></app-create-configurazione>
+    </div>
+  </div> -->
+</div>

@@ -27,6 +27,11 @@ public class ControlloDTO implements IDTO<ControlloDTO, Controllo> {
     private List<Configurazione> configurazioni;
     private int ordineControllo;
 
+    //TODO implement retrieval of entities associated
+    public ControlloDTO(String descrizione, Long tipoControlloID, Long ambitoID, int ordineControllo) {
+        this.descrizione = descrizione;
+    }
+
     @Override
     public ControlloDTO fromEntity(Controllo c) {
         if (c != null) {

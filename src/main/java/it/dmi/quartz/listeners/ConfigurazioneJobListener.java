@@ -5,6 +5,7 @@ import it.dmi.data.entities.task.Configurazione;
 import it.dmi.quartz.ejb.Manager;
 import it.dmi.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobListener;
@@ -20,7 +21,7 @@ public class ConfigurazioneJobListener implements JobListener {
     private final String cID;
     private final Manager manager;
 
-    public ConfigurazioneJobListener(Configurazione c, Manager m) {
+    public ConfigurazioneJobListener(@NotNull Configurazione c, @NotNull Manager m) {
         this.cID = c.getStrID();
         this.manager = m;
     }
