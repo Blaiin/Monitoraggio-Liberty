@@ -8,6 +8,10 @@ const configurazioni = [
   { nome: 'Config3', memoria: 100 },
   { nome: 'Config4', memoria: 180 },
   { nome: 'Config5', memoria: 220 },
+  { nome: 'Config6', memoria: 100 },
+  { nome: 'Config7', memoria: 470 },
+  { nome: 'Config8', memoria: 127 },
+  { nome: 'Config9', memoria: 333 },
 ];
 @Component({
   selector: 'app-monitoraggio-stati',
@@ -17,60 +21,63 @@ const configurazioni = [
 export class MonitoraggioStatiComponent implements OnInit {
   title = 'Grafico Sinusoidale di Memoria';
 
-  constructor(){
-
-  }
-
-ngOnInit(): void {
-
-}
-
-  // Generiamo dati simulati per un grafico sinusoidale
-  public generareDatiSinusoidali(): number[] {
-    const dati = [];
-    const frequenza = 0.1;  // Frequenza dell'onda sinusoidale
-    const ampiezza = 50;  // Ampiezza della curva
-    const offset = 100;  // Offset per il consumo di memoria
-
-    // Genera 100 punti per la curva sinusoidale
-    for (let x = 0; x < 100; x++) {
-      const valoreSin = Math.sin(frequenza * x) * ampiezza + offset;
-      dati.push(valoreSin);
-    }
-    return dati;
-  }
-
-  // Dati per il grafico (sinusoidale)
   public chartData: ChartData = {
-    labels: Array.from({ length: 100 }, (_, i) => i),  // Etichette: punti temporali o altre variabili
+    labels: Array.from({ length: 100 }, (_, i) => i), // Etichette: punti temporali
     datasets: [
       {
-        data: this.generareDatiSinusoidali(),  // Consumo di memoria simulato tramite funzione sinusoidale
+        data: this.generareDatiSinusoidali(), // Dati iniziali
         label: 'Consumo di Memoria (MB)',
         fill: false,
         borderColor: 'rgba(75, 192, 192, 1)',
-        tension: 0.4  // La curvatura della linea
-      }
-    ]
+        tension: 0.4,
+      },
+    ],
   };
 
-  // Opzioni del grafico
   public chartOptions: ChartOptions = {
     responsive: true,
     scales: {
       x: {
         title: {
           display: true,
-          text: 'Tempo'
-        }
+          text: 'Tempo',
+        },
       },
       y: {
         title: {
           display: true,
-          text: 'Memoria (MB)'
+          text: 'Memoria (MB)',
         },
-        beginAtZero: true  // L'asse Y inizia da zero
-      }
-    }
+        beginAtZero: true,
+      },
+    },
   };
+
+  ngOnInit(): void {
+    // Aggiorna i dati ogni 5 secondi
+    setInterval(() => {
+      this.aggiornaDatiGrafico();
+    }, 3000);
+  }
+
+  public generareDatiSinusoidali(): number[] {
+    const dati = [];
+    const frequenza = 0.1;
+    const ampiezza = 50;
+    const offset = 100;
+
+    for (let x = 0; x < 100; x++) {
+      const valoreSin = Math.sin(frequenza * x) * ampiezza + offset;
+      dati.push(valoreSin + Math.random() * 10); // Aggiunta di rumore per variazione
+    }
+    return dati;
+  }
+
+  private aggiornaDatiGrafico(): void {
+    // Aggiorna i dati del dataset
+    this.chartData.datasets[0].data = this.generareDatiSinusoidali();
+
+    // Forza l'aggiornamento del grafico
+    this.chartData = { ...this.chartData };
+  }
 }
