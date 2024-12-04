@@ -16,7 +16,16 @@
                 <div class="col-md-6 form-group">
                   <div formGroupName="tipoControllo">
                     <label for="tipoControlloDescrizione">Descrizione Tipo Controllo</label>
-                    <input placeholder="Inserire descrizione" id="tipoControlloDescrizione" formControlName="descrizione" class="form-control">
+                    <!-- <input placeholder="Inserire descrizione" id="tipoControlloDescrizione" formControlName="descrizione" class="form-control"> -->
+
+                    <select name="tipoControllo" id="tipoControllo" formControlName="descrizione" class="form-select" (change)="onTipoControlloChange($event)">
+                      <option value="" selected>Seleziona tipo di controllo</option>
+                      <option value="1">Controllo basato su COUNT</option>
+                      <option value="2">Controllo basato su contenuto</option>
+                      <option value="3">Controllo basato su esito programma</option>
+                      <option value="4">Controllo scatenante un' azione</option>
+                    </select>
+
                     <mat-error *ngIf="configurazioneForm.get('tipoControllo.descrizione')?.hasError('required')">
                       Il campo descrizione tipo controllo è obbligatorio
                     </mat-error>
@@ -32,14 +41,14 @@
             <mat-step label="Controllo" [stepControl]="configurazioneForm.get('controllo')!">
               <div formGroupName="controllo">
                 <div class="row">
-                  <div class="col-md-3 form-group">
+                  <div class="col-md-4 form-group">
                     <label for="controlloDescrizione">Descrizione Controllo</label>
                 <input placeholder="Inserire descrizione" id="controlloDescrizione" formControlName="descrizione" class="form-control">
                 <mat-error *ngIf="configurazioneForm.get('controllo.descrizione')?.hasError('required')">
                   Il campo descrizione controllo è obbligatorio
                 </mat-error>
                   </div>
-                  <div class="col-md-3 form-group">
+                  <!-- <div class="col-md-3 form-group">
                     <label for="controlloTipoControlloID">Tipo Controllo ID</label>
                     <input
                       placeholder="Inserire tipo controllo id"
@@ -48,30 +57,34 @@
                       type="number"
                       class="form-control">
 
-                    <!-- Mat Error per 'required' -->
                     <mat-error *ngIf="configurazioneForm.get('controllo.tipoControlloID')?.hasError('required')">
                       Il campo id tipo controllo è obbligatorio
                     </mat-error>
 
-                    <!-- Mat Error per 'pattern' -->
+
                     <mat-error *ngIf="configurazioneForm.get('controllo.tipoControlloID')?.hasError('pattern')">
                       Il campo id tipo controllo accetta solo valori interi positivi
                     </mat-error>
-                  </div>
+                  </div> -->
 
 
-                  <div class="col-md-3 form-group">
+                  <div class="col-md-4 form-group">
                     <label for="controlloAmbitoID">Ambito ID</label>
-                    <input placeholder="Inserire ambito id" id="controlloAmbitoID" formControlName="ambitoID" type="number" min="0"  class="form-control">
-                    <mat-error *ngIf="configurazioneForm.get('controllo.ambitoID')?.hasError('required')">
-                      Il campo id ambito è obbligatorio
+                    <!-- <input placeholder="Inserire ambito id" id="controlloAmbitoID" formControlName="ambitoID" type="number" min="0"  class="form-control"> -->
+                    <select name="ambito" id="ambito" formControlName="ambito" class="form-select">
+                      <option value="" selected>Seleziona ambito</option>
+                      <option value="1">Posta</option>
+                      <option value="2">Protocollo</option>
+                      <option value="3">Deleghe</option>
+                      <option value="4">Firma</option>
+                    </select>
+                    <mat-error *ngIf="configurazioneForm.get('controllo.ambito')?.hasError('required')">
+                      Il campo ambito è obbligatorio
                     </mat-error>
-                    <mat-error *ngIf="configurazioneForm.get('controllo.ambitoID')?.hasError('pattern')">
-                      Il campo id ambito accetta solo valori interi positivi
-                    </mat-error>
+
                   </div>
 
-                  <div class="col-md-3 form-group">
+                  <div class="col-md-4 form-group">
                     <label for="controlloOrdineControllo">Ordine Controllo</label>
                     <input placeholder="Inserire ordine controllo" id="controlloOrdineControllo" formControlName="ordineControllo" type="number" min="0"  class="form-control">
                     <mat-error *ngIf="configurazioneForm.get('controllo.ordineControllo')?.hasError('required')">
@@ -92,7 +105,7 @@
             </mat-step>
 
             <!-- Step 3: Ambito -->
-            <mat-step label="Ambito" [stepControl]="configurazioneForm.get('ambito')!">
+            <!-- <mat-step label="Ambito" [stepControl]="configurazioneForm.get('ambito')!">
               <div class="row">
                 <div class="col-md-6 form-group">
                   <div formGroupName="ambito">
@@ -117,7 +130,7 @@
                 <button mat-button matStepperPrevious>◄ Indietro </button>
                 <button mat-button matStepperNext [disabled]="!configurazioneForm.get('ambito')?.valid">Avanti ► </button>
               </div>
-            </mat-step>
+            </mat-step> -->
 
             <!-- Step 4: Fonte Dati -->
             <mat-step label="Fonte Dati" [stepControl]="configurazioneForm.get('fonteDati')!">
@@ -177,9 +190,9 @@
                   <div class="col-md-4">
                     <label for="utenteFonteDatiDescrizione">Descrizione Sicurezza Fonte Dati</label>
                     <input placeholder="Inserire descrizione" id="utenteFonteDatiDescrizione" formControlName="descrizione" class="form-control">
-                    <mat-error *ngIf="configurazioneForm.get('utenteFonteDati.descrizione')?.hasError('required')">
+                    <!-- <mat-error *ngIf="configurazioneForm.get('utenteFonteDati.descrizione')?.hasError('required')">
                       Il campo descrizione è obbligatorio
-                    </mat-error>
+                    </mat-error> -->
                   </div>
                   <div class="col-md-4">
                     <label for="utenteFonteDatiUsername">Username</label>
@@ -341,6 +354,17 @@
                         </mat-card-header>
                         <mat-card-content>
                           <ul class="azione-fields">
+                            <li>
+                              <label for="tipoAzione{{ i }}{{ j }}">Tipo azione</label>
+                              <select name="tipoAzione" id="tipoAzione" formControlName="tipoAzione" class="form-select">
+                                <option value="" selected>Seleziona tipo azione</option>
+                                <option value="1">Invio mail</option>
+                                <option value="2">Esecuzione script SQL</option>
+                                <option value="3">Esecuzione di programma/cmd/sh</option>
+                                <option value="4">Esecuzione di altro controllo</option>
+                              </select>
+                              <mat-error *ngIf="azione.get('tipoAzione')?.hasError('required')">Obbligatorio</mat-error>
+                            </li>
                             <li>
                               <label for="sqlScript{{ i }}{{ j }}">SQL Script</label>
                               <input id="sqlScript{{ i }}{{ j }}" placeholder="Inserisci SQL" formControlName="sqlScript" class="form-control">

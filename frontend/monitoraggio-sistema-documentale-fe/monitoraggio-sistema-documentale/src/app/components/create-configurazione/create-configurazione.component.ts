@@ -34,12 +34,12 @@ export class CreateConfigurazioneComponent implements OnInit {
       }),
       controllo: this.fb.group({
         descrizione: ['', Validators.required],
-        tipoControlloID: [
-          '',
-          Validators.required,
-          // Validators.pattern(/^[0-9]*[1-9][0-9]*$/)
-        ],
-        ambitoID: [
+        // tipoControlloID: [
+        // '',
+        // Validators.required,
+        // Validators.pattern(/^[0-9]*[1-9][0-9]*$/)
+        // ],
+        ambito: [
           '',
           Validators.required,
           // Validators.pattern(/^[0-9]*[1-9][0-9]*$/)
@@ -50,10 +50,10 @@ export class CreateConfigurazioneComponent implements OnInit {
           // Validators.pattern(/^[0-9]*[1-9][0-9]*$/)
         ],
       }),
-      ambito: this.fb.group({
-        nome: ['', Validators.required],
-        destinazione: ['', Validators.required],
-      }),
+      // ambito: this.fb.group({
+      //   nome: ['', Validators.required],
+      //   destinazione: ['', Validators.required],
+      // }),
       fonteDati: this.fb.group({
         descrizione: ['', Validators.required],
         nomeDriver: ['', Validators.required],
@@ -62,7 +62,7 @@ export class CreateConfigurazioneComponent implements OnInit {
         JNDIName: ['', Validators.required],
       }),
       utenteFonteDati: this.fb.group({
-        descrizione: ['', Validators.required],
+        descrizione: [''], //opzionale
         username: ['', Validators.required],
         password: ['', Validators.required],
       }),
@@ -105,6 +105,7 @@ export class CreateConfigurazioneComponent implements OnInit {
 
   createAzione() {
     return this.fb.group({
+      tipoAzione: ['', Validators.required],
       sqlScript: ['', Validators.required],
       programma: ['', Validators.required],
       classe: ['', Validators.required],
@@ -171,5 +172,29 @@ export class CreateConfigurazioneComponent implements OnInit {
     Object.values(this.configurazioneForm.controls).forEach((control) => {
       control.markAsTouched();
     });
+  }
+
+  onTipoControlloChange(event: Event): void {
+    const selectedValue = (event.target as HTMLSelectElement).value;
+
+    const programmaControl = this.configurazioneForm.get(
+      'configurazione.programma'
+    );
+    const classeControl = this.configurazioneForm.get('configurazione.classe');
+
+    if (selectedValue === '1') {
+      programmaControl?.disable();
+      classeControl?.disable();
+      programmaControl?.clearValidators();
+      classeControl?.clearValidators();
+    } else {
+      programmaControl?.enable();
+      classeControl?.enable();
+      programmaControl?.setValidators(Validators.required);
+      classeControl?.setValidators(Validators.required);
+    }
+
+    programmaControl?.updateValueAndValidity();
+    classeControl?.updateValueAndValidity();
   }
 }
