@@ -106,9 +106,19 @@ export class CreateConfigurazioneComponent implements OnInit {
   createAzione() {
     return this.fb.group({
       tipoAzione: ['', Validators.required],
-      sqlScript: ['', Validators.required],
-      programma: ['', Validators.required],
-      classe: ['', Validators.required],
+      sqlScript: [{ value: '', disabled: true }, Validators.required],
+      programma: [{ value: '', disabled: true }, Validators.required],
+      classe: [{ value: '', disabled: true }, Validators.required],
+      destinatario: [
+        { value: '', disabled: true },
+        [
+          Validators.required,
+          Validators.pattern(
+            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+          ),
+        ],
+      ],
+      testoMail: [{ value: '', disabled: true }, Validators.required],
     });
   }
 
@@ -194,6 +204,143 @@ export class CreateConfigurazioneComponent implements OnInit {
       classeControl?.setValidators(Validators.required);
     }
 
+    programmaControl?.updateValueAndValidity();
+    classeControl?.updateValueAndValidity();
+  }
+
+  onSogliaChange(index: number): void {
+    const sogliaGroup = (this.configurazioneForm.get('soglie') as FormArray).at(
+      index
+    ) as FormGroup;
+
+    const sogliaInferioreControl = sogliaGroup.get('sogliaInferiore');
+    const sogliaSuperioreControl = sogliaGroup.get('sogliaSuperiore');
+    const valoreControl = sogliaGroup.get('valore');
+    const operatoreControl = sogliaGroup.get('operatore');
+
+    const sogliaInferioreValorizzata = !!sogliaInferioreControl?.value;
+    const sogliaSuperioreValorizzata = !!sogliaSuperioreControl?.value;
+
+    // Disabilita valore e operatore se una delle soglie è valorizzata
+    if (sogliaInferioreValorizzata || sogliaSuperioreValorizzata) {
+      valoreControl?.disable();
+      valoreControl?.setValue(null);
+      operatoreControl?.disable();
+      operatoreControl?.setValue(null);
+      valoreControl?.clearValidators();
+      operatoreControl?.clearValidators();
+    } else {
+      valoreControl?.enable();
+      operatoreControl?.enable();
+      valoreControl?.setValidators(Validators.required);
+      operatoreControl?.setValidators(Validators.required);
+    }
+
+    // Rende l'altra soglia non obbligatoria se una è valorizzata
+    if (sogliaInferioreValorizzata) {
+      sogliaSuperioreControl?.clearValidators();
+    } else if (sogliaSuperioreValorizzata) {
+      sogliaInferioreControl?.clearValidators();
+    } else {
+      sogliaInferioreControl?.setValidators(Validators.required);
+      sogliaSuperioreControl?.setValidators(Validators.required);
+    }
+
+    // Aggiorna la validità dei campi
+    sogliaInferioreControl?.updateValueAndValidity();
+    sogliaSuperioreControl?.updateValueAndValidity();
+    valoreControl?.updateValueAndValidity();
+    operatoreControl?.updateValueAndValidity();
+  }
+
+  onChangeTipoAzione(index: number, subIndex: number): void {
+    const azioneGroup = (this.configurazioneForm.get('soglie') as FormArray)
+      .at(index)
+      .get('azioni') as FormArray;
+    const currentAzioneGroup = azioneGroup.at(subIndex) as FormGroup;
+
+    const tipoAzioneControl = currentAzioneGroup.get('tipoAzione');
+    const sqlScriptControl = currentAzioneGroup.get('sqlScript');
+    const programmaControl = currentAzioneGroup.get('programma');
+    const classeControl = currentAzioneGroup.get('classe');
+    const destinatarioControl = currentAzioneGroup.get('destinatario');
+    const testoMailControl = currentAzioneGroup.get('testoMail');
+
+    switch (tipoAzioneControl?.value) {
+      case '1': // invio mail
+        //campi da abilitare
+        destinatarioControl?.enable();
+        destinatarioControl?.setValidators([
+          Validators.required,
+          Validators.pattern(
+            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+          ),
+        ]);
+        testoMailControl?.enable();
+        testoMailControl?.setValidators(Validators.required);
+        //campi da disabilitare
+        sqlScriptControl?.disable();
+        programmaControl?.disable();
+        classeControl?.disable();
+        sqlScriptControl?.clearValidators();
+        programmaControl?.clearValidators();
+        classeControl?.clearValidators();
+        break;
+      case '2': // Esecuzione script SQL
+        sqlScriptControl?.enable();
+        sqlScriptControl?.setValidators(Validators.required);
+        programmaControl?.disable();
+        classeControl?.disable();
+        programmaControl?.clearValidators();
+        classeControl?.clearValidators();
+        destinatarioControl?.disable();
+        destinatarioControl?.clearValidators();
+        testoMailControl?.disable();
+        testoMailControl?.clearValidators();
+        break;
+
+      case '3': // Esecuzione di programma/cmd/sh
+        programmaControl?.enable();
+        programmaControl?.setValidators(Validators.required);
+        sqlScriptControl?.disable();
+        classeControl?.disable();
+        sqlScriptControl?.clearValidators();
+        classeControl?.clearValidators();
+        destinatarioControl?.disable();
+        destinatarioControl?.clearValidators();
+        testoMailControl?.disable();
+        testoMailControl?.clearValidators();
+        break;
+
+      case '4': // Esecuzione di altro controllo
+        classeControl?.enable();
+        classeControl?.setValidators(Validators.required);
+        sqlScriptControl?.disable();
+        programmaControl?.disable();
+        sqlScriptControl?.clearValidators();
+        programmaControl?.clearValidators();
+        destinatarioControl?.disable();
+        destinatarioControl?.clearValidators();
+        testoMailControl?.disable();
+        testoMailControl?.clearValidators();
+        break;
+
+      default: // Reset in caso di selezione vuota o altro
+        sqlScriptControl?.disable();
+        programmaControl?.disable();
+        classeControl?.disable();
+        sqlScriptControl?.clearValidators();
+        destinatarioControl?.disable();
+        destinatarioControl?.clearValidators();
+        programmaControl?.clearValidators();
+        classeControl?.clearValidators();
+        testoMailControl?.clearValidators();
+        testoMailControl?.clearValidators();
+        break;
+    }
+
+    // Aggiorna lo stato dei campi
+    sqlScriptControl?.updateValueAndValidity();
     programmaControl?.updateValueAndValidity();
     classeControl?.updateValueAndValidity();
   }
