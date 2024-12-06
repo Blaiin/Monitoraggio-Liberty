@@ -220,30 +220,52 @@ export class CreateConfigurazioneComponent implements OnInit {
 
     const sogliaInferioreValorizzata = !!sogliaInferioreControl?.value;
     const sogliaSuperioreValorizzata = !!sogliaSuperioreControl?.value;
+    const valoreValorizzato = !!valoreControl?.value;
+    const operatoreValorizzato = !!operatoreControl?.value;
 
-    // Disabilita valore e operatore se una delle soglie è valorizzata
-    if (sogliaInferioreValorizzata || sogliaSuperioreValorizzata) {
-      valoreControl?.disable();
-      valoreControl?.setValue(null);
-      operatoreControl?.disable();
-      operatoreControl?.setValue(null);
-      valoreControl?.clearValidators();
-      operatoreControl?.clearValidators();
-    } else {
-      valoreControl?.enable();
-      operatoreControl?.enable();
-      valoreControl?.setValidators(Validators.required);
-      operatoreControl?.setValidators(Validators.required);
-    }
+    // Reset iniziale per evitare conflitti
+    sogliaInferioreControl?.clearValidators();
+    sogliaSuperioreControl?.clearValidators();
+    valoreControl?.clearValidators();
+    operatoreControl?.clearValidators();
 
-    // Rende l'altra soglia non obbligatoria se una è valorizzata
+    valoreControl?.enable();
+    operatoreControl?.enable();
+
+    // Caso 1: Soglia Inferiore valorizzata
     if (sogliaInferioreValorizzata) {
-      sogliaSuperioreControl?.clearValidators();
-    } else if (sogliaSuperioreValorizzata) {
-      sogliaInferioreControl?.clearValidators();
-    } else {
+      sogliaSuperioreControl?.clearValidators(); // Non obbligatoria
+      valoreControl?.reset();
+      valoreControl?.disable(); // Disabilitata
+      operatoreControl?.reset();
+      operatoreControl?.disable(); // Disabilitata
+    }
+    // Caso 2: Soglia Superiore valorizzata
+    else if (sogliaSuperioreValorizzata) {
+      sogliaInferioreControl?.clearValidators(); // Non obbligatoria
+      valoreControl?.reset();
+      valoreControl?.disable(); // Disabilitata
+      operatoreControl?.reset();
+      operatoreControl?.disable(); // Disabilitata
+    }
+    // Caso 3: Valore valorizzato
+    else if (valoreValorizzato) {
+      sogliaInferioreControl?.clearValidators(); // Non obbligatoria
+      sogliaSuperioreControl?.clearValidators(); // Non obbligatoria
+      operatoreControl?.setValidators(Validators.required); // Obbligatorio
+    }
+    // Caso 4: Operatore valorizzato
+    else if (operatoreValorizzato) {
+      sogliaInferioreControl?.clearValidators(); // Non obbligatoria
+      sogliaSuperioreControl?.clearValidators(); // Non obbligatoria
+      valoreControl?.setValidators(Validators.required); // Obbligatorio
+    }
+    // Caso di default: Tutti obbligatori
+    else {
       sogliaInferioreControl?.setValidators(Validators.required);
       sogliaSuperioreControl?.setValidators(Validators.required);
+      valoreControl?.setValidators(Validators.required);
+      operatoreControl?.setValidators(Validators.required);
     }
 
     // Aggiorna la validità dei campi

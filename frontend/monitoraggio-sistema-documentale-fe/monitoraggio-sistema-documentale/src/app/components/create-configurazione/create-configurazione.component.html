@@ -9,7 +9,7 @@
     <div class="col-12">
       <mat-card>
         <form [formGroup]="configurazioneForm" (ngSubmit)="onSubmit()">
-          <mat-stepper  [formGroup]="configurazioneForm" [linear]="true" #stepper> <!--[linear]="true"-->
+          <mat-stepper  [formGroup]="configurazioneForm"  #stepper> <!--[linear]="true"-->
             <!-- Step 1: Tipo Controllo -->
             <mat-step label="Tipo Controllo" [stepControl]="configurazioneForm.get('tipoControllo')!" >
               <div class="row">
@@ -312,35 +312,55 @@
                     <mat-card-content>
                       <ul class="soglia-fields">
                         <li>
-                          <label for="sogliaInferiore{{ i }}">Soglia Inferiore</label>
-                          <input (change)="onSogliaChange(i)" id="sogliaInferiore{{ i }}" placeholder="Inserire soglia inferiore" formControlName="sogliaInferiore" class="form-control">
-                          <mat-error *ngIf="soglia.get('sogliaInferiore')?.hasError('required')">Obbligatorio</mat-error>
+                          <div class="row">
+                            <div class="col-6">
+                              <label for="sogliaInferiore{{ i }}">Soglia Inferiore</label>
+                              <input (change)="onSogliaChange(i)" id="sogliaInferiore{{ i }}" placeholder="Inserire soglia inferiore" formControlName="sogliaInferiore" class="form-control">
+                              <mat-error *ngIf="soglia.get('sogliaInferiore')?.hasError('required')">Obbligatorio</mat-error>
+                            </div>
+                          </div>
+
                         </li>
                         <li>
-                          <label for="sogliaSuperiore{{ i }}">Soglia Superiore</label>
-                          <input (change)="onSogliaChange(i)" id="sogliaSuperiore{{ i }}" placeholder="Inserire soglia superiore" formControlName="sogliaSuperiore" class="form-control">
-                          <mat-error *ngIf="soglia.get('sogliaSuperiore')?.hasError('required')">Obbligatorio</mat-error>
+                          <div class="row">
+                            <div class="col-6">
+                              <label for="sogliaSuperiore{{ i }}">Soglia Superiore</label>
+                              <input (change)="onSogliaChange(i)" id="sogliaSuperiore{{ i }}" placeholder="Inserire soglia superiore" formControlName="sogliaSuperiore" class="form-control">
+                              <mat-error *ngIf="soglia.get('sogliaSuperiore')?.hasError('required')">Obbligatorio</mat-error>
+                            </div>
+                          </div>
+
                         </li>
                         <li>
-                          <label for="valore{{ i }}">Valore</label>
+                          <div class="row">
+                            <div class="col-6">
+                              <label for="valore{{ i }}">Valore</label>
                           <input id="valore{{ i }}" placeholder="Inserire valore" formControlName="valore" class="form-control">
                           <mat-error *ngIf="soglia.get('valore')?.hasError('required')">Obbligatorio</mat-error>
+                            </div>
+                          </div>
+
                         </li>
                         <li>
-                          <label for="operatore{{ i }}">Operatore</label>
-                          <select id="operatore{{ i }}" formControlName="operatore" class="form-select">
-                            <option value="">Seleziona</option>
-                            <option value="+">+</option>
-                            <option value="-">-</option>
-                            <option value="*">*</option>
-                            <option value="/">/</option>
-                          </select>
-                          <mat-error *ngIf="soglia.get('operatore')?.hasError('required')">Obbligatorio</mat-error>
+                          <div class="row">
+                            <div class="col-6">
+                              <label for="operatore{{ i }}">Operatore</label>
+                              <select id="operatore{{ i }}" formControlName="operatore" class="form-select">
+                                <option value="" selected>Seleziona operatore</option>
+                                <option value="+">+</option>
+                                <option value="-">-</option>
+                                <option value="*">*</option>
+                                <option value="/">/</option>
+                              </select>
+                              <mat-error *ngIf="soglia.get('operatore')?.hasError('required')">Obbligatorio</mat-error>
+                            </div>
+                          </div>
+
                         </li>
                       </ul>
                     </mat-card-content>
                     <mat-card-actions>
-                      <button mat-flat-button color="primary" (click)="addAzione(i)" matTooltip="Aggiungi azione associata alla soglia numero {{ i +1 }}">Aggiungi Azione <mat-icon>add</mat-icon></button>
+                      <button mat-flat-button color="primary" (click)="addAzione(i)" matTooltip="Aggiungi azione associata alla soglia numero {{ i +1 }}">Aggiungi Azione <mat-icon>add</mat-icon></button> &nbsp;
                       <button mat-flat-button color="warn" (click)="removeSoglia(i)" matTooltip="Rimuovi azione associata alla soglia numero {{ i +1 }}">Rimuovi Soglia <mat-icon>remove_circle</mat-icon></button>
                     </mat-card-actions>
                   </mat-card>
@@ -355,41 +375,62 @@
                         <mat-card-content>
                           <ul class="azione-fields">
                             <li>
-                              <label for="tipoAzione{{ i }}{{ j }}">Tipo azione</label>
-                              <select name="tipoAzione" id="tipoAzione" formControlName="tipoAzione" class="form-select" (change)="onChangeTipoAzione(i, j)">
-                                <option value="" selected>Seleziona tipo azione</option>
-                                <option value="1">Invio mail</option>
-                                <option value="2">Esecuzione script SQL</option>
-                                <option value="3">Esecuzione di programma/cmd/sh</option>
-                                <option value="4">Esecuzione di altro controllo</option>
-                              </select>
-                              <mat-error *ngIf="azione.get('tipoAzione')?.hasError('required')">Obbligatorio</mat-error>
+                              <div class="row">
+                                <div class="col-4">
+                                  <label for="tipoAzione{{ i }}{{ j }}">Tipo azione</label>
+                                  <select name="tipoAzione" id="tipoAzione" formControlName="tipoAzione" class="form-select" (change)="onChangeTipoAzione(i, j)">
+                                    <option value="" selected>Seleziona tipo azione</option>
+                                    <option value="1">Invio mail</option>
+                                    <option value="2">Esecuzione script SQL</option>
+                                    <option value="3">Esecuzione di programma/cmd/sh</option>
+                                    <option value="4">Esecuzione di altro controllo</option>
+                                  </select>
+                                  <mat-error *ngIf="azione.get('tipoAzione')?.hasError('required')">Obbligatorio</mat-error>
+                                </div>
+                              </div>
                             </li>
                             <li [hidden]="azione.get('tipoAzione')?.value!='1'" >
-                              <label for="destinatario{{ i }}{{ j }}">Destinatario</label>
-                              <input id="destinatario{{ i }}{{ j }}" placeholder="Inserisci destinatario" formControlName="destinatario" class="form-control">
-                              <mat-error *ngIf="azione.get('destinatario')?.hasError('required')">Obbligatorio</mat-error>
-                              <mat-error *ngIf="azione.get('destinatario')?.hasError('pattern')">Inserire un indirizzo email valido</mat-error>
+                              <div class="row">
+                                <div class="col-4">
+                                  <label for="destinatario{{ i }}{{ j }}">Destinatario</label>
+                                  <input id="destinatario{{ i }}{{ j }}" placeholder="Inserisci destinatario" formControlName="destinatario" class="form-control">
+                                  <mat-error *ngIf="azione.get('destinatario')?.hasError('required')">Obbligatorio</mat-error>
+                                  <mat-error *ngIf="azione.get('destinatario')?.hasError('pattern')">Inserire un indirizzo email valido</mat-error>
+                                </div>
+                                <div class="col-6">
+                                  <label for="testoMail{{ i }}{{ j }}">Testo</label>
+                                  <textarea name="testoMail{{ i }}{{ j }}" id="testoMail{{ i }}{{ j }}" formControlName="testoMail" placeholder="Inserire testo mail" class="form-control"></textarea>
+                                  <mat-error *ngIf="azione.get('testoMail')?.hasError('required')">Obbligatorio</mat-error>
+                                </div>
+                              </div>
                             </li>
-                            <li [hidden]="azione.get('tipoAzione')?.value!='1'" >
-                              <label for="testoMail{{ i }}{{ j }}">Testo</label>
-                              <textarea name="testoMail{{ i }}{{ j }}" id="testoMail{{ i }}{{ j }}" formControlName="testoMail" placeholder="Inserire testo mail" class="form-control"></textarea>
-                              <mat-error *ngIf="azione.get('testoMail')?.hasError('required')">Obbligatorio</mat-error>
-                            </li>
+
                             <li [hidden]="azione.get('tipoAzione')?.value!='2'">
-                              <label for="sqlScript{{ i }}{{ j }}">SQL Script</label>
-                              <input id="sqlScript{{ i }}{{ j }}" placeholder="Inserisci SQL" formControlName="sqlScript" class="form-control">
-                              <mat-error *ngIf="azione.get('sqlScript')?.hasError('required')">Obbligatorio</mat-error>
+                              <div class="row">
+                                <div class="col-4">
+                                  <label for="sqlScript{{ i }}{{ j }}">SQL Script</label>
+                                  <input id="sqlScript{{ i }}{{ j }}" placeholder="Inserisci SQL" formControlName="sqlScript" class="form-control">
+                                  <mat-error *ngIf="azione.get('sqlScript')?.hasError('required')">Obbligatorio</mat-error>
+                                </div>
+                              </div>
                             </li>
                             <li [hidden]="azione.get('tipoAzione')?.value!='3'">
-                              <label for="programma{{ i }}{{ j }}">Programma</label>
-                              <input id="programma{{ i }}{{ j }}" placeholder="Inserisci Programma" formControlName="programma" class="form-control">
-                              <mat-error *ngIf="azione.get('programma')?.hasError('required')">Obbligatorio</mat-error>
+                              <div class="row">
+                                <div class="col-4">
+                                  <label for="programma{{ i }}{{ j }}">Programma</label>
+                                  <input id="programma{{ i }}{{ j }}" placeholder="Inserisci Programma" formControlName="programma" class="form-control">
+                                  <mat-error *ngIf="azione.get('programma')?.hasError('required')">Obbligatorio</mat-error>
+                                </div>
+                              </div>
                             </li>
                             <li [hidden]="azione.get('tipoAzione')?.value!='4'">
-                              <label for="classe{{ i }}{{ j }}">Classe</label>
+                              <div class="row">
+                                <div class="col-4">
+                                  <label for="classe{{ i }}{{ j }}">Classe</label>
                               <input id="classe{{ i }}{{ j }}" placeholder="Inserisci Classe" formControlName="classe" class="form-control">
                               <mat-error *ngIf="azione.get('classe')?.hasError('required')">Obbligatorio</mat-error>
+                                </div>
+                              </div>
                             </li>
 
                           </ul>
