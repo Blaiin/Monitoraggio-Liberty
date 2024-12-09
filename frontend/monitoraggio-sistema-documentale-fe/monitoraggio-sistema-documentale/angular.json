@@ -27,9 +27,14 @@
             "styles": [
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "src/assets/ui-kit/static/css/app.css",
+              "src/assets/ui-kit/static/css/fonts/agenzia-entrate-fonts.css",
+              "src/assets/ui-kit/static/css/bootstrap-icons.css",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+               "src/assets/ui-kit/static/js/bootstrap.bundle.min.js"
+            ]
           },
           "configurations": {
             "production": {

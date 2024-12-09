@@ -1,0 +1,47 @@
+
+.timeline.timeline-dark .timeline-item.timeline-item-done .timeline-icon {
+    color: #004080;
+}
+.timeline.timeline-dark .timeline-item.timeline-item-done::after {
+    background-color: #fff;
+    border-color: #004080;
+}
+.timeline.timeline-dark .timeline-item.timeline-item-doing::after {
+    background-color: #004080;
+    border-color: #fff;
+}
+.timeline.timeline-dark .timeline-item.timeline-item-done::before {
+    border-right-color: #fff;
+}
+.timeline.timeline-dark .timeline-item.timeline-item-doing::before {
+    border-right-color: #fff;
+}
+
+.timeline.timeline-custom::after {
+    background-color: #b5bbc1;
+}
+
+.timeline.timeline-custom .timeline-item.timeline-item-todo::after {
+    background-color: #b5bbc1;
+    border-color: #fff;
+}
+.btn-custom-grey {
+    --bs-btn-color: #fff;
+    --bs-btn-bg:  rgb(108 117 125);
+    --bs-btn-border-color:  rgb(108 117 125);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: rgba(108, 117, 125, 0.865);
+    --bs-btn-hover-border-color:  rgb(108 117 125);
+    --bs-btn-focus-shadow-rgb: 38, 125, 212;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: rgba(108, 117, 125, 0.615);
+    --bs-btn-active-border-color:  rgb(108 117 125);
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg:  rgb(108 117 125);
+    --bs-btn-disabled-border-color: rgb(108 117 125);
+  }
+.bg-custom-grey {
+    --bs-bg-opacity: 1;
+    background-color: rgb(108 117 125) !important;
+  }
