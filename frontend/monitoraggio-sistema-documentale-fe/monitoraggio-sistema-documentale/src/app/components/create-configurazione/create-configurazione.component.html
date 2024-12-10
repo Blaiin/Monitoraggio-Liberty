@@ -15,7 +15,7 @@
               <div class="row">
                 <div class="col-md-4 form-group">
                   <div formGroupName="tipoControllo">
-                    <label for="tipoControlloDescrizione">Descrizione Tipo Controllo</label>
+                    <label for="tipoControlloDescrizione">Descrizione Tipo Controllo *</label>
                     <!-- <input placeholder="Inserire descrizione" id="tipoControlloDescrizione" formControlName="descrizione" class="form-control"> -->
 
                     <select name="tipoControllo" id="tipoControllo" formControlName="descrizione" class="form-select" (change)="onTipoControlloChange($event)">
@@ -42,7 +42,7 @@
               <div formGroupName="controllo">
                 <div class="row">
                   <div class="col-md-4 form-group">
-                    <label for="controlloDescrizione">Descrizione Controllo</label>
+                    <label for="controlloDescrizione">Descrizione Controllo *</label>
                 <input placeholder="Inserire descrizione" id="controlloDescrizione" formControlName="descrizione" class="form-control">
                 <mat-error *ngIf="configurazioneForm.get('controllo.descrizione')?.hasError('required')">
                   Il campo descrizione controllo è obbligatorio
@@ -69,7 +69,7 @@
 
 
                   <div class="col-md-4 form-group">
-                    <label for="controlloAmbitoID">Ambito ID</label>
+                    <label for="controlloAmbitoID">Ambito ID *</label>
                     <!-- <input placeholder="Inserire ambito id" id="controlloAmbitoID" formControlName="ambitoID" type="number" min="0"  class="form-control"> -->
                     <select name="ambito" id="ambito" formControlName="ambito" class="form-select">
                       <option value="" selected>Seleziona ambito</option>
@@ -85,7 +85,7 @@
                   </div>
 
                   <div class="col-md-4 form-group">
-                    <label for="controlloOrdineControllo">Ordine Controllo</label>
+                    <label for="controlloOrdineControllo">Ordine Controllo *</label>
                     <input placeholder="Inserire ordine controllo" id="controlloOrdineControllo" formControlName="ordineControllo" type="number" min="0"  class="form-control">
                     <mat-error *ngIf="configurazioneForm.get('controllo.ordineControllo')?.hasError('required')">
                       Il campo ordine controllo è obbligatorio
@@ -138,28 +138,28 @@
 
                 <div class="row">
                   <div class="col-md-3 form-group">
-                    <label for="fonteDatiDescrizione">Descrizione Fonte Dati</label>
+                    <label for="fonteDatiDescrizione">Descrizione Fonte Dati *</label>
                 <input placeholder="Inserire descrizione" id="fonteDatiDescrizione" formControlName="descrizione" class="form-control">
                 <mat-error *ngIf="configurazioneForm.get('fonteDati.descrizione')?.hasError('required')">
                   Il campo descrizione fonte dati è obbligatorio
                 </mat-error>
                   </div>
                   <div class="col-md-3 form-group">
-                    <label for="fonteDatiNomeDriver">Nome Driver</label>
+                    <label for="fonteDatiNomeDriver">Nome Driver *</label>
               <input placeholder="Inserire nome driver" id="fonteDatiNomeDriver" formControlName="nomeDriver" class="form-control">
               <mat-error *ngIf="configurazioneForm.get('fonteDati.nomeDriver')?.hasError('required')">
                 Il campo nome driver è obbligatorio
               </mat-error>
                   </div>
                   <div class="col-md-3 form-group">
-                    <label for="fonteDatiNomeClasse">Nome Classe</label>
+                    <label for="fonteDatiNomeClasse">Nome Classe *</label>
                     <input placeholder="Inserire nome classe" id="fonteDatiNomeClasse" formControlName="nomeClasse" class="form-control">
                     <mat-error *ngIf="configurazioneForm.get('fonteDati.nomeClasse')?.hasError('required')">
                       Il campo nome classe è obbligatorio
                     </mat-error>
                   </div>
                   <div class="col-md-3 form-group">
-                    <label for="fonteDatiUrl">URL</label>
+                    <label for="fonteDatiUrl">URL *</label>
               <input placeholder="Inserire URL" id="fonteDatiUrl" formControlName="url" type="url" class="form-control">
               <mat-error *ngIf="configurazioneForm.get('fonteDati.url')?.hasError('required')">
                 Il campo url è obbligatorio
@@ -168,7 +168,7 @@
                 </div>
                 <div class="row">
                   <div class="col-md-3 form-group">
-                    <label for="fonteDatiJNDIName">JNDI Name</label>
+                    <label for="fonteDatiJNDIName">JNDI Name *</label>
                     <input placeholder="Inserire JNDI name" id="fonteDatiJNDIName" formControlName="JNDIName" class="form-control">
                     <mat-error *ngIf="configurazioneForm.get('fonteDati.JNDIName')?.hasError('required')">
                       Il campo JNDIName è obbligatorio
@@ -195,14 +195,14 @@
                     </mat-error> -->
                   </div>
                   <div class="col-md-4">
-                    <label for="utenteFonteDatiUsername">Username</label>
+                    <label for="utenteFonteDatiUsername">Username *</label>
                     <input placeholder="Inserire username" id="utenteFonteDatiUsername" formControlName="username" class="form-control">
                     <mat-error *ngIf="configurazioneForm.get('utenteFonteDati.username')?.hasError('required')">
                       Il campo descrizione è obbligatorio
                     </mat-error>
                   </div>
                   <div class="col-md-4">
-                    <label for="utenteFonteDatiPassword">Password</label>
+                    <label for="utenteFonteDatiPassword">Password *</label>
                     <input placeholder="Inserire password" id="utenteFonteDatiPassword" formControlName="password" type="password" class="form-control">
                     <mat-error *ngIf="configurazioneForm.get('utenteFonteDati.password')?.hasError('required')">
                       Il campo password è obbligatorio
@@ -224,21 +224,21 @@
 
                 <div class="row">
                   <div class="col-md-4">
-                    <label for="configurazioneNome">Nome Configurazione</label>
+                    <label for="configurazioneNome">Nome Configurazione *</label>
                 <input placeholder="Inserire nome" id="configurazioneNome" formControlName="nome" class="form-control">
                 <mat-error *ngIf="configurazioneForm.get('configurazione.nome')?.hasError('required')">
                   Il campo nome è obbligatorio
                 </mat-error>
                   </div>
                   <div class="col-md-4">
-                    <label for="configurazioneSqlScript">SQL Script</label>
+                    <label for="configurazioneSqlScript">SQL Script *</label>
                 <input placeholder="Inserire script SQL" id="configurazioneSqlScript" formControlName="sqlScript" class="form-control">
                 <mat-error *ngIf="configurazioneForm.get('configurazione.sqlScript')?.hasError('required')">
                   Il campo SQL script è obbligatorio
                 </mat-error>
                   </div>
                   <div class="col-md-4">
-                    <label for="configurazioneProgramma">Programma</label>
+                    <label for="configurazioneProgramma">Programma *</label>
                     <input placeholder="Inserire programma" id="configurazioneProgramma" formControlName="programma" class="form-control">
                     <mat-error *ngIf="configurazioneForm.get('configurazione.programma')?.hasError('required')">
                       Il campo programma è obbligatorio
@@ -248,13 +248,13 @@
 
                 <div class="row">
                   <div class="col-md-4">
-                    <label for="configurazioneClasse">Classe</label>
+                    <label for="configurazioneClasse">Classe *</label>
                     <input placeholder="Inserire classe" id="configurazioneClasse" formControlName="classe" class="form-control">
                     <mat-error *ngIf="configurazioneForm.get('configurazione.classe')?.hasError('required')">
                       Il campo classe è obbligatorio
                     </mat-error>
                   </div>
-                  <div class="col-md-4">
+                  <!-- <div class="col-md-4">
                       <mat-label>Schedulazione</mat-label>
                       <input
                         type="text"
@@ -270,9 +270,6 @@
                         </mat-option>
                       </mat-autocomplete>
 
-                      <!-- <mat-icon matSuffix matTooltip="Esegui ogni giorno alle 12:00: 0 0 12 * * ? —
-                        Esegui ogni 5 minuti a partire dalle 08:00: 0 0/5 8 * * ? —
-                        Esegui ogni 15 minuti a partire dalle 14: 0 0/15 14 * * ?">info</mat-icon> -->
 
                       <mat-error *ngIf="schedulazioneControl?.hasError('required')">
                         Il campo schedulazione è obbligatorio.
@@ -280,11 +277,14 @@
                       <mat-error *ngIf="schedulazioneControl?.hasError('pattern')">
                         Inserisci una cron expression valida.
                       </mat-error>
-                  </div>
+                  </div> -->
 
+                      <!-- <mat-icon matSuffix matTooltip="Esegui ogni giorno alle 12:00: 0 0 12 * * ? —
+                        Esegui ogni 5 minuti a partire dalle 08:00: 0 0/5 8 * * ? —
+                        Esegui ogni 15 minuti a partire dalle 14: 0 0/15 14 * * ?">info</mat-icon> -->
 
                   <div class="col-md-4">
-                    <label for="configurazioneOrdineConfigurazione">Ordine Configurazione</label>
+                    <label for="configurazioneOrdineConfigurazione">Ordine Configurazione *</label>
                 <input placeholder="Inserire ordine configurazione" id="configurazioneOrdineConfigurazione" formControlName="ordineConfigurazione" type="number" min="0"  class="form-control">
                 <mat-error *ngIf="configurazioneForm.get('configurazione.ordineConfigurazione')?.hasError('required')">
                   Il campo ordine configurazione è obbligatorio
@@ -293,6 +293,132 @@
                   Il campo ordine configurazione accetta solo valori interi positivi.
                 </mat-error>
               </div>
+                </div>
+                <div class="row">
+                  <div formGroupName="schedulazione">
+                    <div class="row">
+                      <mat-card>
+                        <mat-card-title>Schedulazione</mat-card-title>
+                        <mat-card-content>
+                          <div class="row">
+                            <div class="col-md-4">
+                              <label for="secondi">Secondi *</label>
+                              <input
+                                type="text"
+                                id="secondi"
+                                class="form-control"
+                                formControlName="secondi"
+                                placeholder="Es: *"
+                              />
+                              <mat-error *ngIf="configurazioneForm.get('configurazione.schedulazione.secondi')?.hasError('required')">
+                                Il campo secondi è obbligatorio.
+                              </mat-error>
+                              <mat-error *ngIf="configurazioneForm.get('configurazione.schedulazione.secondi')?.hasError('pattern')">
+                                Inserisci un valore valido per secondi.
+                              </mat-error>
+                            </div>
+                            <div class="col-md-4">
+                              <label for="minuti">Minuti *</label>
+                              <input
+                                type="text"
+                                id="minuti"
+                                class="form-control"
+                                formControlName="minuti"
+                                placeholder="Es: *"
+                              />
+                              <mat-error *ngIf="configurazioneForm.get('configurazione.schedulazione.minuti')?.hasError('required')">
+                                Il campo minuti è obbligatorio.
+                              </mat-error>
+                              <mat-error *ngIf="configurazioneForm.get('configurazione.schedulazione.minuti')?.hasError('pattern')">
+                                Inserisci un valore valido per minuti.
+                              </mat-error>
+                            </div>
+                            <div class="col-md-4">
+                              <label for="ore">Ore *</label>
+                              <input
+                                type="text"
+                                id="ore"
+                                class="form-control"
+                                formControlName="ore"
+                                placeholder="Es: *"
+                              />
+                              <mat-error *ngIf="configurazioneForm.get('configurazione.schedulazione.ore')?.hasError('required')">
+                                Il campo ore è obbligatorio.
+                              </mat-error>
+                              <mat-error *ngIf="configurazioneForm.get('configurazione.schedulazione.ore')?.hasError('pattern')">
+                                Inserisci un valore valido per ore.
+                              </mat-error>
+                            </div>
+                          </div>
+                          <div class="row">
+
+                            <div class="col-md-3">
+                              <label for="giornoDelMese">Giorno del mese *</label>
+                              <input
+                                type="text"
+                                id="giornoDelMese"
+                                class="form-control"
+                                formControlName="giornoDelMese"
+                                placeholder="Es: *"
+                              />
+                              <mat-error *ngIf="configurazioneForm.get('configurazione.schedulazione.giornoDelMese')?.hasError('required')">
+                                Il campo giorno del mese è obbligatorio.
+                              </mat-error>
+                              <mat-error *ngIf="configurazioneForm.get('configurazione.schedulazione.giornoDelMese')?.hasError('pattern')">
+                                Inserisci un valore valido per giorno del mese.
+                              </mat-error>
+                            </div>
+                            <div class="col-md-3">
+                              <label for="mese">Mese *</label>
+                              <input
+                                type="text"
+                                id="mese"
+                                class="form-control"
+                                formControlName="mese"
+                                placeholder="Es: *"
+                                [matAutocomplete]="auto"
+                              />
+                              <mat-autocomplete #auto="matAutocomplete">
+                                <mat-option *ngFor="let mese of elencoMesiCron" [value]="mese">
+                                  {{ mese }}
+                                </mat-option>
+                              </mat-autocomplete>
+                              <mat-error *ngIf="configurazioneForm.get('configurazione.schedulazione.mese')?.hasError('required')">
+                                Il campo mese è obbligatorio.
+                              </mat-error>
+                              <mat-error *ngIf="configurazioneForm.get('configurazione.schedulazione.mese')?.hasError('pattern')">
+                                Inserisci un valore valido per mese.
+                              </mat-error>
+                            </div>
+
+                            <div class="col-md-3">
+                              <label for="giornoDellAnno">Giorno dell'anno</label>
+                              <input
+                                type="text"
+                                id="giornoDellAnno"
+                                class="form-control"
+                                formControlName="giornoDellAnno"
+                                placeholder="Es: *"
+                              />
+                              <mat-error *ngIf="configurazioneForm.get('configurazione.schedulazione.giornoDellAnno')?.hasError('required')">
+                                Il campo giorno dell'anno è obbligatorio.
+                              </mat-error>
+                              <mat-error *ngIf="configurazioneForm.get('configurazione.schedulazione.giornoDellAnno')?.hasError('pattern')">
+                                Inserisci un valore valido per giorno dell'anno'.
+                              </mat-error>
+                            </div>
+                            <div class="col-md-3">
+                              <label for="anno">Anno</label>
+                              <input type="text" class="form-control" formControlName="anno" placeholder="Es: *">
+                              <mat-error *ngIf="configurazioneForm.get('configurazione.schedulazione.anno')?.hasError('pattern')">
+                                Inserisci un valore valido per anno.
+                              </mat-error>
+                            </div>
+                          </div>
+                        </mat-card-content>
+                      </mat-card>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -314,7 +440,7 @@
                         <li>
                           <div class="row">
                             <div class="col-6">
-                              <label for="sogliaInferiore{{ i }}">Soglia Inferiore</label>
+                              <label for="sogliaInferiore{{ i }}">Soglia Inferiore *</label>
                               <input (change)="onSogliaChange(i)" id="sogliaInferiore{{ i }}" placeholder="Inserire soglia inferiore" formControlName="sogliaInferiore" class="form-control">
                               <mat-error *ngIf="soglia.get('sogliaInferiore')?.hasError('required')">Obbligatorio</mat-error>
                             </div>
@@ -324,7 +450,7 @@
                         <li>
                           <div class="row">
                             <div class="col-6">
-                              <label for="sogliaSuperiore{{ i }}">Soglia Superiore</label>
+                              <label for="sogliaSuperiore{{ i }}">Soglia Superiore *</label>
                               <input (change)="onSogliaChange(i)" id="sogliaSuperiore{{ i }}" placeholder="Inserire soglia superiore" formControlName="sogliaSuperiore" class="form-control">
                               <mat-error *ngIf="soglia.get('sogliaSuperiore')?.hasError('required')">Obbligatorio</mat-error>
                             </div>
@@ -334,7 +460,7 @@
                         <li>
                           <div class="row">
                             <div class="col-6">
-                              <label for="valore{{ i }}">Valore</label>
+                              <label for="valore{{ i }}">Valore *</label>
                           <input id="valore{{ i }}" placeholder="Inserire valore" formControlName="valore" class="form-control">
                           <mat-error *ngIf="soglia.get('valore')?.hasError('required')">Obbligatorio</mat-error>
                             </div>
@@ -344,7 +470,7 @@
                         <li>
                           <div class="row">
                             <div class="col-6">
-                              <label for="operatore{{ i }}">Operatore</label>
+                              <label for="operatore{{ i }}">Operatore *</label>
                               <select id="operatore{{ i }}" formControlName="operatore" class="form-select">
                                 <option value="" selected>Seleziona operatore</option>
                                 <option value="+">+</option>
@@ -377,7 +503,7 @@
                             <li>
                               <div class="row">
                                 <div class="col-4">
-                                  <label for="tipoAzione{{ i }}{{ j }}">Tipo azione</label>
+                                  <label for="tipoAzione{{ i }}{{ j }}">Tipo azione *</label>
                                   <select name="tipoAzione" id="tipoAzione" formControlName="tipoAzione" class="form-select" (change)="onChangeTipoAzione(i, j)">
                                     <option value="" selected>Seleziona tipo azione</option>
                                     <option value="1">Invio mail</option>
@@ -392,13 +518,13 @@
                             <li [hidden]="azione.get('tipoAzione')?.value!='1'" >
                               <div class="row">
                                 <div class="col-4">
-                                  <label for="destinatario{{ i }}{{ j }}">Destinatario</label>
+                                  <label for="destinatario{{ i }}{{ j }}">Destinatario *</label>
                                   <input id="destinatario{{ i }}{{ j }}" placeholder="Inserisci destinatario" formControlName="destinatario" class="form-control">
                                   <mat-error *ngIf="azione.get('destinatario')?.hasError('required')">Obbligatorio</mat-error>
                                   <mat-error *ngIf="azione.get('destinatario')?.hasError('pattern')">Inserire un indirizzo email valido</mat-error>
                                 </div>
                                 <div class="col-6">
-                                  <label for="testoMail{{ i }}{{ j }}">Testo</label>
+                                  <label for="testoMail{{ i }}{{ j }}">Testo *</label>
                                   <textarea name="testoMail{{ i }}{{ j }}" id="testoMail{{ i }}{{ j }}" formControlName="testoMail" placeholder="Inserire testo mail" class="form-control"></textarea>
                                   <mat-error *ngIf="azione.get('testoMail')?.hasError('required')">Obbligatorio</mat-error>
                                 </div>
@@ -408,7 +534,7 @@
                             <li [hidden]="azione.get('tipoAzione')?.value!='2'">
                               <div class="row">
                                 <div class="col-4">
-                                  <label for="sqlScript{{ i }}{{ j }}">SQL Script</label>
+                                  <label for="sqlScript{{ i }}{{ j }}">SQL Script *</label>
                                   <input id="sqlScript{{ i }}{{ j }}" placeholder="Inserisci SQL" formControlName="sqlScript" class="form-control">
                                   <mat-error *ngIf="azione.get('sqlScript')?.hasError('required')">Obbligatorio</mat-error>
                                 </div>
@@ -417,7 +543,7 @@
                             <li [hidden]="azione.get('tipoAzione')?.value!='3'">
                               <div class="row">
                                 <div class="col-4">
-                                  <label for="programma{{ i }}{{ j }}">Programma</label>
+                                  <label for="programma{{ i }}{{ j }}">Programma *</label>
                                   <input id="programma{{ i }}{{ j }}" placeholder="Inserisci Programma" formControlName="programma" class="form-control">
                                   <mat-error *ngIf="azione.get('programma')?.hasError('required')">Obbligatorio</mat-error>
                                 </div>
@@ -426,7 +552,7 @@
                             <li [hidden]="azione.get('tipoAzione')?.value!='4'">
                               <div class="row">
                                 <div class="col-4">
-                                  <label for="classe{{ i }}{{ j }}">Classe</label>
+                                  <label for="classe{{ i }}{{ j }}">Classe *</label>
                               <input id="classe{{ i }}{{ j }}" placeholder="Inserisci Classe" formControlName="classe" class="form-control">
                               <mat-error *ngIf="azione.get('classe')?.hasError('required')">Obbligatorio</mat-error>
                                 </div>

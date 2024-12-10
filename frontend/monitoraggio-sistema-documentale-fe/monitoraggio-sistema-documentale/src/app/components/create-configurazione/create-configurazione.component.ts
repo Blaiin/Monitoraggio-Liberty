@@ -17,12 +17,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
 })
 export class CreateConfigurazioneComponent implements OnInit {
   configurazioneForm: FormGroup;
-  readonly panelOpenState = signal(false);
-  schedulazioneOptions: string[] = [
-    '0 0 12 * * ?',
-    '0 0/5 8 * * ?',
-    '0 0/15 14 * * ?',
-  ];
+  elencoMesiCron: any[] = [];
+  ElencoGiorniDellaSettimanaCron = [];
 
   constructor(
     private fb: FormBuilder,
@@ -34,26 +30,11 @@ export class CreateConfigurazioneComponent implements OnInit {
       }),
       controllo: this.fb.group({
         descrizione: ['', Validators.required],
-        // tipoControlloID: [
-        // '',
-        // Validators.required,
-        // Validators.pattern(/^[0-9]*[1-9][0-9]*$/)
-        // ],
-        ambito: [
-          '',
-          Validators.required,
-          // Validators.pattern(/^[0-9]*[1-9][0-9]*$/)
-        ],
-        ordineControllo: [
-          '',
-          Validators.required,
-          // Validators.pattern(/^[0-9]*[1-9][0-9]*$/)
-        ],
+
+        ambito: ['', Validators.required],
+        ordineControllo: ['', Validators.required],
       }),
-      // ambito: this.fb.group({
-      //   nome: ['', Validators.required],
-      //   destinazione: ['', Validators.required],
-      // }),
+
       fonteDati: this.fb.group({
         descrizione: ['', Validators.required],
         nomeDriver: ['', Validators.required],
@@ -71,15 +52,55 @@ export class CreateConfigurazioneComponent implements OnInit {
         sqlScript: ['', Validators.required],
         programma: ['', Validators.required],
         classe: ['', Validators.required],
-        schedulazione: [
-          '',
-          [
-            Validators.required,
-            Validators.pattern(
-              /^(?:\d+|\*|\?)(\/\d+)?(\s+(?:\d+|\*|\?)(\/\d+)?){4}(\s+(MON|TUE|WED|THU|FRI|SAT|SUN)(-(MON|TUE|WED|THU|FRI|SAT|SUN))?)?(\s+(\*|\?|(\d+))(\s+(\*|\?|(\d+)))?)*$/
-            ),
+        schedulazione: this.fb.group({
+          secondi: [
+            '',
+            [
+              Validators.required,
+              Validators.pattern(/^(?:[0-5]?\d|\*|,|-|\/)$/),
+            ],
           ],
-        ],
+          minuti: [
+            '',
+            [
+              Validators.required,
+              Validators.pattern(/^(?:[0-5]?\d|\*|,|-|\/)$/),
+            ],
+          ],
+          ore: [
+            '',
+            [
+              Validators.required,
+              Validators.pattern(/^(?:[01]?\d|2[0-3]|\*|,|-|\/)$/),
+            ],
+          ],
+          giornoDelMese: [
+            '',
+            [
+              Validators.required,
+              Validators.pattern(/^(?:[1-9]|[12]\d|3[01]|\*|\?|,|-|\/|L|W)$/),
+            ],
+          ],
+          mese: [
+            '',
+            [
+              Validators.required,
+              Validators.pattern(
+                /^(\*|JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC|[\d,*/-]+)$/
+              ),
+            ],
+          ],
+          giornoDellAnno: [
+            '',
+            [
+              Validators.required,
+              Validators.pattern(
+                /^(?:[1-7]|SUN|MON|TUE|WED|THU|FRI|SAT|,|-|\*|\?|\/|L|#)$/
+              ),
+            ],
+          ],
+          anno: ['', Validators.pattern(/^(?:\d{4}|\*|,|\/|-)$/)],
+        }),
 
         ordineConfigurazione: [
           null,
@@ -89,6 +110,38 @@ export class CreateConfigurazioneComponent implements OnInit {
       }),
       soglie: this.fb.array([this.createSoglia()]),
     });
+
+    this.generateCronOptions();
+  }
+
+  generateCronOptions(): void {
+    const mesi = [
+      'JAN',
+      'FEB',
+      'MAR',
+      'APR',
+      'MAY',
+      'JUN',
+      'JUL',
+      'AUG',
+      'SEP',
+      'OCT',
+      'NOV',
+      'DEC',
+    ];
+
+    // Wildcard
+    this.elencoMesiCron.push(',', '-', '*', '/');
+
+    // Aggiungi i mesi abbreviati
+    this.elencoMesiCron.push(...mesi);
+
+    // Genera combinazioni del tipo n/m (dove n e m vanno da 1 a 12)
+    for (let n = 1; n <= 12; n++) {
+      for (let m = 1; m <= 12; m++) {
+        this.elencoMesiCron.push(`${n}/${m}`);
+      }
+    }
   }
 
   ngOnInit(): void {}
@@ -367,3 +420,23 @@ export class CreateConfigurazioneComponent implements OnInit {
     classeControl?.updateValueAndValidity();
   }
 }
+// ambito: this.fb.group({
+//   nome: ['', Validators.required],
+//   destinazione: ['', Validators.required],
+// }),
+
+// tipoControlloID: [
+// '',
+// Validators.required,
+// Validators.pattern(/^[0-9]*[1-9][0-9]*$/)
+// ],
+
+// schedulazione: [
+//   '',
+//   [
+//     Validators.required,
+//     Validators.pattern(
+//       /^(?:\d+|\*|\?)(\/\d+)?(\s+(?:\d+|\*|\?)(\/\d+)?){4}(\s+(MON|TUE|WED|THU|FRI|SAT|SUN)(-(MON|TUE|WED|THU|FRI|SAT|SUN))?)?(\s+(\*|\?|(\d+))(\s+(\*|\?|(\d+)))?)*$/
+//     ),
+//   ],
+// ],

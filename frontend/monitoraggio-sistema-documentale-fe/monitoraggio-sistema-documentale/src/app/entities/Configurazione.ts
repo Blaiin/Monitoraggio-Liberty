@@ -30,7 +30,15 @@ export interface Configurazione {
       sqlScript: string;
       programma: string;
       classe: string;
-      schedulazione: string;
+      schedulazione: {
+        secondi: string;
+        minuti: string;
+        ore: string;
+        giornoDelMese: string;
+        mese: string;
+        giornoDellAnno: string;
+        anno: string;
+      };
       ordineConfigurazione: number | null;
     };
     soglie: Array<{
@@ -38,6 +46,14 @@ export interface Configurazione {
       sogliaSuperiore: string;
       valore: string;
       operatore: string;
+      azioni: Array<{
+        tipoAzione: string;
+        destinatario: string;
+        testoMail: string;
+        sqlScript: string;
+        programma: string;
+        classe: string;
+      }>;
     }>;
   };
 }
