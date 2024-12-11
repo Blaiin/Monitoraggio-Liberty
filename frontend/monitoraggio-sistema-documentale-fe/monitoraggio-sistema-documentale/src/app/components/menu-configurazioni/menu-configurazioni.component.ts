@@ -2,11 +2,11 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { PeriodicElement } from './configurazione';
+import { Configurazione } from './configurazione';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-const ELEMENT_DATA: PeriodicElement[] = [
+const ELEMENT_DATA: Configurazione[] = [
   { id: 1, name: 'Configurazione 1', stato: 'In attesa' },
   { id: 2, name: 'Configurazione 2', stato: 'In attesa' },
   { id: 3, name: 'Configurazione 3', stato: 'Esecuzione programmata' },

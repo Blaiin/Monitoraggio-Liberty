@@ -4,11 +4,16 @@ import { MenuConfigurazioniComponent } from './components/menu-configurazioni/me
 import { HomepageComponent } from './components/homepage/homepage.component';
 import { MonitoraggioStatiComponent } from './components/monitoraggio-stati/monitoraggio-stati.component';
 import { CreateConfigurazioneComponent } from './components/create-configurazione/create-configurazione.component';
+import { ElencoConfigurazioniAttiveComponent } from './components/elenco-configurazioni-attive/elenco-configurazioni-attive.component';
 
 const routes: Routes = [
   {
     path: 'monitoraggio-sistema-documentale/menu-configurazioni',
     component: MenuConfigurazioniComponent,
+  },
+  {
+    path: 'monitoraggio-sistema-documentale/elenco-configurazioni-attive',
+    component: ElencoConfigurazioniAttiveComponent,
   },
   {
     path: 'monitoraggio-sistema-documentale/menu-configurazioni/create-configurazione',

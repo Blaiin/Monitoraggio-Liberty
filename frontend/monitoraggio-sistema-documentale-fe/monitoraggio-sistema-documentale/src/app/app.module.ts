@@ -13,6 +13,7 @@ import { HomepageComponent } from './components/homepage/homepage.component';
 import { MonitoraggioStatiComponent } from './components/monitoraggio-stati/monitoraggio-stati.component';
 import { NgChartsModule } from 'ng2-charts';
 import { CreateConfigurazioneComponent } from './components/create-configurazione/create-configurazione.component';
+import { ElencoConfigurazioniAttiveComponent } from './components/elenco-configurazioni-attive/elenco-configurazioni-attive.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { CreateConfigurazioneComponent } from './components/create-configurazion
     MonitoraggioStatiComponent,
     NavbarComponent,
     HomepageComponent,
-    CreateConfigurazioneComponent
+    CreateConfigurazioneComponent,
+    ElencoConfigurazioniAttiveComponent,
   ],
   imports: [
     BrowserModule,
@@ -31,7 +33,7 @@ import { CreateConfigurazioneComponent } from './components/create-configurazion
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    NgChartsModule
+    NgChartsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
