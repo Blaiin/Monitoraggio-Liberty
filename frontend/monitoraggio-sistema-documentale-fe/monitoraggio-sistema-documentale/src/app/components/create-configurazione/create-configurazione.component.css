@@ -61,3 +61,14 @@ mat-card{
   margin-top: 20px;
   text-align: right;
 }
+
+.cron-preview {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.cron-preview mat-card-footer {
+  padding: 15px;
+  border: 1px solid #ddd;
+  font-family: monospace;
+}

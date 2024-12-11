@@ -19,6 +19,7 @@ export class CreateConfigurazioneComponent implements OnInit {
   configurazioneForm: FormGroup;
   elencoMesiCron: any[] = [];
   ElencoGiorniDellaSettimanaCron = [];
+  filteredCronExpressionValue: string[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -57,28 +58,36 @@ export class CreateConfigurazioneComponent implements OnInit {
             '',
             [
               Validators.required,
-              Validators.pattern(/^(?:[0-5]?\d|\*|,|-|\/)$/),
+              Validators.pattern(
+                /^\s*(\*|([0-5]?\d)([,-][0-5]?\d)*([\/]\d+)?|(\d+))\s*$/
+              ),
             ],
           ],
           minuti: [
             '',
             [
               Validators.required,
-              Validators.pattern(/^(?:[0-5]?\d|\*|,|-|\/)$/),
+              Validators.pattern(
+                /^\s*(\*|([0-5]?\d)([,-][0-5]?\d)*([\/]\d+)?|(\d+))\s*$/
+              ),
             ],
           ],
           ore: [
             '',
             [
               Validators.required,
-              Validators.pattern(/^(?:[01]?\d|2[0-3]|\*|,|-|\/)$/),
+              Validators.pattern(
+                /^\s*(\*|([01]?\d|2[0-3])([,-][01]?\d|2[0-3])*([\/]\d+)?|(\d+))\s*$/
+              ),
             ],
           ],
           giornoDelMese: [
             '',
             [
               Validators.required,
-              Validators.pattern(/^(?:[1-9]|[12]\d|3[01]|\*|\?|,|-|\/|L|W)$/),
+              Validators.pattern(
+                /^\s*(\*|\?|[1-9]|[12]\d|3[01])([,-][1-9]|[12]\d|3[01])*([\/]\d+)?(L|W)?\s*$/
+              ),
             ],
           ],
           mese: [
@@ -86,7 +95,7 @@ export class CreateConfigurazioneComponent implements OnInit {
             [
               Validators.required,
               Validators.pattern(
-                /^(\*|JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC|[\d,*/-]+)$/
+                /^\s*(\*|JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC|[1-9]|1[0-2])([,-](JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC|[1-9]|1[0-2]))*([\/]\d+)?\s*$/
               ),
             ],
           ],
@@ -95,11 +104,16 @@ export class CreateConfigurazioneComponent implements OnInit {
             [
               Validators.required,
               Validators.pattern(
-                /^(?:[1-7]|SUN|MON|TUE|WED|THU|FRI|SAT|,|-|\*|\?|\/|L|#)$/
+                /^\s*(\*|\?|[1-7]|SUN|MON|TUE|WED|THU|FRI|SAT)([,-][1-7]|SUN|MON|TUE|WED|THU|FRI|SAT)*([\/]\d+)?(L|#\d+)?\s*$/
               ),
             ],
           ],
-          anno: ['', Validators.pattern(/^(?:\d{4}|\*|,|\/|-)$/)],
+          anno: [
+            '',
+            Validators.pattern(
+              /^\s*(\*|[0-9]{4})([,-][0-9]{4})*([\/]\d+)?\s*$/
+            ),
+          ],
         }),
 
         ordineConfigurazione: [
@@ -418,6 +432,35 @@ export class CreateConfigurazioneComponent implements OnInit {
     sqlScriptControl?.updateValueAndValidity();
     programmaControl?.updateValueAndValidity();
     classeControl?.updateValueAndValidity();
+  }
+
+  get filteredCronExpression(): string[] {
+    const schedulazione = this.configurazioneForm.get(
+      'configurazione.schedulazione'
+    )?.value;
+
+    if (!schedulazione) {
+      return [];
+    }
+
+    const keys = [
+      'secondi',
+      'minuti',
+      'ore',
+      'giornoDelMese',
+      'mese',
+      'giornoDellAnno',
+      'anno',
+    ];
+
+    const filteredValues = keys
+      .map((key) => schedulazione[key])
+      .filter((value) => value !== null && value !== '');
+
+    // Salva il valore filtrato nella proprietà
+    this.filteredCronExpressionValue = filteredValues;
+
+    return filteredValues;
   }
 }
 // ambito: this.fb.group({
