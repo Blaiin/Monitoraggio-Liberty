@@ -50,7 +50,7 @@ export class CreateConfigurazioneComponent implements OnInit {
       }),
       configurazione: this.fb.group({
         nome: ['', Validators.required],
-        sqlScript: ['', Validators.required],
+        sqlScript: [null, Validators.required],
         programma: ['', Validators.required],
         classe: ['', Validators.required],
         schedulazione: this.fb.group({
@@ -126,6 +126,16 @@ export class CreateConfigurazioneComponent implements OnInit {
     });
 
     this.generateCronOptions();
+  }
+
+  onFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input?.files?.length) {
+      const file = input.files[0];
+      this.configurazioneForm.patchValue({
+        sqlScript: file, // aggiorna con il file selezionato
+      });
+    }
   }
 
   generateCronOptions(): void {
@@ -219,19 +229,35 @@ export class CreateConfigurazioneComponent implements OnInit {
     return this.configurazioneForm.get('configurazione.schedulazione');
   }
 
-  // Metodo di invio del form
   onSubmit() {
     if (this.configurazioneForm.valid) {
-      const formData: Configurazione['content'] = this.configurazioneForm.value;
-      const body: Configurazione = { content: formData };
+      const formData = new FormData();
 
-      console.log('Form valid, data ready to send:', JSON.stringify(body));
+      const content = {
+        tipoControllo: this.configurazioneForm.value.tipoControllo,
+        controllo: this.configurazioneForm.value.controllo,
+        fonteDati: this.configurazioneForm.value.fonteDati,
+        utenteFonteDati: this.configurazioneForm.value.utenteFonteDati,
+        configurazione: {
+          nome: this.configurazioneForm.value.configurazione.nome,
+          sqlScript: this.configurazioneForm
+            .get('configurazione')
+            ?.get('sqlScript')?.value,
+          schedulazione:
+            this.configurazioneForm.value.configurazione.schedulazione,
+          ordineConfigurazione:
+            this.configurazioneForm.value.configurazione.ordineConfigurazione,
+        },
+        soglie: this.configurazioneForm.value.soglie,
+      };
 
-      this.configurazioneService.aggiungiConfigurazione(body).subscribe(
-        (response: any) => {
+      formData.append('content', JSON.stringify(content));
+
+      this.configurazioneService.aggiungiConfigurazione(formData).subscribe(
+        (response) => {
           console.log('Configurazione aggiunta con successo:', response);
         },
-        (error: any) => {
+        (error) => {
           console.error(
             "Errore durante l'aggiunta della configurazione:",
             error

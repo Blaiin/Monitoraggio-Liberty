@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Configurazione } from 'src/app/entities/Configurazione';
 @Injectable({
@@ -16,9 +16,8 @@ export class ConfigurazioneService {
    * @returns Un Observable della risposta del backend
    */
 
-  aggiungiConfigurazione(
-    configurazione: Configurazione
-  ): Observable<Configurazione> {
-    return this.http.post<Configurazione>(this.apiUrl, configurazione);
+  aggiungiConfigurazione(body: any): Observable<any> {
+    const headers = new HttpHeaders();
+    return this.http.post<Configurazione>(this.apiUrl, body, { headers });
   }
 }
