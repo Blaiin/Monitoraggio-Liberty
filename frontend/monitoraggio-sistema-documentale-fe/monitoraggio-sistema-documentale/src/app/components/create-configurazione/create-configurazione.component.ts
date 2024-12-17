@@ -217,19 +217,53 @@ export class CreateConfigurazioneComponent implements OnInit {
 
     if (fileInput.files && fileInput.files.length > 0) {
       const file = fileInput.files[0];
-      const fileName = file.name;
 
-      // Aggiorna il formControl con il nome del file
-      this.configurazioneForm.get('configurazione.sqlScript')?.setValue(fileName);
-      console.log('Nome del file selezionato:', fileName);
+      // Lettura del contenuto del file
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        const fileContent = reader.result as string; // Contenuto del file (base64 o testuale)
+
+        // Oggetto contenente nome e contenuto del file
+        const fileData = {
+          name: file.name,
+          content: fileContent,
+        };
+
+        // Aggiorna il formControl con l'oggetto completo
+        this.configurazioneForm
+          .get('configurazione.sqlScript')
+          ?.setValue(fileData);
+        console.log('File caricato:', fileData);
+      };
+
+      // Legge il file come testo o base64
+      reader.readAsDataURL(file); // Altrimenti reader.readAsText(file) per testo puro
     }
   }
 
-
-  onSubmit() {
+  onSubmit(): void {
     if (this.configurazioneForm.valid) {
-      const formData: Configurazione['content'] = this.configurazioneForm.value;
-      const body: Configurazione = { content: formData };
+      const formValues = this.configurazioneForm.value;
+
+      // Trasformiamo il campo sqlScript in un oggetto con nome e contenuto
+      const sqlScript = formValues.configurazione?.sqlScript;
+
+      const body: Configurazione = {
+        content: {
+          ...formValues, // Copiamo gli altri campi
+          configurazione: {
+            ...formValues.configurazione, // Copiamo i campi esistenti
+            sqlScript: sqlScript
+              ? {
+                  name: sqlScript.name,
+                  content: sqlScript.content, // Assicurati che il contenuto sia già in Base64 o testo
+                }
+              : null,
+          },
+        },
+      };
+
       console.log('Dati inviati:', JSON.stringify(body));
 
       this.configurazioneService.aggiungiConfigurazione(body).subscribe(
@@ -237,7 +271,10 @@ export class CreateConfigurazioneComponent implements OnInit {
           console.log('Configurazione aggiunta con successo:', response);
         },
         (error) => {
-          console.error("Errore durante l'aggiunta della configurazione:", error);
+          console.error(
+            "Errore durante l'aggiunta della configurazione:",
+            error
+          );
         }
       );
     } else {
@@ -245,7 +282,6 @@ export class CreateConfigurazioneComponent implements OnInit {
       this.markAllAsTouched();
     }
   }
-
 
   // Metodo per segnare tutti i campi come "toccati" per mostrare gli errori
   markAllAsTouched() {
@@ -466,4 +502,3 @@ export class CreateConfigurazioneComponent implements OnInit {
     return filteredValues;
   }
 }
-
