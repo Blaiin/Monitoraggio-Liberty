@@ -1,14 +1,7 @@
-import { Component, OnInit, signal } from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormBuilder,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Configurazione } from 'src/app/entities/Configurazione';
 import { ConfigurazioneService } from './configurazione.service';
-import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-create-configurazione',
@@ -27,35 +20,35 @@ export class CreateConfigurazioneComponent implements OnInit {
   ) {
     this.configurazioneForm = this.fb.group({
       tipoControllo: this.fb.group({
-        descrizione: ['', Validators.required],
+        descrizione: [null, Validators.required],
       }),
       controllo: this.fb.group({
-        descrizione: ['', Validators.required],
+        descrizione: [null, Validators.required],
 
-        ambito: ['', Validators.required],
-        ordineControllo: ['', Validators.required],
+        ambito: [null, Validators.required],
+        ordineControllo: [null, Validators.required],
       }),
 
       fonteDati: this.fb.group({
-        descrizione: ['', Validators.required],
-        nomeDriver: ['', Validators.required],
-        nomeClasse: ['', Validators.required],
-        url: ['', [Validators.required, Validators.pattern('https?://.+')]],
-        JNDIName: ['', Validators.required],
+        descrizione: [null, Validators.required],
+        nomeDriver: [null, Validators.required],
+        nomeClasse: [null, Validators.required],
+        url: [null, [Validators.required, Validators.pattern('https?://.+')]],
+        JNDIName: [null, Validators.required],
       }),
       utenteFonteDati: this.fb.group({
-        descrizione: [''], //opzionale
-        username: ['', Validators.required],
-        password: ['', Validators.required],
+        descrizione: [null], //opzionale
+        username: [null, Validators.required],
+        password: [null, Validators.required],
       }),
       configurazione: this.fb.group({
-        nome: ['', Validators.required],
+        nome: [null, Validators.required],
         sqlScript: [null, Validators.required],
-        programma: ['', Validators.required],
-        classe: ['', Validators.required],
+        programma: [null, Validators.required],
+        classe: [null, Validators.required],
         schedulazione: this.fb.group({
           secondi: [
-            '',
+            null,
             [
               Validators.required,
               Validators.pattern(
@@ -64,7 +57,7 @@ export class CreateConfigurazioneComponent implements OnInit {
             ],
           ],
           minuti: [
-            '',
+            null,
             [
               Validators.required,
               Validators.pattern(
@@ -73,7 +66,7 @@ export class CreateConfigurazioneComponent implements OnInit {
             ],
           ],
           ore: [
-            '',
+            null,
             [
               Validators.required,
               Validators.pattern(
@@ -82,7 +75,7 @@ export class CreateConfigurazioneComponent implements OnInit {
             ],
           ],
           giornoDelMese: [
-            '',
+            null,
             [
               Validators.required,
               Validators.pattern(
@@ -91,7 +84,7 @@ export class CreateConfigurazioneComponent implements OnInit {
             ],
           ],
           mese: [
-            '',
+            null,
             [
               Validators.required,
               Validators.pattern(
@@ -100,7 +93,7 @@ export class CreateConfigurazioneComponent implements OnInit {
             ],
           ],
           giornoDellAnno: [
-            '',
+            null,
             [
               Validators.required,
               Validators.pattern(
@@ -109,7 +102,7 @@ export class CreateConfigurazioneComponent implements OnInit {
             ],
           ],
           anno: [
-            '',
+            null,
             Validators.pattern(
               /^\s*(\*|[0-9]{4})([,-][0-9]{4})*([\/]\d+)?\s*$/
             ),
@@ -126,16 +119,6 @@ export class CreateConfigurazioneComponent implements OnInit {
     });
 
     this.generateCronOptions();
-  }
-
-  onFileChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input?.files?.length) {
-      const file = input.files[0];
-      this.configurazioneForm.patchValue({
-        sqlScript: file, // aggiorna con il file selezionato
-      });
-    }
   }
 
   generateCronOptions(): void {
@@ -172,22 +155,22 @@ export class CreateConfigurazioneComponent implements OnInit {
 
   createSoglia() {
     return this.fb.group({
-      sogliaInferiore: ['', Validators.required],
-      sogliaSuperiore: ['', Validators.required],
-      valore: ['', Validators.required],
-      operatore: ['', Validators.required],
+      sogliaInferiore: [null, Validators.required],
+      sogliaSuperiore: [null, Validators.required],
+      valore: [null, Validators.required],
+      operatore: [null, Validators.required],
       azioni: this.fb.array([]),
     });
   }
 
   createAzione() {
     return this.fb.group({
-      tipoAzione: ['', Validators.required],
-      sqlScript: [{ value: '', disabled: true }, Validators.required],
-      programma: [{ value: '', disabled: true }, Validators.required],
-      classe: [{ value: '', disabled: true }, Validators.required],
+      tipoAzione: [null, Validators.required],
+      sqlScript: [{ value: null, disabled: true }, Validators.required],
+      programma: [{ value: null, disabled: true }, Validators.required],
+      classe: [{ value: null, disabled: true }, Validators.required],
       destinatario: [
-        { value: '', disabled: true },
+        { value: null, disabled: true },
         [
           Validators.required,
           Validators.pattern(
@@ -195,7 +178,7 @@ export class CreateConfigurazioneComponent implements OnInit {
           ),
         ],
       ],
-      testoMail: [{ value: '', disabled: true }, Validators.required],
+      testoMail: [{ value: null, disabled: true }, Validators.required],
     });
   }
 
@@ -229,39 +212,32 @@ export class CreateConfigurazioneComponent implements OnInit {
     return this.configurazioneForm.get('configurazione.schedulazione');
   }
 
+  onFileSelected(event: Event): void {
+    const fileInput = event.target as HTMLInputElement;
+
+    if (fileInput.files && fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+      const fileName = file.name;
+
+      // Aggiorna il formControl con il nome del file
+      this.configurazioneForm.get('configurazione.sqlScript')?.setValue(fileName);
+      console.log('Nome del file selezionato:', fileName);
+    }
+  }
+
+
   onSubmit() {
     if (this.configurazioneForm.valid) {
-      const formData = new FormData();
+      const formData: Configurazione['content'] = this.configurazioneForm.value;
+      const body: Configurazione = { content: formData };
+      console.log('Dati inviati:', JSON.stringify(body));
 
-      const content = {
-        tipoControllo: this.configurazioneForm.value.tipoControllo,
-        controllo: this.configurazioneForm.value.controllo,
-        fonteDati: this.configurazioneForm.value.fonteDati,
-        utenteFonteDati: this.configurazioneForm.value.utenteFonteDati,
-        configurazione: {
-          nome: this.configurazioneForm.value.configurazione.nome,
-          sqlScript: this.configurazioneForm
-            .get('configurazione')
-            ?.get('sqlScript')?.value,
-          schedulazione:
-            this.configurazioneForm.value.configurazione.schedulazione,
-          ordineConfigurazione:
-            this.configurazioneForm.value.configurazione.ordineConfigurazione,
-        },
-        soglie: this.configurazioneForm.value.soglie,
-      };
-
-      formData.append('content', JSON.stringify(content));
-
-      this.configurazioneService.aggiungiConfigurazione(formData).subscribe(
+      this.configurazioneService.aggiungiConfigurazione(body).subscribe(
         (response) => {
           console.log('Configurazione aggiunta con successo:', response);
         },
         (error) => {
-          console.error(
-            "Errore durante l'aggiunta della configurazione:",
-            error
-          );
+          console.error("Errore durante l'aggiunta della configurazione:", error);
         }
       );
     } else {
@@ -269,6 +245,7 @@ export class CreateConfigurazioneComponent implements OnInit {
       this.markAllAsTouched();
     }
   }
+
 
   // Metodo per segnare tutti i campi come "toccati" per mostrare gli errori
   markAllAsTouched() {
@@ -489,23 +466,4 @@ export class CreateConfigurazioneComponent implements OnInit {
     return filteredValues;
   }
 }
-// ambito: this.fb.group({
-//   nome: ['', Validators.required],
-//   destinazione: ['', Validators.required],
-// }),
 
-// tipoControlloID: [
-// '',
-// Validators.required,
-// Validators.pattern(/^[0-9]*[1-9][0-9]*$/)
-// ],
-
-// schedulazione: [
-//   '',
-//   [
-//     Validators.required,
-//     Validators.pattern(
-//       /^(?:\d+|\*|\?)(\/\d+)?(\s+(?:\d+|\*|\?)(\/\d+)?){4}(\s+(MON|TUE|WED|THU|FRI|SAT|SUN)(-(MON|TUE|WED|THU|FRI|SAT|SUN))?)?(\s+(\*|\?|(\d+))(\s+(\*|\?|(\d+)))?)*$/
-//     ),
-//   ],
-// ],

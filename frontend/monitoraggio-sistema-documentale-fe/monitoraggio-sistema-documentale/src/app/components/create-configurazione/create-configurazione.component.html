@@ -232,12 +232,18 @@
                   </div>
 
                   <div class="col-md-4">
-                    <label for="sqlScript">Script SQL *</label>
-                    <input class="form-control" type="file" formControlName="sqlScript"  (change)="onFileChange($event)" />
+                    <label for="configurazioneSqlScript">SQL Script *</label>
+                    <input
+                      type="file"
+                      id="configurazioneSqlScript"
+                      (change)="onFileSelected($event)"
+                      class="form-control"
+                    />
                     <mat-error *ngIf="configurazioneForm.get('configurazione.sqlScript')?.hasError('required')">
-                      Il file è obbligatorio
+                      Il campo SQL script è obbligatorio
                     </mat-error>
                   </div>
+
 
                   <div class="col-md-4">
                     <label for="configurazioneProgramma">Programma *</label>

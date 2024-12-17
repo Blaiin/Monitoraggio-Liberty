@@ -27,7 +27,7 @@ export interface Configurazione {
     };
     configurazione: {
       nome: string;
-      sqlScript: string;
+      sqlScript: any;
       programma: string;
       classe: string;
       schedulazione: {
@@ -57,3 +57,25 @@ export interface Configurazione {
     }>;
   };
 }
+
+
+// ambito: this.fb.group({
+//   nome: ['', Validators.required],
+//   destinazione: ['', Validators.required],
+// }),
+
+// tipoControlloID: [
+// '',
+// Validators.required,
+// Validators.pattern(/^[0-9]*[1-9][0-9]*$/)
+// ],
+
+// schedulazione: [
+//   '',
+//   [
+//     Validators.required,
+//     Validators.pattern(
+//       /^(?:\d+|\*|\?)(\/\d+)?(\s+(?:\d+|\*|\?)(\/\d+)?){4}(\s+(MON|TUE|WED|THU|FRI|SAT|SUN)(-(MON|TUE|WED|THU|FRI|SAT|SUN))?)?(\s+(\*|\?|(\d+))(\s+(\*|\?|(\d+)))?)*$/
+//     ),
+//   ],
+// ],
