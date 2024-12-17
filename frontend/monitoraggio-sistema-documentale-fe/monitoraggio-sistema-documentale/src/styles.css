@@ -1,14 +1,11 @@
 @import 'assets/ui-kit/static/css/app.css';
 @import 'assets/ui-kit/static/css/agenzia-entrate.css';
 @import 'assets/ui-kit/static/css/bootstrap-icons.css';
-@import 'assets/ui-kit/static/css/bootstrap-icons.css';
 
+/* Stili di base per l'intera pagina */
 html,
 body {
   height: 100%;
-}
-
-body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }

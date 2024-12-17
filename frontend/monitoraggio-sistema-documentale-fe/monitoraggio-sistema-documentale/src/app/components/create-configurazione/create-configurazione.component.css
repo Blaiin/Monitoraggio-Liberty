@@ -72,3 +72,32 @@ mat-card{
   border: 1px solid #ddd;
   font-family: monospace;
 }
+
+.btn-custom-grey {
+  color: #fff;
+  background-color: rgb(108, 117, 125);
+  border-color: rgb(108, 117, 125);
+}
+
+.btn-custom-grey:hover {
+  color: #fff;
+  background-color: rgba(108, 117, 125, 0.865);
+  border-color: rgb(108, 117, 125);
+}
+
+.btn-custom-grey:focus {
+  box-shadow: 0 0 0 0.2rem rgba(38, 125, 212, 0.5);
+}
+
+.btn-custom-grey:active {
+  color: #fff;
+  background-color: rgba(108, 117, 125, 0.615);
+  border-color: rgb(108, 117, 125);
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+
+.btn-custom-grey:disabled {
+  color: #fff;
+  background-color: rgb(108, 117, 125);
+  border-color: rgb(108, 117, 125);
+}
