@@ -552,7 +552,8 @@
                               <div class="row">
                                 <div class="col-4">
                                   <label for="sqlScript{{ i }}{{ j }}">SQL Script *</label>
-                                  <input id="sqlScript{{ i }}{{ j }}" placeholder="Inserisci SQL" formControlName="sqlScript" class="form-control">
+                                  <input id="sqlScript{{ i }}{{ j }}" placeholder="Inserisci SQL"  type="file"
+                                  (change)="onFileSelectedForAzione($event, i, j)" class="form-control">
                                   <mat-error *ngIf="azione.get('sqlScript')?.hasError('required')">Obbligatorio</mat-error>
                                 </div>
                               </div>

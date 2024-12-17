@@ -242,6 +242,38 @@ export class CreateConfigurazioneComponent implements OnInit {
     }
   }
 
+  onFileSelectedForAzione(
+    event: Event,
+    sogliaIndex: number,
+    azioneIndex: number
+  ): void {
+    const fileInput = event.target as HTMLInputElement;
+
+    if (fileInput.files && fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      // Quando il file è stato caricato, lo processiamo
+      reader.onload = () => {
+        const content = reader.result as string; // Contenuto del file
+
+        // Otteniamo l'array delle azioni per la soglia specifica
+        const azioniArray = this.getAzioni(sogliaIndex);
+
+        // Aggiorniamo il controllo 'sqlScript' per la specifica azione
+        azioniArray.at(azioneIndex).get('sqlScript')?.setValue({
+          name: file.name, // Nome del file
+          content: content, // Contenuto del file
+        });
+
+        console.log("File caricato per l'azione:", file.name);
+      };
+
+      // Legge il file come testo
+      reader.readAsText(file);
+    }
+  }
+
   onSubmit(): void {
     if (this.configurazioneForm.valid) {
       const formValues = this.configurazioneForm.value;
