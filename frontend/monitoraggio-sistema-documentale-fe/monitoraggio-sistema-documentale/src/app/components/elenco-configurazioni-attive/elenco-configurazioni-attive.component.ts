@@ -26,7 +26,11 @@ export class ElencoConfigurazioniAttiveComponent implements OnInit {
 
   constructor(private configurazioneService: ConfigurazioneAttivaService) {}
 
-  ngOnInit() {
+  ngOnInit() {}
+
+  onChangeGraphicType(event: any) {
+    const value = event.target.value;
+    console.log(value);
     this.configurazioneService.getElencoConfigurazioniAttive().subscribe(
       (response: ConfigurazioneAttiva[]) => {
         this.prepareChartData(response);

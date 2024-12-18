@@ -1,8 +1,14 @@
-.title{
+@import '../../../../src/assets/ui-kit/static/css/agenzia-entrate.css';
+@import '../../../../src/assets/ui-kit/static/css/app.css';
+@import '../../../../src/assets/ui-kit/static/css/bootstrap-icons.css';
+@import '../../../../src/assets/ui-kit/static/css/fonts/agenzia-entrate-fonts.css';
+
+
+.title {
   text-align: center;
 }
 
-.row{
+.row {
   padding: 1%;
 }
 
@@ -14,7 +20,7 @@ textarea.ng-invalid.ng-touched {
   background-color: #ffe6e6;
 }
 
-.step-buttons{
+.step-buttons {
   text-align: center;
 }
 
@@ -33,21 +39,24 @@ textarea.ng-invalid.ng-touched {
   margin-top: 20px;
 }
 
-mat-card{
+mat-card {
   border: 1px solid #f3f3f3;
 }
 
-.soglie-list, .azioni-list {
+.soglie-list,
+.azioni-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.soglia-item, .azione-item {
+.soglia-item,
+.azione-item {
   margin-bottom: 20px;
 }
 
-.soglia-fields li, .azione-fields li {
+.soglia-fields li,
+.azione-fields li {
   margin-bottom: 10px;
 }
 

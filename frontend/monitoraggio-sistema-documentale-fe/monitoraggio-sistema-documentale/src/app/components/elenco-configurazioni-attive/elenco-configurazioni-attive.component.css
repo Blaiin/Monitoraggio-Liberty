@@ -1,3 +1,8 @@
+@import '../../../../src/assets/ui-kit/static/css/agenzia-entrate.css';
+@import '../../../../src/assets/ui-kit/static/css/app.css';
+@import '../../../../src/assets/ui-kit/static/css/bootstrap-icons.css';
+@import '../../../../src/assets/ui-kit/static/css/fonts/agenzia-entrate-fonts.css';
+
 .title{
   text-align: center;
 }

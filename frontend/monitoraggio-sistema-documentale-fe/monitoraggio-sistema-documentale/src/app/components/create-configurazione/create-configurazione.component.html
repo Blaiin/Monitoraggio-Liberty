@@ -503,8 +503,8 @@
                       </ul>
                     </mat-card-content>
                     <mat-card-actions>
-                      <button class="btn-custom-grey" mat-flat-button color="primary" (click)="addAzione(i)" matTooltip="Aggiungi azione associata alla soglia numero {{ i +1 }}">Aggiungi Azione <mat-icon>add</mat-icon></button> &nbsp;
-                      <button class="btn-custom-grey" mat-flat-button color="warn" (click)="removeSoglia(i)" matTooltip="Rimuovi azione associata alla soglia numero {{ i +1 }}">Rimuovi Soglia <mat-icon>remove_circle</mat-icon></button>
+                      <button class="btn-custom-grey" mat-button  (click)="addAzione(i)" matTooltip="Aggiungi azione associata alla soglia numero {{ i +1 }}">Aggiungi Azione <mat-icon>add</mat-icon></button> &nbsp;
+                      <button class="btn-custom-grey" mat-button  (click)="removeSoglia(i)" matTooltip="Rimuovi azione associata alla soglia numero {{ i +1 }}">Rimuovi Soglia <mat-icon>remove_circle</mat-icon></button>
                     </mat-card-actions>
                   </mat-card>
 
@@ -591,14 +591,14 @@
               <!-- Bottone aggiungi soglia -->
               <div class="row mt-3">
                 <div class="col-md-4">
-                  <button class="btn-custom-grey" mat-flat-button color="primary" (click)="addSoglia()">Aggiungi Soglia <mat-icon>add</mat-icon></button>
+                  <button class="btn-custom-grey" mat-button  (click)="addSoglia()">Aggiungi Soglia <mat-icon>add</mat-icon></button>
                 </div>
               </div>
 
               <!-- Step Navigation Buttons -->
               <div class="step-buttons">
                 <button class="btn-custom-grey" mat-button matStepperPrevious>◄ Indietro</button>
-                <button class="btn-custom-grey" mat-flat-button color="primary" [disabled]="!configurazioneForm.valid">Salva <mat-icon>save</mat-icon></button>
+                <button class="btn-custom-grey" mat-button  [disabled]="!configurazioneForm.valid">Salva <mat-icon>save</mat-icon></button>
               </div>
             </mat-step>
 
