@@ -155,10 +155,10 @@ export class CreateConfigurazioneComponent implements OnInit {
 
   createSoglia() {
     return this.fb.group({
-      sogliaInferiore: [null, Validators.required],
-      sogliaSuperiore: [null, Validators.required],
-      valore: [null, Validators.required],
-      operatore: [null, Validators.required],
+      sogliaInferiore: [null],
+      sogliaSuperiore: [null],
+      valore: [null],
+      operatore: [null],
       azioni: this.fb.array([]),
     });
   }
@@ -356,61 +356,19 @@ export class CreateConfigurazioneComponent implements OnInit {
     const valoreControl = sogliaGroup.get('valore');
     const operatoreControl = sogliaGroup.get('operatore');
 
-    const sogliaInferioreValorizzata = !!sogliaInferioreControl?.value;
-    const sogliaSuperioreValorizzata = !!sogliaSuperioreControl?.value;
-    const valoreValorizzato = !!valoreControl?.value;
-    const operatoreValorizzato = !!operatoreControl?.value;
-
-    // Reset iniziale per evitare conflitti
-    sogliaInferioreControl?.clearValidators();
-    sogliaSuperioreControl?.clearValidators();
-    valoreControl?.clearValidators();
-    operatoreControl?.clearValidators();
-
-    valoreControl?.enable();
-    operatoreControl?.enable();
-
-    // Caso 1: Soglia Inferiore valorizzata
-    if (sogliaInferioreValorizzata) {
-      sogliaSuperioreControl?.clearValidators(); // Non obbligatoria
-      valoreControl?.reset();
-      valoreControl?.disable(); // Disabilitata
-      operatoreControl?.reset();
-      operatoreControl?.disable(); // Disabilitata
-    }
-    // Caso 2: Soglia Superiore valorizzata
-    else if (sogliaSuperioreValorizzata) {
-      sogliaInferioreControl?.clearValidators(); // Non obbligatoria
-      valoreControl?.reset();
-      valoreControl?.disable(); // Disabilitata
-      operatoreControl?.reset();
-      operatoreControl?.disable(); // Disabilitata
-    }
-    // Caso 3: Valore valorizzato
-    else if (valoreValorizzato) {
-      sogliaInferioreControl?.clearValidators(); // Non obbligatoria
-      sogliaSuperioreControl?.clearValidators(); // Non obbligatoria
-      operatoreControl?.setValidators(Validators.required); // Obbligatorio
-    }
-    // Caso 4: Operatore valorizzato
-    else if (operatoreValorizzato) {
-      sogliaInferioreControl?.clearValidators(); // Non obbligatoria
-      sogliaSuperioreControl?.clearValidators(); // Non obbligatoria
-      valoreControl?.setValidators(Validators.required); // Obbligatorio
-    }
-    // Caso di default: Tutti obbligatori
-    else {
-      sogliaInferioreControl?.setValidators(Validators.required);
-      sogliaSuperioreControl?.setValidators(Validators.required);
-      valoreControl?.setValidators(Validators.required);
+    if (valoreControl?.value != "") {
+      sogliaInferioreControl?.disable();
+      sogliaSuperioreControl?.disable();
       operatoreControl?.setValidators(Validators.required);
+      operatoreControl?.updateValueAndValidity();
+    } else {
+      sogliaInferioreControl?.enable();
+      sogliaSuperioreControl?.enable();
+      operatoreControl?.clearValidators();
+      operatoreControl?.clearAsyncValidators();
+      operatoreControl?.updateValueAndValidity();
     }
-
-    // Aggiorna la validità dei campi
-    sogliaInferioreControl?.updateValueAndValidity();
-    sogliaSuperioreControl?.updateValueAndValidity();
-    valoreControl?.updateValueAndValidity();
-    operatoreControl?.updateValueAndValidity();
+    this.configurazioneForm.updateValueAndValidity();
   }
 
   onChangeTipoAzione(index: number, subIndex: number): void {

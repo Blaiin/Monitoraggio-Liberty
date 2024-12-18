@@ -9,7 +9,7 @@
     <div class="col-12">
       <mat-card>
         <form [formGroup]="configurazioneForm" (ngSubmit)="onSubmit()">
-          <mat-stepper  [formGroup]="configurazioneForm" [linear]="true" #stepper> <!--[linear]="true"-->
+          <mat-stepper  [formGroup]="configurazioneForm"  #stepper> <!--[linear]="true"-->
             <!-- Step 1: Tipo Controllo -->
             <mat-step label="Tipo Controllo" [stepControl]="configurazioneForm.get('tipoControllo')!" >
               <div class="row">
@@ -458,7 +458,7 @@
                           <div class="row">
                             <div class="col-6">
                               <label for="sogliaInferiore{{ i }}">Soglia Inferiore *</label>
-                              <input (change)="onSogliaChange(i)" id="sogliaInferiore{{ i }}" placeholder="Inserire soglia inferiore" formControlName="sogliaInferiore" class="form-control">
+                              <input (input)="onSogliaChange(i)" id="sogliaInferiore{{ i }}" placeholder="Inserire soglia inferiore" formControlName="sogliaInferiore" class="form-control">
                               <mat-error *ngIf="soglia.get('sogliaInferiore')?.hasError('required')">Obbligatorio</mat-error>
                             </div>
                           </div>
@@ -468,7 +468,7 @@
                           <div class="row">
                             <div class="col-6">
                               <label for="sogliaSuperiore{{ i }}">Soglia Superiore *</label>
-                              <input (change)="onSogliaChange(i)" id="sogliaSuperiore{{ i }}" placeholder="Inserire soglia superiore" formControlName="sogliaSuperiore" class="form-control">
+                              <input (input)="onSogliaChange(i)" id="sogliaSuperiore{{ i }}" placeholder="Inserire soglia superiore" formControlName="sogliaSuperiore" class="form-control">
                               <mat-error *ngIf="soglia.get('sogliaSuperiore')?.hasError('required')">Obbligatorio</mat-error>
                             </div>
                           </div>
@@ -478,7 +478,7 @@
                           <div class="row">
                             <div class="col-6">
                               <label for="valore{{ i }}">Valore *</label>
-                          <input id="valore{{ i }}" placeholder="Inserire valore" formControlName="valore" class="form-control">
+                          <input id="valore{{ i }}" (input)="onSogliaChange(i)" placeholder="Inserire valore" formControlName="valore" class="form-control">
                           <mat-error *ngIf="soglia.get('valore')?.hasError('required')">Obbligatorio</mat-error>
                             </div>
                           </div>
@@ -488,13 +488,20 @@
                           <div class="row">
                             <div class="col-6">
                               <label for="operatore{{ i }}">Operatore *</label>
-                              <select id="operatore{{ i }}" formControlName="operatore" class="form-select">
-                                <option value="" selected>Seleziona operatore</option>
-                                <option value="+">+</option>
-                                <option value="-">-</option>
-                                <option value="*">*</option>
-                                <option value="/">/</option>
-                              </select>
+                                <input
+                                  matInput class="form-control"
+                                  (input)="onSogliaChange(i)"
+                                  [matAutocomplete]="auto"
+                                  formControlName="operatore"
+                                  id="operatore{{ i }}"
+                                  placeholder="Seleziona operatore"
+                                />
+                                <mat-autocomplete #auto="matAutocomplete">
+                                  <mat-option *ngFor="let operator of ['+', '-', '*', '/']" [value]="operator">
+                                    {{ operator }}
+                                  </mat-option>
+                                </mat-autocomplete>
+
                               <mat-error *ngIf="soglia.get('operatore')?.hasError('required')">Obbligatorio</mat-error>
                             </div>
                           </div>
