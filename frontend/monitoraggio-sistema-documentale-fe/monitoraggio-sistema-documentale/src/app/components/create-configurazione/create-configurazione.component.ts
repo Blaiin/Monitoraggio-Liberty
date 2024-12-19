@@ -329,21 +329,37 @@ export class CreateConfigurazioneComponent implements OnInit {
       'configurazione.programma'
     );
     const classeControl = this.configurazioneForm.get('configurazione.classe');
+    const sqlScriptControl = this.configurazioneForm.get(
+      'configurazione.sqlScript'
+    );
 
     if (selectedValue === '1') {
+      // Disabilita e rimuovi i validatori per valore 1
       programmaControl?.disable();
       classeControl?.disable();
       programmaControl?.clearValidators();
       classeControl?.clearValidators();
+    } else if (selectedValue === '4') {
+      // Disabilita e rimuovi i validatori per valore 4
+      programmaControl?.disable();
+      classeControl?.disable();
+      sqlScriptControl?.disable();
+      programmaControl?.clearValidators();
+      classeControl?.clearValidators();
+      sqlScriptControl?.clearValidators();
     } else {
+      // Abilita e imposta come obbligatori per valori diversi da 1 e 4
       programmaControl?.enable();
       classeControl?.enable();
+      sqlScriptControl?.enable();
       programmaControl?.setValidators(Validators.required);
       classeControl?.setValidators(Validators.required);
     }
 
+    // Aggiorna lo stato dei control
     programmaControl?.updateValueAndValidity();
     classeControl?.updateValueAndValidity();
+    sqlScriptControl?.updateValueAndValidity();
   }
 
   onSogliaChange(index: number): void {
@@ -356,7 +372,7 @@ export class CreateConfigurazioneComponent implements OnInit {
     const valoreControl = sogliaGroup.get('valore');
     const operatoreControl = sogliaGroup.get('operatore');
 
-    if (valoreControl?.value != "") {
+    if (valoreControl?.value != '') {
       sogliaInferioreControl?.disable();
       sogliaSuperioreControl?.disable();
       operatoreControl?.setValidators(Validators.required);

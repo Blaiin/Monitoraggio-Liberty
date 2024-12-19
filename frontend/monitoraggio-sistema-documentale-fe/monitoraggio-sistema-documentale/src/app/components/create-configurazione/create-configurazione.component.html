@@ -237,7 +237,7 @@
                       type="file"
                       id="configurazioneSqlScript"
                       (change)="onFileSelected($event)"
-                      class="form-control"
+                      class="form-control" formControlName="sqlScript"
                     />
                     <mat-error *ngIf="configurazioneForm.get('configurazione.sqlScript')?.hasError('required')">
                       Il campo SQL script è obbligatorio
